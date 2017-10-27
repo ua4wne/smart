@@ -4,6 +4,7 @@ namespace app\modules\main\models;
 
 use app\models\BaseModel;
 use Yii;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "material".
@@ -73,5 +74,23 @@ class Material extends BaseModel
     public function getStocks()
     {
         return $this->hasMany(Stock::className(), ['material_id' => 'id']);
+    }
+
+    public static function getCategories()
+    {
+        // Выбираем только те категории, у которых есть дочерние категории
+        $parents = Category::find()
+            ->select(['id', 'name'])
+            ->distinct(true)
+            ->all();
+
+        return ArrayHelper::map($parents, 'id', 'name');
+    }
+
+    public function getCategoryName()
+    {
+        $category = $this->category;
+
+        return $category ? $category->name : '';
     }
 }
