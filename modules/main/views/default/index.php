@@ -1,4 +1,4 @@
-<div class="page-content">
+
     <div class="ace-settings-container" id="ace-settings-container">
         <div class="btn btn-app btn-xs btn-warning ace-settings-btn" id="ace-settings-btn">
             <i class="ace-icon fa fa-cog bigger-130"></i>
@@ -436,4 +436,3 @@
             <!-- PAGE CONTENT ENDS -->
         </div><!-- /.col -->
     </div><!-- /.row -->
-</div><!-- /.page-content -->

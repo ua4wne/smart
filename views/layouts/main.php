@@ -39,7 +39,7 @@ AppAsset::register($this);
             <a href="/" class="navbar-brand">
                 <small>
                     <i class="fa fa-leaf"></i>
-                    Ace Admin
+                    Домовёнок
                 </small>
             </a>
         </div>
@@ -697,110 +697,35 @@ AppAsset::register($this);
                     </li>
 
                     <li class="">
-                        <a href="elements.html">
+                        <a href="/main/stock/category">
                             <i class="menu-icon fa fa-caret-right"></i>
-                            Elements
+                            Категории
                         </a>
-
                         <b class="arrow"></b>
                     </li>
 
                     <li class="">
-                        <a href="buttons.html">
+                        <a href="/main/stock/cell">
                             <i class="menu-icon fa fa-caret-right"></i>
-                            Buttons &amp; Icons
+                            Места хранения
                         </a>
-
                         <b class="arrow"></b>
                     </li>
 
                     <li class="">
-                        <a href="content-slider.html">
+                        <a href="/main/stock/material">
                             <i class="menu-icon fa fa-caret-right"></i>
-                            Content Sliders
+                            Номенклатура
                         </a>
-
                         <b class="arrow"></b>
                     </li>
 
                     <li class="">
-                        <a href="treeview.html">
+                        <a href="/main/stock/unit">
                             <i class="menu-icon fa fa-caret-right"></i>
-                            Treeview
+                            Ед. измерения
                         </a>
-
                         <b class="arrow"></b>
-                    </li>
-
-                    <li class="">
-                        <a href="jquery-ui.html">
-                            <i class="menu-icon fa fa-caret-right"></i>
-                            jQuery UI
-                        </a>
-
-                        <b class="arrow"></b>
-                    </li>
-
-                    <li class="">
-                        <a href="nestable-list.html">
-                            <i class="menu-icon fa fa-caret-right"></i>
-                            Nestable Lists
-                        </a>
-
-                        <b class="arrow"></b>
-                    </li>
-
-                    <li class="">
-                        <a href="#" class="dropdown-toggle">
-                            <i class="menu-icon fa fa-caret-right"></i>
-
-                            Three Level Menu
-                            <b class="arrow fa fa-angle-down"></b>
-                        </a>
-
-                        <b class="arrow"></b>
-
-                        <ul class="submenu">
-                            <li class="">
-                                <a href="#">
-                                    <i class="menu-icon fa fa-leaf green"></i>
-                                    Item #1
-                                </a>
-
-                                <b class="arrow"></b>
-                            </li>
-
-                            <li class="">
-                                <a href="#" class="dropdown-toggle">
-                                    <i class="menu-icon fa fa-pencil orange"></i>
-
-                                    4th level
-                                    <b class="arrow fa fa-angle-down"></b>
-                                </a>
-
-                                <b class="arrow"></b>
-
-                                <ul class="submenu">
-                                    <li class="">
-                                        <a href="#">
-                                            <i class="menu-icon fa fa-plus purple"></i>
-                                            Add Product
-                                        </a>
-
-                                        <b class="arrow"></b>
-                                    </li>
-
-                                    <li class="">
-                                        <a href="#">
-                                            <i class="menu-icon fa fa-eye pink"></i>
-                                            View Products
-                                        </a>
-
-                                        <b class="arrow"></b>
-                                    </li>
-                                </ul>
-                            </li>
-                        </ul>
                     </li>
                 </ul>
             </li>
@@ -1000,8 +925,27 @@ AppAsset::register($this);
                     </form>
                 </div><!-- /.nav-search -->
             </div>
-
+            <div class="page-content">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <?php if( Yii::$app->session->hasFlash('success') ): ?>
+                            <div class="alert alert-success alert-dismissible" role="alert">
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <?php echo Yii::$app->session->getFlash('success'); ?>
+                            </div>
+                        <?php endif;?>
+                        <?php if( Yii::$app->session->hasFlash('error') ): ?>
+                            <div class="alert alert-danger alert-dismissible" role="alert">
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <?php echo Yii::$app->session->getFlash('error'); ?>
+                            </div>
+                        <?php endif;?>
+                    </div>
+                    <!-- /.col-lg-12 -->
+                </div>
+                <!-- /.row -->
             <?= $content ?>
+            </div>
         </div>
     </div><!-- /.main-content -->
 
