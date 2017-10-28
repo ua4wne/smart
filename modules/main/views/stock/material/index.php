@@ -8,7 +8,7 @@ use yii\helpers\Url;
 /* @var $searchModel app\modules\main\models\MaterialSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Materials';
+$this->title = 'Номенклатура';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="material-index">
@@ -17,7 +17,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
 
     <p>
-        <?= Html::a('Create Material', ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Новая запись', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
     <?= GridView::widget([
         'dataProvider' => $dataProvider,

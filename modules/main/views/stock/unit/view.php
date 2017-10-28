@@ -2,16 +2,15 @@
 
 use yii\helpers\Html;
 use yii\widgets\DetailView;
-use yii\helpers\Url;
 
 /* @var $this yii\web\View */
-/* @var $model app\modules\main\models\Material */
+/* @var $model app\modules\main\models\Unit */
 
 $this->title = $model->name;
-$this->params['breadcrumbs'][] = ['label' => 'Номенклатура', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Ед. измерений', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="material-view">
+<div class="unit-view">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
@@ -30,20 +29,7 @@ $this->params['breadcrumbs'][] = $this->title;
         'model' => $model,
         'attributes' => [
             'id',
-            [
-                'label' => 'Картинка',
-                'format' => 'raw',
-                'value' => function($data){
-                    return Html::img(Url::toRoute($data->image),[
-                        'alt'=>'image',
-                        'style' => 'width:300px;',
-                        //'class'=>'img-circle'
-                    ]);
-                },
-            ],
             'name',
-            'category_id',
-            //'image',
             'created_at',
             'updated_at',
         ],

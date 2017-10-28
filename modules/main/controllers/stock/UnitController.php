@@ -2,19 +2,18 @@
 
 namespace app\modules\main\controllers\stock;
 
-use app\modules\main\models\Cell;
-use app\modules\main\models\Unit;
 use Yii;
-use app\modules\main\models\Stock;
-use app\modules\main\models\StockSearch;
+use app\modules\main\models\Unit;
+use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use app\modules\main\models\Stock;
 
 /**
- * StoreController implements the CRUD actions for Stock model.
+ * UnitController implements the CRUD actions for Unit model.
  */
-class StoreController extends Controller
+class UnitController extends Controller
 {
     /**
      * @inheritdoc
@@ -32,22 +31,22 @@ class StoreController extends Controller
     }
 
     /**
-     * Lists all Stock models.
+     * Lists all Unit models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new StockSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider = new ActiveDataProvider([
+            'query' => Unit::find(),
+        ]);
 
         return $this->render('index', [
-            'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }
 
     /**
-     * Displays a single Stock model.
+     * Displays a single Unit model.
      * @param integer $id
      * @return mixed
      */
@@ -59,37 +58,25 @@ class StoreController extends Controller
     }
 
     /**
-     * Creates a new Stock model.
+     * Creates a new Unit model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new Stock();
+        $model = new Unit();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
-            $cells = array();
-            $rows = Cell::find()->select(['id','name'])->asArray()->all();
-            foreach ($rows as $row){
-                $cells[$row[id]] = $row[name];
-            }
-            $units = array();
-            $rows = Unit::find()->select(['id','name'])->asArray()->all();
-            foreach ($rows as $row){
-                $units[$row[id]] = $row[name];
-            }
             return $this->render('create', [
                 'model' => $model,
-                'cells' => $cells,
-                'units' => $units,
             ]);
         }
     }
 
     /**
-     * Updates an existing Stock model.
+     * Updates an existing Unit model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -101,47 +88,41 @@ class StoreController extends Controller
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
-            $cells = array();
-            $rows = Cell::find()->select(['id','name'])->asArray()->all();
-            foreach ($rows as $row){
-                $cells[$row[id]] = $row[name];
-            }
-            $units = array();
-            $rows = Unit::find()->select(['id','name'])->asArray()->all();
-            foreach ($rows as $row){
-                $units[$row[id]] = $row[name];
-            }
             return $this->render('update', [
                 'model' => $model,
-                'cells' => $cells,
-                'units' => $units,
             ]);
         }
     }
 
     /**
-     * Deletes an existing Stock model.
+     * Deletes an existing Unit model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $rows = Stock::find()->where(['unit_id'=>$id])->count();
+        if($rows){
+            Yii::$app->session->setFlash('error', 'Единица измерения <strong>'. $this->findModel($id)->name .'</strong> не может быть удалена, т.к. имеются связанные данные в таблице остатков!');
+        }
+        else {
+            $this->findModel($id)->delete();
+        }
 
         return $this->redirect(['index']);
     }
 
     /**
-     * Finds the Stock model based on its primary key value.
+     * Finds the Unit model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return Stock the loaded model
+     * @return Unit the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Stock::findOne($id)) !== null) {
+        if (($model = Unit::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

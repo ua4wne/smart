@@ -6,9 +6,9 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model app\modules\main\models\Material */
 
-$this->title = 'Create Material';
-$this->params['breadcrumbs'][] = ['label' => 'Materials', 'url' => ['index']];
-$this->params['breadcrumbs'][] = $this->title;
+$this->title = 'Новая номенклатура';
+$this->params['breadcrumbs'][] = ['label' => 'Номенклатура', 'url' => ['index']];
+$this->params['breadcrumbs'][] = 'Новая запись';
 ?>
 <div class="material-create">
 
@@ -16,6 +16,8 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?= $this->render('_form', [
         'model' => $model,
+        'upload' => $upload,
+        'catsel' => $catsel,
     ]) ?>
 
 </div>

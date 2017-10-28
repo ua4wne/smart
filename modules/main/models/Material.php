@@ -39,7 +39,7 @@ class Material extends BaseModel
             [['category_id'], 'integer'],
             [['created_at', 'updated_at'], 'safe'],
             [['name'], 'string', 'max' => 100],
-            [['image'], 'string', 'max' => 30],
+            [['image'], 'string', 'max' => 50],
             [['name'], 'unique'],
             [['category_id'], 'exist', 'skipOnError' => true, 'targetClass' => Category::className(), 'targetAttribute' => ['category_id' => 'id']],
         ];
@@ -53,7 +53,7 @@ class Material extends BaseModel
         return [
             'id' => 'ID',
             'name' => 'Наименование',
-            'category_id' => 'Category ID',
+            'category_id' => 'Категория',
             'image' => 'Изображение',
             'created_at' => 'Дата создания',
             'updated_at' => 'Дата обновления',
@@ -78,19 +78,17 @@ class Material extends BaseModel
 
     public static function getCategories()
     {
-        // Выбираем только те категории, у которых есть дочерние категории
+        // Выбираем категории
         $parents = Category::find()
             ->select(['id', 'name'])
             ->distinct(true)
             ->all();
-
         return ArrayHelper::map($parents, 'id', 'name');
     }
 
     public function getCategoryName()
     {
         $category = $this->category;
-
         return $category ? $category->name : '';
     }
 }

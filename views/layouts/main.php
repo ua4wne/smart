@@ -677,55 +677,36 @@ AppAsset::register($this);
                                 <b class="arrow"></b>
                             </li>
                             <li class="">
-                                <a href="#" class="dropdown-toggle">
+                                <a href="/main/stock/category">
                                     <i class="menu-icon fa fa-caret-right"></i>
-                                    Номенклатура
-                                    <b class="arrow fa fa-angle-down"></b>
+                                    Категории
                                 </a>
                                 <b class="arrow"></b>
-                                <ul class="submenu">
-                                    <li class="">
-                                        <a href="/main/stock/chip">
-                                            <i class="menu-icon fa fa-tag"></i>
-                                            <span class="menu-text"> Микросхемы </span>
-                                        </a>
-                                        <b class="arrow"></b>
-                                    </li>
-                                </ul>
+                            </li>
+
+                            <li class="">
+                                <a href="/main/stock/cell">
+                                    <i class="menu-icon fa fa-caret-right"></i>
+                                    Места хранения
+                                </a>
+                                <b class="arrow"></b>
+                            </li>
+
+                            <li class="">
+                                <a href="/main/stock/material">
+                                    <i class="menu-icon fa fa-caret-right"></i>
+                                    Номенклатура
+                                </a>
+                                <b class="arrow"></b>
+                            </li>
+                            <li class="">
+                                <a href="/main/stock/unit">
+                                    <i class="menu-icon fa fa-caret-right"></i>
+                                    Ед. измерения
+                                </a>
+                                <b class="arrow"></b>
                             </li>
                         </ul>
-                    </li>
-
-                    <li class="">
-                        <a href="/main/stock/category">
-                            <i class="menu-icon fa fa-caret-right"></i>
-                            Категории
-                        </a>
-                        <b class="arrow"></b>
-                    </li>
-
-                    <li class="">
-                        <a href="/main/stock/cell">
-                            <i class="menu-icon fa fa-caret-right"></i>
-                            Места хранения
-                        </a>
-                        <b class="arrow"></b>
-                    </li>
-
-                    <li class="">
-                        <a href="/main/stock/material">
-                            <i class="menu-icon fa fa-caret-right"></i>
-                            Номенклатура
-                        </a>
-                        <b class="arrow"></b>
-                    </li>
-
-                    <li class="">
-                        <a href="/main/stock/unit">
-                            <i class="menu-icon fa fa-caret-right"></i>
-                            Ед. измерения
-                        </a>
-                        <b class="arrow"></b>
                     </li>
                 </ul>
             </li>

@@ -2,12 +2,16 @@
 
 namespace app\modules\main\controllers\stock;
 
+use app\modules\main\models\Category;
+use app\modules\main\models\Stock;
 use Yii;
 use app\modules\main\models\Material;
 use app\modules\main\models\MaterialSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use app\modules\main\models\UploadImage;
+use yii\web\UploadedFile;
 
 /**
  * MaterialController implements the CRUD actions for Material model.
@@ -64,12 +68,26 @@ class MaterialController extends Controller
     public function actionCreate()
     {
         $model = new Material();
+        $upload = new UploadImage();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        } else {
+        if ($model->load(Yii::$app->request->post())) {
+            $upload->image = UploadedFile::getInstance($upload, 'image');
+            $fname = $upload->upload();
+            //обновляем данные картинки
+            $model->image = $fname;
+            if($model->save())
+                return $this->redirect(['view', 'id' => $model->id]);
+        }
+        else {
+            $categories = Category::find()->select(['id','name'])->asArray()->all();
+            $catsel = array();
+            foreach($categories as $category) {
+                $catsel[$category['id']] = $category['name']; //массив для заполнения данных в select формы
+            }
             return $this->render('create', [
                 'model' => $model,
+                'upload' => $upload,
+                'catsel' => $catsel,
             ]);
         }
     }
@@ -83,12 +101,32 @@ class MaterialController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
+        $old_image = substr($model->image,1); //старый файл изображения
+        $upload = new UploadImage();
 
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+        if ($model->load(Yii::$app->request->post()) ) {
+            $upload->image = UploadedFile::getInstance($upload, 'new_image');
+            if(!empty($upload->image)){
+                $fname = $upload->upload();
+                //обновляем данные картинки
+                $model->image = $fname;
+                //удаляем связанный файл изображения если это не общая картинка noimage.jpg
+                $pos = strpos($old_image, 'noimage.jpg');
+                if($pos === false)
+                    unlink($old_image);
+            }
+            $model->save();
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
+            $categories = Category::find()->select(['id','name'])->asArray()->all();
+            $catsel = array();
+            foreach($categories as $category) {
+                $catsel[$category['id']] = $category['name']; //массив для заполнения данных в select формы
+            }
             return $this->render('update', [
                 'model' => $model,
+                'upload' => $upload,
+                'catsel' => $catsel,
             ]);
         }
     }
@@ -101,7 +139,19 @@ class MaterialController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        $rows = Stock::find()->where(['material_id'=>$id])->sum('quantity');
+        //return print_r($rows);
+        if($rows){
+            Yii::$app->session->setFlash('error', 'Номенклатура <strong>'. $this->findModel($id)->name .'</strong> не может быть удалена, т.к. имеются её остатки ('.$rows.') на складе!');
+        }
+        else {
+            $fname = substr($this->findModel($id)->image,1);
+            $this->findModel($id)->delete();
+            //удаляем связанный файл изображения если это не общая картинка noimage.jpg
+            $pos = strpos($fname, 'noimage.jpg');
+            if($pos === false)
+                unlink($fname);
+        }
 
         return $this->redirect(['index']);
     }
