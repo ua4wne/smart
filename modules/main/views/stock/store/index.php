@@ -1,8 +1,7 @@
 <?php
 
 use yii\helpers\Html;
-use yii\grid\GridView;
-use app\modules\main\models\Stock;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $searchModel app\modules\main\models\StockSearch */
@@ -19,40 +18,19 @@ $this->params['breadcrumbs'][] = $this->title;
     <p>
         <?= Html::a('Приход', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
-    <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
 
-            //'id',
-            //'cell_id',
-            [
-                'attribute'=>'cell_id',
-                'label'=>'Ячейка',
-                'format'=>'text', // Возможные варианты: raw, html
-                'content'=>function($data){
-                    return $data->getCellName();
-                },
-                'filter' => Stock::getCells()
-            ],
-            'material.name',
-            'quantity',
-            //'unit_id',
-            [
-                'attribute'=>'unit_id',
-                'label'=>'Единица',
-                'format'=>'text', // Возможные варианты: raw, html
-                'content'=>function($data){
-                    return $data->getUnitName();
-                },
-                'filter' => Stock::getUnits()
-            ],
-            'price',
-            // 'created_at',
-            // 'updated_at',
+    <?= $content ?>
 
-            ['class' => 'yii\grid\ActionColumn'],
-        ],
-    ]); ?>
 </div>
+
+<?php
+$js = <<<JS
+$(document).ready(function(){
+    $('#dataTables-stock').DataTable({
+        responsive: true
+    });
+});
+
+JS;
+$this->registerJs($js);
+?>

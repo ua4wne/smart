@@ -24,6 +24,8 @@ class AppAsset extends AssetBundle
         'css/ace.min.css',
         'css/ace-skins.min.css',
         'css/ace-rtl.min.css',
+        'css/dataTables.bootstrap.css',
+        'css/dataTables.responsive.css',
         'css/style.css',
     ];
     public $js = [
@@ -32,6 +34,9 @@ class AppAsset extends AssetBundle
         'js/ace-elements.min.js',
         'js/ace-extra.min.js',
         'js/ace.min.js',
+        'js/jquery.dataTables.min.js',
+        'js/dataTables.bootstrap.min.js',
+        'js/dataTables.responsive.js'
 
     ];
     public $jsOptions = [

@@ -18,8 +18,9 @@ class StockSearch extends Stock
     public function rules()
     {
         return [
-            [['id', 'cell_id', 'material_id', 'quantity', 'unit_id'], 'integer'],
+            [['id', 'cell_id', 'quantity', 'unit_id'], 'integer'],
             [['price'], 'number'],
+            [['material_id'], 'string'],
             [['created_at', 'updated_at'], 'safe'],
         ];
     }
@@ -44,6 +45,8 @@ class StockSearch extends Stock
     {
         $query = Stock::find();
 
+        //$this->findName($this->material_id)
+
         // add conditions that should always apply here
 
         $dataProvider = new ActiveDataProvider([
@@ -62,14 +65,26 @@ class StockSearch extends Stock
         $query->andFilterWhere([
             'id' => $this->id,
             'cell_id' => $this->cell_id,
-            'material_id' => $this->material_id,
+            //'material_id' => $this->material_id,
             'quantity' => $this->quantity,
             'unit_id' => $this->unit_id,
             'price' => $this->price,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ]);
+        if(strlen($this->material_id))
+        $query->andFilterWhere(['in','material_id',self::findName($this->material_id)]);
 
         return $dataProvider;
+    }
+
+    public static function findName($name){
+        if (($model = Material::find()->select('id')->where(['like','name',$name])->asArray()->all()) !== null){
+            $str = '';
+            foreach ($model as $val){
+                $str.=$val['id'].',';
+            }
+            return $str;
+        }
     }
 }

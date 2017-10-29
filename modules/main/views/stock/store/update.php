@@ -7,7 +7,7 @@ use yii\helpers\Html;
 
 $this->title = 'Обновление: ' . $model->material->name;
 $this->params['breadcrumbs'][] = ['label' => 'Остатки', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->material->name, 'url' => ['view', 'id' => $model->id]];
+$this->params['breadcrumbs'][] = ['label' => $model->material->name, 'url' => ['view', 'id' => $model->material_id]];
 $this->params['breadcrumbs'][] = 'Обновление';
 ?>
 <div class="stock-update">

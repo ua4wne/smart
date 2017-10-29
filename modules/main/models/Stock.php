@@ -83,6 +83,12 @@ class Stock extends BaseModel
         return $this->hasOne(Material::className(), ['id' => 'material_id']);
     }
 
+    public function getImage()
+    {
+        $img =  $this->material;
+        return $img ? $img->image : '';
+    }
+
     /**
      * @return \yii\db\ActiveQuery
      */
@@ -121,5 +127,32 @@ class Stock extends BaseModel
     {
         $unit = $this->unit;
         return $unit ? $unit->name : '';
+    }
+
+    public static function ViewStock(){
+        $query =  'SELECT s.material_id AS id, c.name AS cell, m.name AS material, cat.name AS category, s.quantity AS quantity, u.name AS unit, s.price AS price ' .
+            'FROM Stock s ' .
+            'INNER JOIN cell c ON (c.id = s.cell_id) ' .
+            'INNER JOIN material m ON (m.id = s.material_id) '.
+            'INNER JOIN category cat ON (cat.id = m.category_id) '.
+            'INNER JOIN unit u ON (u.id = s.unit_id) ';
+        // подключение к базе данных
+        $connection = \Yii::$app->db;
+        // Составляем SQL запрос
+        $model = $connection->createCommand($query);
+        //Осуществляем запрос к базе данных, переменная $model содержит ассоциативный массив с данными
+        $rows = $model->queryAll();
+        $content = '<table class="table table-striped table-bordered table-hover" id="dataTables-stock">
+                        <thead><tr><th>ID</th><th>Ячейка</th><th>Номенклатура</th><th>Категория</th><th>Кол-во</th><th>Ед. изм</th><th>Цена</th><th>Действия</th></tr></thead>
+                            <tbody>';
+        foreach ($rows as $row){
+            $content.='<tr><td>'.$row['id'].'</td><td>'.$row['cell'].'</td><td>'.$row['material'].'</td>
+                        <td>'.$row['category'].'</td><td>'.$row['quantity'].'</td><td>'.$row['unit'].'</td><td>'.$row['price'].'</td>
+                        <td><a href="/main/stock/store/view?id='.$row['id'].'" title="Просмотр" aria-label="Просмотр"><span class="glyphicon glyphicon-eye-open"></span></a>
+                         <a href="/main/stock/store/update?id='.$row['id'].'" title="Редактировать" aria-label="Редактировать"><span class="glyphicon glyphicon-pencil"></span></a>
+                         <a href="/main/stock/store/delete?id='.$row['id'].'" title="Удалить" aria-label="Удалить" data-confirm="Вы уверены, что хотите удалить этот элемент?" data-method="post"><span class="glyphicon glyphicon-trash"></span></a></tr>';
+        }
+        $content.='</tbody></table>';
+        return $content;
     }
 }

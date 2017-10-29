@@ -7,6 +7,8 @@ use app\modules\main\models\Unit;
 use Yii;
 use app\modules\main\models\Stock;
 use app\modules\main\models\StockSearch;
+use app\modules\main\models\MyStockSearch;
+use yii\data\SqlDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -37,13 +39,27 @@ class StoreController extends Controller
      */
     public function actionIndex()
     {
-        $searchModel = new StockSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
-
-        return $this->render('index', [
+        //$searchModel = new StockSearch();
+        //$dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        /*$dataProvider = new SqlDataProvider([
+            'sql' =>  'SELECT c.name AS cell, m.name AS material, m.image AS images, cat.name AS category, s.quantity AS quantity, u.name AS unit, s.price AS price ' .
+                'FROM Stock s ' .
+                'INNER JOIN cell c ON (c.id = s.cell_id) ' .
+                'INNER JOIN material m ON (m.id = s.material_id) '.
+                'INNER JOIN category cat ON (cat.id = m.category_id) '.
+                'INNER JOIN unit u ON (u.id = s.unit_id) ',
+        ]); */
+        $content = Stock::ViewStock();
+        return $this->render('index',[
+            'content' => $content,
+        ]);
+        /*return $this->render('indexOLD', [
             'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
-        ]);
+            'pagination' => [
+                'pagesize' => 10,
+            ],
+        ]);*/
     }
 
     /**
@@ -141,7 +157,7 @@ class StoreController extends Controller
      */
     protected function findModel($id)
     {
-        if (($model = Stock::findOne($id)) !== null) {
+        if (($model = Stock::findOne(['material_id'=>$id])) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
