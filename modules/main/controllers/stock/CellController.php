@@ -38,6 +38,9 @@ class CellController extends Controller
     {
         $dataProvider = new ActiveDataProvider([
             'query' => Cell::find(),
+            'pagination' => [
+                'pageSize' => Yii::$app->params['page_size'],
+            ],
         ]);
 
         return $this->render('index', [

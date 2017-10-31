@@ -12,30 +12,13 @@ $this->title = 'Инвентаризация';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="stock-index">
-
-    <h1><?= Html::encode($this->title) ?></h1>
-    <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
-
-    <p>
-        <?= Html::a('<span class="fa  fa-file-pdf-o"></span> Скачать', ['export'], ['class' => 'btn btn-primary']) ?>
-    </p>
-
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
             //'id',
-            [
-                'attribute'=>'cell_id',
-                'label'=>'Ячейка',
-                'format'=>'text', // Возможные варианты: raw, html
-                'content'=>function($data){
-                    return $data->getCellName();
-                },
-                'filter' => \app\modules\main\models\Stock::getCells()
-            ],
+            'cell.name',
             'material.name',
             'quantity',
             'unit.name',

@@ -11,7 +11,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="unit-index">
 
-    <h1>Единицы измерений</h1>
+    <h1 class="center">Единицы измерений</h1>
 
     <p>
         <?= Html::a('Новая запись', ['create'], ['class' => 'btn btn-success']) ?>

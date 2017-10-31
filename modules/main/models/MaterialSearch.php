@@ -47,6 +47,9 @@ class MaterialSearch extends Material
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'pagination' => [
+                'pageSize' => Yii::$app->params['page_size'],
+            ],
         ]);
 
         $this->load($params);

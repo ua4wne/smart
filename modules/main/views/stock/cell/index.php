@@ -11,7 +11,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="cell-index">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+    <h1 class="center"><?= Html::encode($this->title) ?></h1>
 
     <p>
         <?= Html::a('Новая запись', ['create'], ['class' => 'btn btn-success']) ?>
