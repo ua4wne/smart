@@ -677,6 +677,13 @@ AppAsset::register($this);
                                 <b class="arrow"></b>
                             </li>
                             <li class="">
+                                <a href="/main/stock/store/inventory">
+                                    <i class="menu-icon fa fa-search"></i>
+                                    <span class="menu-text"> Инвентаризация </span>
+                                </a>
+                                <b class="arrow"></b>
+                            </li>
+                            <li class="">
                                 <a href="/main/stock/category">
                                     <i class="menu-icon fa fa-caret-right"></i>
                                     Категории

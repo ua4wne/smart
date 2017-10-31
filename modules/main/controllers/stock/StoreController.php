@@ -7,8 +7,7 @@ use app\modules\main\models\Unit;
 use Yii;
 use app\modules\main\models\Stock;
 use app\modules\main\models\StockSearch;
-use app\modules\main\models\MyStockSearch;
-use yii\data\SqlDataProvider;
+use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -115,7 +114,7 @@ class StoreController extends Controller
         $model = $this->findModel($id);
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+            return $this->redirect(['view', 'id' => $model->material_id]);
         } else {
             $cells = array();
             $rows = Cell::find()->select(['id','name'])->asArray()->all();
@@ -162,5 +161,16 @@ class StoreController extends Controller
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+
+    public function actionInventory()
+    {
+        $searchModel = new StockSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+
+        return $this->render('inventory', [
+            'searchModel' => $searchModel,
+            'dataProvider' => $dataProvider,
+        ]);
     }
 }

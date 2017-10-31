@@ -14,7 +14,7 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'cell_id')->dropDownList($cells) ?>
 
-    <?= $form->field($model, 'material_id')->textInput() ?>
+    <?= $form->field($model, 'material_id')->hiddenInput()->label(false) ?>
 
     <?= $form->field($model, 'quantity')->textInput() ?>
 
