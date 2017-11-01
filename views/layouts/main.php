@@ -360,10 +360,8 @@ AppAsset::register($this);
 
             <li class="">
                 <a href="#" class="dropdown-toggle">
-                    <i class="menu-icon fa fa-desktop"></i>
-                    <span class="menu-text">
-								UI &amp; Elements
-							</span>
+                    <i class="menu-icon fa fa-gears"></i>
+                    <span class="menu-text">Настройки</span>
 
                     <b class="arrow fa fa-angle-down"></b>
                 </a>
@@ -375,7 +373,7 @@ AppAsset::register($this);
                         <a href="#" class="dropdown-toggle">
                             <i class="menu-icon fa fa-caret-right"></i>
 
-                            Layouts
+                            Система
                             <b class="arrow fa fa-angle-down"></b>
                         </a>
 
@@ -383,54 +381,9 @@ AppAsset::register($this);
 
                         <ul class="submenu">
                             <li class="">
-                                <a href="top-menu.html">
+                                <a href="/main/config">
                                     <i class="menu-icon fa fa-caret-right"></i>
-                                    Top Menu
-                                </a>
-
-                                <b class="arrow"></b>
-                            </li>
-
-                            <li class="">
-                                <a href="two-menu-1.html">
-                                    <i class="menu-icon fa fa-caret-right"></i>
-                                    Two Menus 1
-                                </a>
-
-                                <b class="arrow"></b>
-                            </li>
-
-                            <li class="">
-                                <a href="two-menu-2.html">
-                                    <i class="menu-icon fa fa-caret-right"></i>
-                                    Two Menus 2
-                                </a>
-
-                                <b class="arrow"></b>
-                            </li>
-
-                            <li class="">
-                                <a href="mobile-menu-1.html">
-                                    <i class="menu-icon fa fa-caret-right"></i>
-                                    Default Mobile Menu
-                                </a>
-
-                                <b class="arrow"></b>
-                            </li>
-
-                            <li class="">
-                                <a href="mobile-menu-2.html">
-                                    <i class="menu-icon fa fa-caret-right"></i>
-                                    Mobile Menu 2
-                                </a>
-
-                                <b class="arrow"></b>
-                            </li>
-
-                            <li class="">
-                                <a href="mobile-menu-3.html">
-                                    <i class="menu-icon fa fa-caret-right"></i>
-                                    Mobile Menu 3
+                                    Параметры
                                 </a>
 
                                 <b class="arrow"></b>
@@ -451,51 +404,6 @@ AppAsset::register($this);
                         <a href="elements.html">
                             <i class="menu-icon fa fa-caret-right"></i>
                             Elements
-                        </a>
-
-                        <b class="arrow"></b>
-                    </li>
-
-                    <li class="">
-                        <a href="buttons.html">
-                            <i class="menu-icon fa fa-caret-right"></i>
-                            Buttons &amp; Icons
-                        </a>
-
-                        <b class="arrow"></b>
-                    </li>
-
-                    <li class="">
-                        <a href="content-slider.html">
-                            <i class="menu-icon fa fa-caret-right"></i>
-                            Content Sliders
-                        </a>
-
-                        <b class="arrow"></b>
-                    </li>
-
-                    <li class="">
-                        <a href="treeview.html">
-                            <i class="menu-icon fa fa-caret-right"></i>
-                            Treeview
-                        </a>
-
-                        <b class="arrow"></b>
-                    </li>
-
-                    <li class="">
-                        <a href="jquery-ui.html">
-                            <i class="menu-icon fa fa-caret-right"></i>
-                            jQuery UI
-                        </a>
-
-                        <b class="arrow"></b>
-                    </li>
-
-                    <li class="">
-                        <a href="nestable-list.html">
-                            <i class="menu-icon fa fa-caret-right"></i>
-                            Nestable Lists
                         </a>
 
                         <b class="arrow"></b>
