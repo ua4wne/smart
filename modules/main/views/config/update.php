@@ -5,9 +5,9 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model app\modules\main\models\Config */
 
-$this->title = 'Обновление: ' . $model->id;
+$this->title = 'Обновление: ' . $model->param;
 $this->params['breadcrumbs'][] = ['label' => 'Параметры', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->id, 'url' => ['view', 'id' => $model->id]];
+$this->params['breadcrumbs'][] = ['label' => $model->param, 'url' => ['view', 'id' => $model->id]];
 $this->params['breadcrumbs'][] = 'Обновление';
 ?>
 <div class="config-update">

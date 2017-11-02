@@ -3,6 +3,7 @@
 namespace app\modules\main\controllers;
 
 use app\models\Events;
+use app\models\Weather;
 use Yii;
 use yii\web\Controller;
 use yii\data\ActiveDataProvider;
@@ -26,8 +27,15 @@ class DefaultController extends Controller
 
     public function actionIndex()
     {
-
-        return $this->render('index');
+        //читаем данные о погоде из файла
+        $file = 'temp/forecast.xml';
+        if(file_exists($file)){
+            $data = simplexml_load_file($file);
+            $content = Weather::GetContent($data);
+        }
+        return $this->render('index',[
+            'content' => $content,
+        ]);
         /*else{
             throw new HttpException(404 ,'Доступ запрещен');
         }*/

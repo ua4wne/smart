@@ -101,7 +101,8 @@ class ConfigController extends Controller
      */
     public function actionDelete($id)
     {
-        $this->findModel($id)->delete();
+        Yii::$app->session->setFlash('error', 'Удаление системной константы запрещено!');
+        //$this->findModel($id)->delete();
 
         return $this->redirect(['index']);
     }
