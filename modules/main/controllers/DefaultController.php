@@ -41,6 +41,13 @@ class DefaultController extends Controller
         }*/
     }
 
+    public function actionForecast(){
+        if(\Yii::$app->request->isAjax){
+            $data =  Weather::GetForecast();
+            return $data;
+        }
+    }
+
     public function actionEvents(){
         if(Yii::$app->user->can('admin')) {
             $query = Events::find()->where(['=', 'is_read', 0]);

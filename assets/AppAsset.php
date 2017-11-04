@@ -27,6 +27,7 @@ class AppAsset extends AssetBundle
         'css/dataTables.bootstrap.css',
         'css/dataTables.responsive.css',
         'css/style.css',
+        'css/morris.css',
     ];
     public $js = [
         'js/jquery-ui.custom.min.js',
@@ -36,7 +37,10 @@ class AppAsset extends AssetBundle
         'js/ace.min.js',
         'js/jquery.dataTables.min.js',
         'js/dataTables.bootstrap.min.js',
-        'js/dataTables.responsive.js'
+        'js/dataTables.responsive.js',
+        'js/raphael-min.js',
+        'js/morris.js',
+
 
     ];
     public $jsOptions = [

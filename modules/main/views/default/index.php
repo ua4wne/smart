@@ -1,4 +1,13 @@
+<?php
 
+use yii\helpers\Html;
+
+/* @var $this yii\web\View */
+/* @var $dataProvider yii\data\ActiveDataProvider */
+
+$this->title = 'Панель управления';
+$this->params['breadcrumbs'][] = $this->title;
+?>
     <div class="ace-settings-container" id="ace-settings-container">
         <div class="btn btn-app btn-xs btn-warning ace-settings-btn" id="ace-settings-btn">
             <i class="ace-icon fa fa-cog bigger-130"></i>
@@ -216,13 +225,14 @@
 
                         <div class="widget-body">
                             <div class="widget-main">
-                                <div id="piechart-placeholder"></div>
-
-                                <div class="hr hr8 hr-double"></div>
-
                                 <div class="clearfix">
                                     <?= $content['html']; ?>
                                 </div>
+                                <div class="hr hr8 hr-double"></div>
+                                <div class="clearfix">
+                                    <div id="forecast_icon"></div>
+                                </div>
+                                <div class="hr hr8 hr-double"></div>
                             </div><!-- /.widget-main -->
                         </div><!-- /.widget-body -->
                     </div><!-- /.widget-box -->
@@ -373,3 +383,25 @@
             <!-- PAGE CONTENT ENDS -->
         </div><!-- /.col -->
     </div><!-- /.row -->
+<?php
+$js = <<<JS
+ $(document).ready(function(){
+     $.ajax({
+     url: '/main/default/forecast',
+     type: 'POST',
+     data: {'get_data':'get_data'},
+     success: function(res){
+     //alert("Сервер вернул вот что: " + res);
+         $("#forecast_icon").empty();
+         $("#forecast_icon").html(res);
+     },
+     error: function(){
+     alert('Error!');
+     }
+     });
+ });
+
+JS;
+
+$this->registerJs($js);
+?>

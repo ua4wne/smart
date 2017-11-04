@@ -60,31 +60,35 @@ class Weather extends Model {
             $to = $param->time['to'];
             if(strtotime($from)<strtotime($utc)&&strtotime($utc)<strtotime($to)) {
                 $timestamp = strtotime($from)+3*3600;
-                $from = date('d-m-Y H:i',$timestamp); //UTC -> MSK
+                $from = date('H:i',$timestamp); //UTC -> MSK
                 $timestamp = strtotime($to)+3*3600;
-                $to = date('d-m-Y H:i',$timestamp); //UTC -> MSK
-                $alt = $param->time->symbol[name];
+                $to = date('H:i',$timestamp); //UTC -> MSK
+                $alt = $param->time->symbol['name'];
                 $icon = $param->time->symbol['var'];
                 $content['img'] = '<img src="images/w/'.$icon.'.png" alt="'.$alt.'">';
                 //echo 'wind-dir: '.$res->windDirection[deg].' '.$res->windDirection[code].' '.$res->windDirection[name].'<br>';
-                $wind = self::getWindDirection($param->time->windDirection[code]).' '.$param->time->windSpeed[mps].' м\сек';
+                $wind = self::getWindDirection($param->time->windDirection['code']).' '.$param->time->windSpeed['mps'].' м\с';
                 //echo 'wind-speed: '.$res->windSpeed[name].' '.$res->windSpeed[mps].'<br>';
                 //$tempr = $res->temperature[value].'<sup>o</sup>C';
-                //$min_t = $res->temperature[min].'<sup>o</sup>C';
-                $max_t = self::getTempSign($param->time->temperature[max]);
+                $min_t = self::getTempSign($param->time->temperature['min']);
+                $min_t .= ' <sup>o</sup>C';
+                $max_t = self::getTempSign($param->time->temperature['max']);
                 $max_t .= ' <sup>o</sup>C';
-                $content['max_t'] = $max_t;
-                $press = round($param->time->pressure[value] * 0.750062,2);
+                if($min_t!=$max_t)
+                    $content['max_t'] = 'от '.$min_t.' до '.$max_t;
+                else
+                    $content['max_t'] = $max_t;
+                //$press = round($param->time->pressure['value'] * 0.750062,2);
                 //echo 'pressure: '.$res->pressure[unit].' '.$res->pressure[value].'<br>';
-                $humidity = $param->time->humidity[value].' '.$param->time->humidity[unit];
+                //$humidity = $param->time->humidity['value'].' '.$param->time->humidity[unit];
                 //echo 'clouds: '.$res->clouds[value].' '.$res->clouds[all].' '.$res->clouds[unit].'<br>';
-                $clouds = $param->time->clouds[all].' '.$param->time->clouds[unit];
+                //$clouds = $param->time->clouds['all'].' '.$param->time->clouds[unit];
                 break;
             }
         }
-        $timestamp = strtotime($data->sun[rise])+3*3600;
+        $timestamp = strtotime($data->sun['rise'])+3*3600;
         $sunrise = date('H:i',$timestamp); //UTC -> MSK
-        $timestamp = strtotime($data->sun[set])+3*3600;
+        $timestamp = strtotime($data->sun['set'])+3*3600;
         $sunset = date('H:i',$timestamp); //UTC -> MSK
         $html = '<div class="grid3">
                     <span class="grey"><i class="ace-icon fa fa-sun-o fa-fw blue"></i>&nbsp; Восход</span>
@@ -95,18 +99,55 @@ class Weather extends Model {
                     <p class="bigger pull-right">'.$sunset.'</p>
                  </div>
                  <div class="grid3">
-                    <span class="grey"><i class="ace-icon fa fa-flag-o fa-fw blue"></i>&nbsp; Ветер</span>
-                    <p class="bigger pull-right">'.$wind.'</p>
+                    <span class="grey"><i class="ace-icon fa fa-clock-o fa-fw blue"></i>&nbsp; Период</span>
+                    <p class="bigger pull-right">с '.$from.' по '.$to.'</p>
                  </div>';
         $content['html'] = $html;
         return $content;
     }
 
+    public static function GetForecast(){
+        $file = 'temp/forecast.xml';
+        if(file_exists($file)){
+            $logs = simplexml_load_file($file);
+            $forecast =  $logs->forecast->time;
+            //return print_r($forecast);
+            $old = 'nerw';
+            $k=0;
+            $content = '<div>';
+            foreach ($forecast as $log){
+                $from = $log['from'];
+                $timestamp = strtotime($from)+3*3600;
+                $from = date('H:i',$timestamp);
+                $alt = $log->symbol['name'];
+                $icon = $log->symbol['var'].'.png';
+                if ($icon != $old && $k < 4) {
+                    $humidity = $log->humidity['value'] . ' ' . $log->humidity[unit];
+                    $press = round($log->pressure['value'] * 0.750062, 2);
+                    $wind = self::getWindDirection($log->windDirection['code']) . ' ' . $log->windSpeed['mps'] . ' м\с';
+                    $clouds = $log->clouds['all'] . ' ' . $log->clouds[unit];
+                    $val_t = self::getTempSign($log->temperature['value']);
+                    $content .= '<div class="grid4">
+                    <span class="grey"><img src="images/w/' . $icon . '" alt="' . $alt . '"></span>
+                    <p class="bigger pull-right"><i class="ace-icon fa fa-thermometer fa-fw blue" aria-hidden="true"></i>&nbsp;' . $val_t . '<br>
+                    <i class="ace-icon fa fa-tint fa-fw blue" aria-hidden="true"></i>&nbsp;' . $humidity . '<br>
+                    <i class="ace-icon fa fa-asterisk fa-fw blue" aria-hidden="true"></i>&nbsp;' . $press . '<br>
+                    <i class="ace-icon fa fa-cloud fa-fw blue" aria-hidden="true"></i>&nbsp;' . $clouds . '</p>
+                    <p>' . $from . '<br><i class="ace-icon fa fa-flag-o fa-fw blue" aria-hidden="true"></i>&nbsp;' . $wind . '</p>
+                    </div>';
+                    $k++;
+                }
+                $old = $icon;
+            }
+        }
+        $content.='</div>';
+        return $content;
+    }
 
     //запрос данных с сайта
     private function GetDataXML($fname) {
         //определяем строку запроса url
-        if($this->geoloc) {
+        if($this->geoloc=='true') {
             $coord = LibraryModel::GeoLocation();
             $this->url = 'api.openweathermap.org/data/2.5/'.self::FIVE_DAYS.'?lat='.$coord[0].'&lon='.$coord[1].'&mode=xml&APPID='.$this->api_key; //api.openweathermap.org/data/2.5/forecast?lat=35&lon=139
         }
