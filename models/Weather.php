@@ -168,7 +168,7 @@ class Weather extends Model {
     }
 
     // получаем знак температуры
-    private function getTempSign($temp)
+    private static function getTempSign($temp)
     {
         if($temp>100)
             $temp-=self::CALVIN;
@@ -177,7 +177,7 @@ class Weather extends Model {
     }
 
     // получаем направления ветра
-    private function getWindDirection($wind)
+    private static function getWindDirection($wind)
     {
         $wind = (string)$wind;
         if(strlen($wind)==3)
