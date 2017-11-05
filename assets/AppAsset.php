@@ -20,6 +20,8 @@ class AppAsset extends AssetBundle
     public $css = [
         'css/bootstrap.min.css',
         'css/font-awesome.min.css',
+        'css/jquery-ui.custom.min.css',
+        'css/fullcalendar.min.css',
         'css/fonts.googleapis.com.css',
         'css/ace.min.css',
         'css/ace-skins.min.css',
@@ -32,6 +34,9 @@ class AppAsset extends AssetBundle
     public $js = [
         'js/jquery-ui.custom.min.js',
         'js/jquery.ui.touch-punch.min.js',
+        'js/moment.min.js',
+        'js/fullcalendar.min.js',
+        'js/bootbox.js',
         'js/ace-elements.min.js',
         'js/ace-extra.min.js',
         'js/ace.min.js',
@@ -40,8 +45,7 @@ class AppAsset extends AssetBundle
         'js/dataTables.responsive.js',
         'js/raphael-min.js',
         'js/morris.js',
-
-
+        'js/caldraw.js',
     ];
     public $jsOptions = [
         //'position' => \yii\web\View::POS_HEAD, //влияет на работу фильтрации в таблицах представлений - виджет GridView!!!

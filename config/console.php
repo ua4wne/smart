@@ -11,7 +11,21 @@ $config = [
     'id' => 'smart-console',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
+    'language' => 'ru-RU',
+    'timeZone' => 'Europe/Moscow',
     'controllerNamespace' => 'app\commands',
+    'modules' => [
+        'admin' => [ //модуль для работы с админкой
+            'class' => 'app\modules\admin\Module',
+            'layout' => 'admin',
+        ],
+        'user' => [ //модуль для работы с пользователями
+            'class' => 'app\modules\user\Module',
+        ],
+        'main' => [ //главный модуль
+            'class' => 'app\modules\main\Module',
+        ],
+    ],
     'components' => [
         'cache' => [
             'class' => 'yii\caching\FileCache',

@@ -131,7 +131,7 @@ class Stock extends BaseModel
 
     public static function ViewStock(){
         $query =  'SELECT s.material_id AS id, c.name AS cell, m.name AS material, cat.name AS category, s.quantity AS quantity, u.name AS unit, s.price AS price ' .
-            'FROM Stock s ' .
+            'FROM stock s ' .
             'INNER JOIN cell c ON (c.id = s.cell_id) ' .
             'INNER JOIN material m ON (m.id = s.material_id) '.
             'INNER JOIN category cat ON (cat.id = m.category_id) '.
