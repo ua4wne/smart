@@ -54,30 +54,36 @@ class Weather extends Model {
         $content['lon'] = $lon;
         $timestamp = strtotime(date('c'))-3*3600; //MSK -> UTC
         $utc = date('c',$timestamp); //текущее время в формате UTC
-        $params = $data->forecast;
+        $params = $data->forecast->time;
+        //echo '<pre>';
+        //print_r($params);
+        //echo '</pre>';
         foreach ($params as $param){
-            $from = $param->time['from'];
-            $to = $param->time['to'];
-            if(strtotime($from)<strtotime($utc)&&strtotime($utc)<strtotime($to)) {
+                $from = $param['from'];
+                $to = $param['to'];
+            if(strtotime($utc)<strtotime($to)) {
                 $timestamp = strtotime($from)+3*3600;
                 $from = date('H:i',$timestamp); //UTC -> MSK
                 $timestamp = strtotime($to)+3*3600;
                 $to = date('H:i',$timestamp); //UTC -> MSK
-                $alt = $param->time->symbol['name'];
-                $icon = $param->time->symbol['var'];
-                $content['img'] = '<img src="images/w/'.$icon.'.png" alt="'.$alt.'">';
+                //$alt = $param->time->symbol['name'];
+                //$icon = $param->time->symbol['var'];
+                //$content['img'] = '<img src="images/w/'.$icon.'.png" alt="'.$alt.'">';
                 //echo 'wind-dir: '.$res->windDirection[deg].' '.$res->windDirection[code].' '.$res->windDirection[name].'<br>';
-                $wind = self::getWindDirection($param->time->windDirection['code']).' '.$param->time->windSpeed['mps'].' м\с';
+                //$wind = self::getWindDirection($param->time->windDirection['code']).' '.$param->time->windSpeed['mps'].' м\с';
                 //echo 'wind-speed: '.$res->windSpeed[name].' '.$res->windSpeed[mps].'<br>';
                 //$tempr = $res->temperature[value].'<sup>o</sup>C';
-                $min_t = self::getTempSign($param->time->temperature['min']);
+                /*$min_t = self::getTempSign($param->time->temperature['min']);
                 $min_t .= ' <sup>o</sup>C';
                 $max_t = self::getTempSign($param->time->temperature['max']);
                 $max_t .= ' <sup>o</sup>C';
                 if($min_t!=$max_t)
                     $content['max_t'] = 'от '.$min_t.' до '.$max_t;
                 else
-                    $content['max_t'] = $max_t;
+                    $content['max_t'] = $max_t;*/
+                //$alt = $param->symbol['name'];
+                //$icon = $param->symbol['var'] . '.png';
+                //$content['max_t'] = self::getTempSign($param->temperature['value']);
                 //$press = round($param->time->pressure['value'] * 0.750062,2);
                 //echo 'pressure: '.$res->pressure[unit].' '.$res->pressure[value].'<br>';
                 //$humidity = $param->time->humidity['value'].' '.$param->time->humidity[unit];
@@ -115,29 +121,37 @@ class Weather extends Model {
             $old = 'nerw';
             $k=0;
             $content = '<div>';
+            $timestamp = strtotime(date('c'))-3*3600; //MSK -> UTC
+            $utc = date('c',$timestamp); //текущее время в формате UTC
             foreach ($forecast as $log){
                 $from = $log['from'];
                 $timestamp = strtotime($from)+3*3600;
                 $from = date('H:i',$timestamp);
-                $alt = $log->symbol['name'];
-                $icon = $log->symbol['var'].'.png';
-                if ($icon != $old && $k < 4) {
-                    $humidity = $log->humidity['value'] . ' ' . $log->humidity[unit];
-                    $press = round($log->pressure['value'] * 0.750062, 2);
-                    $wind = self::getWindDirection($log->windDirection['code']) . ' ' . $log->windSpeed['mps'] . ' м\с';
-                    $clouds = $log->clouds['all'] . ' ' . $log->clouds[unit];
-                    $val_t = self::getTempSign($log->temperature['value']);
-                    $content .= '<div class="grid4">
-                    <span class="grey"><img src="images/w/' . $icon . '" alt="' . $alt . '"></span>
+                $to = $log['to'];
+                if(strtotime($utc)<strtotime($to)) {
+                    $alt = $log->symbol['name'];
+                    $icon = $log->symbol['var'] . '.png';
+                    if ($icon != $old && $k < 4) {
+                        $humidity = $log->humidity['value'] . ' ' . $log->humidity[unit];
+                        $press = round($log->pressure['value'] * 0.750062, 2);
+                        $wind = self::getWindDirection($log->windDirection['code']) . ' ' . $log->windSpeed['mps'] . ' м\с';
+                        $clouds = $log->clouds['all'] . ' ' . $log->clouds[unit];
+                        $val_t = self::getTempSign($log->temperature['value']);
+                        if($k==0)
+                            $content .= '<div class="grid4 alert-success">';
+                        else
+                            $content .= '<div class="grid4">';
+                    $content.='<span class="grey"><img src="images/w/' . $icon . '" alt="' . $alt . '"></span>
                     <p class="bigger pull-right"><i class="ace-icon fa fa-thermometer fa-fw blue" aria-hidden="true"></i>&nbsp;' . $val_t . '<br>
                     <i class="ace-icon fa fa-tint fa-fw blue" aria-hidden="true"></i>&nbsp;' . $humidity . '<br>
                     <i class="ace-icon fa fa-asterisk fa-fw blue" aria-hidden="true"></i>&nbsp;' . $press . '<br>
                     <i class="ace-icon fa fa-cloud fa-fw blue" aria-hidden="true"></i>&nbsp;' . $clouds . '</p>
                     <p>' . $from . '<br><i class="ace-icon fa fa-flag-o fa-fw blue" aria-hidden="true"></i>&nbsp;' . $wind . '</p>
                     </div>';
-                    $k++;
+                        $k++;
+                    }
+                    $old = $icon;
                 }
-                $old = $icon;
             }
         }
         $content.='</div>';

@@ -113,7 +113,7 @@ jQuery(function($) {
             selectHelper: true,
             select: function(start, end, allDay) {
 
-                bootbox.prompt("New Event Title:", function(title) {
+                bootbox.prompt("Новая задача:", function(title) {
                     if (title !== null) {
                         calendar.fullCalendar('renderEvent',
                             {
@@ -127,8 +127,6 @@ jQuery(function($) {
                         );
                     }
                 });
-
-
                 calendar.fullCalendar('unselect');
             }
             ,
@@ -142,14 +140,14 @@ jQuery(function($) {
                          <div class="modal-body">\
                            <button type="button" class="close" data-dismiss="modal" style="margin-top:-10px;">&times;</button>\
                            <form class="no-margin">\
-                              <label>Change event name &nbsp;</label>\
+                              <label>Изменить название задачи &nbsp;</label>\
                               <input class="middle" autocomplete="off" type="text" value="' + calEvent.title + '" />\
-					 <button type="submit" class="btn btn-sm btn-success"><i class="ace-icon fa fa-check"></i> Save</button>\
+					 <button type="submit" class="btn btn-sm btn-success"><i class="ace-icon fa fa-check"></i> Сохранить</button>\
 				   </form>\
 				 </div>\
 				 <div class="modal-footer">\
-					<button type="button" class="btn btn-sm btn-danger" data-action="delete"><i class="ace-icon fa fa-trash-o"></i> Delete Event</button>\
-					<button type="button" class="btn btn-sm" data-dismiss="modal"><i class="ace-icon fa fa-times"></i> Cancel</button>\
+					<button type="button" class="btn btn-sm btn-danger" data-action="delete"><i class="ace-icon fa fa-trash-o"></i> Удалить задачу</button>\
+					<button type="button" class="btn btn-sm" data-dismiss="modal"><i class="ace-icon fa fa-times"></i> Отмена</button>\
 				 </div>\
 			  </div>\
 			 </div>\
@@ -186,6 +184,5 @@ jQuery(function($) {
             }
 
         });
-
 
     })

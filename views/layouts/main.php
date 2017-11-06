@@ -391,7 +391,7 @@ AppAsset::register($this);
                     </li>
 
                     <li class="">
-                        <a href="/main/config/locations">
+                        <a href="/main/locations">
                             <i class="menu-icon fa fa-caret-right"></i>
                             Локации
                         </a>
@@ -401,56 +401,12 @@ AppAsset::register($this);
 
 
                     <li class="">
-                        <a href="#" class="dropdown-toggle">
+                        <a href="/main/device">
                             <i class="menu-icon fa fa-caret-right"></i>
-
                             Оборудование
-                            <b class="arrow fa fa-angle-down"></b>
                         </a>
 
                         <b class="arrow"></b>
-
-                        <ul class="submenu">
-                            <li class="">
-                                <a href="#">
-                                    <i class="menu-icon fa fa-leaf green"></i>
-                                    Item #1
-                                </a>
-
-                                <b class="arrow"></b>
-                            </li>
-
-                            <li class="">
-                                <a href="#" class="dropdown-toggle">
-                                    <i class="menu-icon fa fa-pencil orange"></i>
-
-                                    4th level
-                                    <b class="arrow fa fa-angle-down"></b>
-                                </a>
-
-                                <b class="arrow"></b>
-
-                                <ul class="submenu">
-                                    <li class="">
-                                        <a href="#">
-                                            <i class="menu-icon fa fa-plus purple"></i>
-                                            Add Product
-                                        </a>
-
-                                        <b class="arrow"></b>
-                                    </li>
-
-                                    <li class="">
-                                        <a href="#">
-                                            <i class="menu-icon fa fa-eye pink"></i>
-                                            View Products
-                                        </a>
-
-                                        <b class="arrow"></b>
-                                    </li>
-                                </ul>
-                            </li>
-                        </ul>
                     </li>
                 </ul>
             </li>

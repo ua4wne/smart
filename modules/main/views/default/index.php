@@ -214,13 +214,8 @@ $this->params['breadcrumbs'][] = $this->title;
                     <div class="widget-box">
                         <div class="widget-header widget-header-flat widget-header-small">
                             <h5 class="widget-title">
-                                <?= $content['img']; ?>
-                                <?= $content['max_t']; ?>
-                            </h5>
-
-                            <div class="widget-toolbar no-border">
                                 Текущий прогноз погоды в <?= $content['city']; ?>
-                            </div>
+                            </h5>
                         </div>
 
                         <div class="widget-body">

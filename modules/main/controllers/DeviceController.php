@@ -1,12 +1,11 @@
 <?php
 
-namespace app\modules\main\controllers\stock;
+namespace app\modules\main\controllers;
 
-use app\modules\main\models\Category;
-use app\modules\main\models\Stock;
+use app\modules\main\models\Location;
 use Yii;
-use app\modules\main\models\Material;
-use app\modules\main\models\MaterialSearch;
+use app\modules\main\models\Device;
+use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -14,9 +13,9 @@ use app\modules\main\models\UploadImage;
 use yii\web\UploadedFile;
 
 /**
- * MaterialController implements the CRUD actions for Material model.
+ * DeviceController implements the CRUD actions for Device model.
  */
-class MaterialController extends Controller
+class DeviceController extends Controller
 {
     /**
      * @inheritdoc
@@ -34,22 +33,22 @@ class MaterialController extends Controller
     }
 
     /**
-     * Lists all Material models.
+     * Lists all Device models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new MaterialSearch();
-        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        $dataProvider = new ActiveDataProvider([
+            'query' => Device::find(),
+        ]);
 
         return $this->render('index', [
-            'searchModel' => $searchModel,
             'dataProvider' => $dataProvider,
         ]);
     }
 
     /**
-     * Displays a single Material model.
+     * Displays a single Device model.
      * @param integer $id
      * @return mixed
      */
@@ -61,15 +60,16 @@ class MaterialController extends Controller
     }
 
     /**
-     * Creates a new Material model.
+     * Creates a new Device model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new Material();
+        $model = new Device();
         $upload = new UploadImage();
-
+        $sid = md5(uniqid());
+        $model->uid = substr($sid,0,16);
         if ($model->load(Yii::$app->request->post())) {
             $upload->image = UploadedFile::getInstance($upload, 'image');
             $fname = $upload->upload();
@@ -77,23 +77,24 @@ class MaterialController extends Controller
             $model->image = $fname;
             if($model->save())
                 return $this->redirect(['view', 'id' => $model->id]);
-        }
-        else {
-            $categories = Category::find()->select(['id','name'])->asArray()->all();
-            $catsel = array();
-            foreach($categories as $category) {
-                $catsel[$category['id']] = $category['name']; //массив для заполнения данных в select формы
+        } else {
+            $locations = Location::find()->select(['id','name'])->asArray()->all();
+            $selloc = array();
+            foreach($locations as $location) {
+                $selloc[$location['id']] = $location['name']; //массив для заполнения данных в select формы
             }
+            $selvrf = array('0' => 'Ручной','1' => 'Автоматический');
             return $this->render('create', [
                 'model' => $model,
+                'selvrf' => $selvrf,
+                'selloc' => $selloc,
                 'upload' => $upload,
-                'catsel' => $catsel,
             ]);
         }
     }
 
     /**
-     * Updates an existing Material model.
+     * Updates an existing Device model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -104,7 +105,7 @@ class MaterialController extends Controller
         $old_image = substr($model->image,1); //старый файл изображения
         $upload = new UploadImage();
 
-        if ($model->load(Yii::$app->request->post()) ) {
+        if ($model->load(Yii::$app->request->post())) {
             $upload->image = UploadedFile::getInstance($upload, 'new_image');
             if(!empty($upload->image)){
                 $fname = $upload->upload();
@@ -120,54 +121,49 @@ class MaterialController extends Controller
             $model->save();
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
-            $categories = Category::find()->select(['id','name'])->asArray()->all();
-            $catsel = array();
-            foreach($categories as $category) {
-                $catsel[$category['id']] = $category['name']; //массив для заполнения данных в select формы
+            $locations = Location::find()->select(['id','name'])->asArray()->all();
+            $selloc = array();
+            foreach($locations as $location) {
+                $selloc[$location['id']] = $location['name']; //массив для заполнения данных в select формы
             }
+            $selvrf = array('0' => 'Ручной','1' => 'Автоматический');
             return $this->render('update', [
                 'model' => $model,
+                'selvrf' => $selvrf,
+                'selloc' => $selloc,
                 'upload' => $upload,
-                'catsel' => $catsel,
             ]);
         }
     }
 
     /**
-     * Deletes an existing Material model.
+     * Deletes an existing Device model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
      */
     public function actionDelete($id)
     {
-        $rows = Stock::find()->where(['material_id'=>$id])->sum('quantity');
-        //return print_r($rows);
-        if($rows){
-            Yii::$app->session->setFlash('error', 'Номенклатура <strong>'. $this->findModel($id)->name .'</strong> не может быть удалена, т.к. имеются её остатки ('.$rows.') на складе!');
-        }
-        else {
-            $fname = substr($this->findModel($id)->image,1);
-            $this->findModel($id)->delete();
-            //удаляем связанный файл изображения если это не общая картинка noimage.jpg
-            $pos = strpos($fname, 'noimage.jpg');
-            if($pos === false)
-                unlink($fname);
-        }
+        $fname = substr($this->findModel($id)->image,1);
+        $this->findModel($id)->delete();
+        //удаляем связанный файл изображения если это не общая картинка noimage.jpg
+        $pos = strpos($fname, 'noimage.jpg');
+        if($pos === false)
+            unlink($fname);
 
         return $this->redirect(['index']);
     }
 
     /**
-     * Finds the Material model based on its primary key value.
+     * Finds the Device model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return Material the loaded model
+     * @return Device the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Material::findOne($id)) !== null) {
+        if (($model = Device::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
