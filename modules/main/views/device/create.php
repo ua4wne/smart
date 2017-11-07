@@ -18,6 +18,7 @@ $this->params['breadcrumbs'][] = 'Новая запись';
         'model' => $model,
         'selvrf' => $selvrf,
         'selloc' => $selloc,
+        'seltype' => $seltype,
         'upload' => $upload,
     ]) ?>
 

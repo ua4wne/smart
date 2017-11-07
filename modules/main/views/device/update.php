@@ -16,7 +16,6 @@ $this->params['breadcrumbs'][] = ['label' => $model->name, 'url' => ['view', 'id
 
     <h1 class="center"><?= Html::encode($this->title) ?></h1>
 
-    <h1><?= Html::encode($this->title) ?></h1>
     <div class="row">
         <div class="col-md-4 col-md-offset-4">
             <?= Html::img(Url::toRoute($model->image),[
@@ -33,6 +32,8 @@ $this->params['breadcrumbs'][] = ['label' => $model->name, 'url' => ['view', 'id
         <?= $form->field($model, 'uid')->textInput(['maxlength' => true]) ?>
 
         <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
+
+        <?= $form->field($model, 'type_id')->dropDownList($seltype) ?>
 
         <?= $form->field($model, 'descr')->textarea(['rows' => 6]) ?>
 

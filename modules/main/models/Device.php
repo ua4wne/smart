@@ -37,9 +37,9 @@ class Device extends BaseModel
     public function rules()
     {
         return [
-            [['uid', 'name', 'location_id'], 'required'],
+            [['uid', 'name', 'location_id', 'type_id'], 'required'],
             [['descr'], 'string'],
-            [['verify', 'protocol_id', 'location_id'], 'integer'],
+            [['verify', 'protocol_id', 'location_id', 'type_id'], 'integer'],
             [['created_at', 'updated_at'], 'safe'],
             [['uid'], 'string', 'max' => 16],
             [['name'], 'string', 'max' => 70],
@@ -65,6 +65,7 @@ class Device extends BaseModel
             'verify' => 'Контроль',
             'protocol_id' => 'Протокол',
             'location_id' => 'Локация',
+            'type_id' => 'Тип устройства',
             'created_at' => 'Дата создания',
             'updated_at' => 'Дата обновления',
         ];
@@ -76,5 +77,35 @@ class Device extends BaseModel
     public function getLocation()
     {
         return $this->hasOne(Location::className(), ['id' => 'location_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCounterLog()
+    {
+        return $this->hasMany(CounterLog::className(), ['id' => 'device_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getTarif()
+    {
+        return $this->hasOne(Tarif::className(), ['device_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getType()
+    {
+        return $this->hasOne(DeviceType::className(), ['id' => 'type_id']);
+    }
+
+    public function getTypeName()
+    {
+        $type = $this->type;
+        return $type ? $type->name : '';
     }
 }

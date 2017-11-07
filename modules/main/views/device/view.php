@@ -16,6 +16,9 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
+        <?php if($model->type->name == 'Счетчик') :?>
+        <?= Html::a('Тариф', ['tarif', 'id' => $model->id], ['class' => 'btn btn-success']) ?>
+        <?php endif; ?>
         <?= Html::a('Обновить', ['update', 'id' => $model->id], ['class' => 'btn btn-primary']) ?>
         <?= Html::a('Удалить', ['delete', 'id' => $model->id], [
             'class' => 'btn btn-danger',
@@ -43,6 +46,14 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             'uid',
             'name',
+            [
+                'attribute'=>'type.name',
+                'label'=>'Тип устройства',
+            ],
+            [
+                'attribute'=>'tarif.koeff',
+                'label'=>'Тариф',
+            ],
             'descr:ntext',
             'address',
             'verify',

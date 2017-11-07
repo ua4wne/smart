@@ -408,6 +408,14 @@ AppAsset::register($this);
 
                         <b class="arrow"></b>
                     </li>
+                    <li class="">
+                        <a href="/main/device-type">
+                            <i class="menu-icon fa fa-caret-right"></i>
+                            Типы устройств
+                        </a>
+
+                        <b class="arrow"></b>
+                    </li>
                 </ul>
             </li>
 

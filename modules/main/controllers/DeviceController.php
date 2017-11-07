@@ -2,7 +2,9 @@
 
 namespace app\modules\main\controllers;
 
+use app\modules\main\models\DeviceType;
 use app\modules\main\models\Location;
+use app\modules\main\models\Tarif;
 use Yii;
 use app\modules\main\models\Device;
 use yii\data\ActiveDataProvider;
@@ -59,6 +61,27 @@ class DeviceController extends Controller
         ]);
     }
 
+    public function actionTarif($id)
+    {
+        $model = new Tarif();
+        $model->device_id = $id;
+        if ($model->load(Yii::$app->request->post())) {
+            //удаляем старую запись, если была
+            $old = Tarif::findOne(['device_id'=>$id]);
+            if(!empty($old))
+                $old->delete();
+            if($model->save())
+                return $this->redirect(['view', 'id' => $id]);
+        }
+        else
+            return $this->render('tarif', [
+                'model' => $model,
+                'image' => $this->findModel($id)->image,
+                'device' => $this->findModel($id)->name,
+                'id' => $id,
+            ]);
+    }
+
     /**
      * Creates a new Device model.
      * If creation is successful, the browser will be redirected to the 'view' page.
@@ -83,11 +106,17 @@ class DeviceController extends Controller
             foreach($locations as $location) {
                 $selloc[$location['id']] = $location['name']; //массив для заполнения данных в select формы
             }
+            $types = DeviceType::find()->select(['id','name'])->asArray()->all();
+            $seltype = array();
+            foreach($types as $type) {
+                $seltype[$type['id']] = $type['name']; //массив для заполнения данных в select формы
+            }
             $selvrf = array('0' => 'Ручной','1' => 'Автоматический');
             return $this->render('create', [
                 'model' => $model,
                 'selvrf' => $selvrf,
                 'selloc' => $selloc,
+                'seltype' => $seltype,
                 'upload' => $upload,
             ]);
         }
@@ -126,11 +155,17 @@ class DeviceController extends Controller
             foreach($locations as $location) {
                 $selloc[$location['id']] = $location['name']; //массив для заполнения данных в select формы
             }
+            $types = DeviceType::find()->select(['id','name'])->asArray()->all();
+            $seltype = array();
+            foreach($types as $type) {
+                $seltype[$type['id']] = $type['name']; //массив для заполнения данных в select формы
+            }
             $selvrf = array('0' => 'Ручной','1' => 'Автоматический');
             return $this->render('update', [
                 'model' => $model,
                 'selvrf' => $selvrf,
                 'selloc' => $selloc,
+                'seltype' => $seltype,
                 'upload' => $upload,
             ]);
         }

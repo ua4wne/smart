@@ -36,6 +36,14 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             'uid',
             'name',
+            [
+                'attribute'=>'type_id',
+                'label'=>'Тип устройства',
+                'format'=>'text', // Возможные варианты: raw, html
+                'content'=>function($data){
+                    return $data->getTypeName();
+                },
+            ],
             'descr:ntext',
             'address',
             //'verify',
