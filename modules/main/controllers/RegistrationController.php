@@ -3,9 +3,11 @@
 namespace app\modules\main\controllers;
 
 use app\models\LibraryModel;
+use app\modules\main\models\Config;
 use app\modules\main\models\CounterLog;
 use app\modules\main\models\Device;
 use app\modules\main\models\DeviceType;
+use app\modules\main\models\Tarif;
 use yii\data\SqlDataProvider;
 use yii\web\Controller;
 use Yii;
@@ -34,13 +36,13 @@ class RegistrationController extends Controller
         $dataProvider1 = new SqlDataProvider([
             'sql' =>  'select d.name as name, sum(l.delta) as delta, sum(l.price) as price from counter_log l
                         inner join device d on d.id=l.device_id
-                        where _year='.$year.' group by _month',
+                        where _year='.$year.' group by name',
         ]);
 
         $dataProvider2 = new SqlDataProvider([
-            'sql' =>  'select d.name as name, l.delta as delta from counter_log l
+            'sql' =>  'select l._month as _month, sum(l.price) as price from counter_log l
                         inner join device d on d.id=l.device_id
-                        where _year='.$year.' order by _month',
+                        where _year='.$year.' group by _month',
         ]);
 
         $content = CounterLog::StatCounter($year);
@@ -50,6 +52,66 @@ class RegistrationController extends Controller
             'dataProvider2' => $dataProvider2,
             'content' => $content,
         ]);
+    }
+
+    public function actionSend(){
+        $params = [];
+
+        \Yii::$app->mailer->getView()->params['fio'] = Config::findOne(['param'=>'FULL_NAME'])->val;
+        \Yii::$app->mailer->getView()->params['address'] = Config::findOne(['param'=>'POSTAL_ADDRESS'])->val;
+        \Yii::$app->mailer->getView()->params['fls'] = Config::findOne(['param'=>'PERCONAL_ACCOUNT'])->val;
+
+        $content = '';
+        $type = DeviceType::findOne(['name'=>'Счетчик'])->id;
+        $models = Device::find()->where(['=','type_id',$type])->orderBy('name', SORT_ASC)->all();
+
+        //определяем предыдущий период
+        $year = date('Y');
+        $month = date('m');
+        $period = explode('-', date('Y-m', strtotime("$year-$month-01 -1 month"))); //определяем предыдущий период
+        $y = $period[0];
+        $m = $period[1];
+        foreach ($models as $model){
+            $prev = CounterLog::find()->where(['device_id'=>$model->id,'_year'=>$y,'_month'=>$m])->limit(1)->all();
+            $curr = CounterLog::find()->where(['device_id'=>$model->id,'_year'=>$year,'_month'=>$month])->limit(1)->all();
+            if(empty($curr)){
+                Yii::$app->session->setFlash('error', 'Не указано значение показаний счетчика'.' <strong>'.$model->name.'</strong> за текущий месяц!');
+                \Yii::$app->mailer->getView()->params['fio'] = null;
+                \Yii::$app->mailer->getView()->params['address'] = null;
+                \Yii::$app->mailer->getView()->params['fls'] = null;
+                \Yii::$app->mailer->getView()->params['table'] = null;
+
+                return $this->redirect('/main/registration/index');
+            }
+            $content.='<tr><td>'.$model->name.'</td><td>'.$model->uid.'</td><td>'.$prev[0]->val.'</td><td>'.$curr[0]->val.'</td></tr>';
+        }
+        \Yii::$app->mailer->getView()->params['table'] = $content;
+        $subject = 'Показания счётчиков за '.LibraryModel::SetMonth($month).' '.$year.' год.';
+        //определяем получателей сообщения
+        $respis = Config::findOne(['param'=>'TSJ_RECIPIENT'])->val;
+        $resps = explode(',',$respis);
+        foreach ($resps as $to){
+            $result = \Yii::$app->mailer->compose([
+                'html' => 'views/html_mail',
+                //'text' => 'views/text_mail',
+            ], $params)
+                ->setFrom(Yii::$app->params['adminEmail'])
+                ->setTo($to)
+                ->setSubject($subject)
+                ->send();
+        }
+        if($result)
+            Yii::$app->session->setFlash('success', 'Сообщение отправлено!');
+        else
+            Yii::$app->session->setFlash('error', 'Ошибка! Сообщение не было отправлено.');
+
+        // Reset layout params
+        \Yii::$app->mailer->getView()->params['fio'] = null;
+        \Yii::$app->mailer->getView()->params['address'] = null;
+        \Yii::$app->mailer->getView()->params['fls'] = null;
+        \Yii::$app->mailer->getView()->params['table'] = null;
+
+        return $this->redirect('/main/registration/index');
     }
 
     // Всплывшее модальное окно заполняем представлением формы с полями
@@ -82,20 +144,18 @@ class RegistrationController extends Controller
         if($model->load(Yii::$app->request->post())){
             $result = $this->CheckCountVal($model->device_id,$model->val,$model->_year,$model->_month);
             //удаляем, если имеется запись за текущий месяц, чтобы не было дублей
-            //try{CounterLog::deleteAll(['device_id'=>$model->device_id,'year'=>$model->_year,'month'=>$model->_month]);}
-            //catch (\mysqli_sql_exception $e){}
-
+            CounterLog::deleteAll(['device_id'=>$model->device_id,'_year'=>$model->_year,'_month'=>$model->_month]);
             if($result===self::LESS_VAL)
                 $model->delta = $model->val - $this->previous;
             else
                 $model->delta = $model->val; //первая запись или замена счетчика
-            $model->koeff = $model->device_id->tarif->koeff;
-            $model->price = $model->delta * $model->koeff;
-            //$model->save();
+            $koeff = Tarif::findOne(['device_id'=>$model->device_id])->koeff;
+            $model->price = $model->delta * $koeff;
+            $model->save();
             return 'OK';
         }
-        else
-            return 'ERR';
+
+        return 'ERR';
     }
 
     //выборка всех счетчиков
@@ -113,7 +173,7 @@ class RegistrationController extends Controller
         $numrow = CounterLog::find()->where(['device_id'=>$id,'_year'=>$y,'_month'=>$m])->count();
         if($numrow) {
             $row = CounterLog::find()->where(['device_id'=>$id,'_year'=>$y,'_month'=>$m])->limit(1)->asArray()->all();
-            $this->previous = $row[0][encount];
+            $this->previous = $row[0][val];
             if($this->previous > $val)
                 return self::MORE_VAL;
             else

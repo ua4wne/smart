@@ -40,7 +40,7 @@ class CounterLog extends BaseModel
         return [
             [['device_id', '_year', '_month', 'val'], 'required'],
             [['device_id'], 'integer'],
-            [['val', 'delta', 'koeff', 'price'], 'number'],
+            [['val', 'delta', 'price'], 'number'],
             [['created_at', 'updated_at'], 'safe'],
             [['_year'], 'string', 'max' => 4],
             [['_month'], 'string', 'max' => 2],
@@ -60,7 +60,6 @@ class CounterLog extends BaseModel
             '_month' => 'Месяц',
             'val' => 'Показания счетчика',
             'delta' => 'Потребление',
-            'koeff' => 'Тариф',
             'price' => 'Стоимость',
             'created_at' => 'Дата создания',
             'updated_at' => 'Дата обновления',

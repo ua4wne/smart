@@ -21,10 +21,9 @@ class m171107_151730_create_counter_log_table extends Migration
             'device_id' => $this->integer()->notNull(),
             '_year' => $this->char(4)->notNull(),
             '_month' => $this->char(2)->notNull(),
-            'val' => $this->float(2)->notNull(),
-            'delta' => $this->float(2)->notNull(),
-            'koeff' => $this->float(2)->notNull(),
-            'price' => $this->decimal(8,2)->notNull(),
+            'val' => $this->float()->notNull(),
+            'delta' => $this->float()->notNull(),
+            'price' => $this->decimal(7,2)->notNull(),
             'created_at' => $this->dateTime()->notNull(),
             'updated_at' => $this->dateTime()->notNull(),
         ], $tableOptions);

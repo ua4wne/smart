@@ -18,8 +18,8 @@ class m171101_174755_create_config_table extends Migration
 
         $this->createTable('config', [
             'id' => $this->primaryKey(),
-            'param' => $this->string(100)->notNull()->unique(),
-            'val' => $this->string(70)->notNull(),
+            'param' => $this->string(50)->notNull()->unique(),
+            'val' => $this->string(100)->notNull(),
             'descr' => $this->text(),
             'created_at' => $this->dateTime()->notNull(),
             'updated_at' => $this->dateTime()->notNull(),

@@ -34,8 +34,8 @@ class Config extends BaseModel
             [['param', 'val'], 'required'],
             [['descr'], 'string'],
             [['created_at', 'updated_at'], 'safe'],
-            [['param'], 'string', 'max' => 100],
-            [['val'], 'string', 'max' => 70],
+            [['param'], 'string', 'max' => 50],
+            [['val'], 'string', 'max' => 100],
             [['param'], 'unique'],
         ];
     }

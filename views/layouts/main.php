@@ -680,7 +680,6 @@ AppAsset::register($this);
 </div><!-- /.main-container -->
 
 <!-- ace scripts -->
-<script src="assets/js/ace.min.js"></script>
 
 <?php $this->endBody() ?>
 </body>

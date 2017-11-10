@@ -1,6 +1,6 @@
 <?php
 use sjaakp\gcharts\PieChart;
-use sjaakp\gcharts\LineChart;
+use sjaakp\gcharts\ColumnChart;
 use yii\helpers\Html;
 use yii\grid\GridView;
 
@@ -15,7 +15,7 @@ $this->registerJsFile(
 <div class="registration-index">
     <h3 class="center">Данные за <?= date('Y'); ?> год</h3>
     <div class="row">
-        <div class="col-md-3">
+        <div class="col-md-4">
             <?= PieChart::widget([
                 'height' => '400px',
                 'dataProvider' => $dataProvider1,
@@ -28,16 +28,16 @@ $this->registerJsFile(
                 ],
             ]) ?>
         </div>
-        <div class="col-md-9">
-            <?= LineChart::widget([
+        <div class="col-md-8">
+            <?= ColumnChart::widget([
                 'height' => '400px',
                 'dataProvider' => $dataProvider2,
                 'columns' => [
-                    'name:string',
-                    'delta'
+                    '_month:string',
+                    'price',
                 ],
                 'options' => [
-                    'title' => 'Показания счетчиков'
+                    'title' => 'Стоимость, руб'
                 ],
             ]) ?>
         </div>
@@ -49,6 +49,7 @@ $this->registerJsFile(
     </div>
     <p>
         <?= Html::a('Новая запись', ['create'], ['class' => 'btn btn-success add-modal']) ?>
+        <?= Html::a('<i class="fa fa-envelope-o" aria-hidden="true"></i> Отправить', ['send'], ['class' => 'btn btn-primary']) ?>
     </p>
 
     <!-- Modal "Добавить показания счетчика" -->

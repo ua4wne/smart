@@ -11,7 +11,20 @@ use yii\helpers\Html;
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=<?= Yii::$app->charset ?>" />
     <title><?= Html::encode($this->title) ?></title>
-    <?php $this->head() ?>
+    <style type="text/css">
+        table {
+            border-collapse: collapse; /*убираем пустые промежутки между ячейками*/
+            border: 1px solid #039; /*устанавливаем для таблицы внешнюю границу серого цвета толщиной 1px*/
+        }
+        caption{text-transform: uppercase;}
+        th {text-transform: uppercase;
+            border: 1px solid #0865c2;
+            padding: 15px;}
+        td {border: 1px dashed #0865c2;
+            padding: 10px 20px;
+            text-align: left;}
+    </style>
+
 </head>
 <body>
     <?php $this->beginBody() ?>

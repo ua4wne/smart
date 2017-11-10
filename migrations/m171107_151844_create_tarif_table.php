@@ -19,7 +19,7 @@ class m171107_151844_create_tarif_table extends Migration
         $this->createTable('tarif', [
             'id' => $this->primaryKey(),
             'device_id' => $this->integer()->notNull(),
-            'koeff' => $this->float(2)->notNull(),
+            'koeff' => $this->float()->notNull(),
             'unit' => $this->char(5)->notNull(),
             'created_at' => $this->dateTime()->notNull(),
             'updated_at' => $this->dateTime()->notNull(),
