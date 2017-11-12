@@ -38,15 +38,4 @@ class BaseModel extends ActiveRecord
         parent::afterDelete();
         Yii::$app->session->setFlash('success', 'Запись c ID='. $this->id .' была удалена!');
     }
-
-    public function AddEventLog($type,$msg){
-            $log = new Events();
-            $log->user_id = Yii::$app->user->identity->getId();
-            $log->user_ip = $_SERVER['REMOTE_ADDR'];
-            $log->type = $type;
-            $log->is_read = 0;
-            $log->msg = $msg;
-            $log->save();
-            return true;
-    }
 }

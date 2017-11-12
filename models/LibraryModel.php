@@ -3,6 +3,7 @@
 namespace app\models;
 
 use yii\base\Model;
+use app\modules\admin\models\Eventlog;
 
 //библиотека общих функций
 class LibraryModel extends Model
@@ -47,5 +48,16 @@ class LibraryModel extends Model
             if($key == $id)
                 return mb_strtolower($month,'UTF-8');
         }
+    }
+
+    public static function AddEventLog($type,$msg){
+        $log = new Eventlog();
+        $log->user_id = Yii::$app->user->identity->getId();
+        $log->user_ip = self::GetRealIp();
+        $log->type = $type;
+        $log->is_read = 0;
+        $log->msg = $msg;
+        $log->save();
+        return true;
     }
 }

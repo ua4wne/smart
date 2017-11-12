@@ -55,12 +55,12 @@ class DefaultController extends Controller
     public function actionLogin()
     {
         $this->layout = 'basic';
-        $session = Yii::$app->session;
+        /*$session = Yii::$app->session;
         $attempt = $session->get('num');
         if(!isset($attempt))
             $session->set('num', 0);
         if($attempt==5)
-            return $this->render('ban');
+            return $this->render('ban');*/
 
         if (!Yii::$app->user->isGuest) {
             return $this->goHome();
@@ -75,15 +75,7 @@ class DefaultController extends Controller
         }
         else{
             //запись в лог
-            /*$msg = 'Пользователь <strong>'. $model->username .'</strong> пытался войти в систему '.date('d-m-Y H:i:s');
-            $log = new Events();
-            $log->user_id = 1;
-            $log->user_ip = $_SERVER['REMOTE_ADDR'];
-            $log->type = 'access';
-            $log->is_read = 0;
-            $log->msg = $msg;
-            $log->save();*/
-            $attempt = $session->get('num');
+            /*$attempt = $session->get('num');
             if($attempt<5)
                 $attempt++;
             $session->set('num', $attempt);
@@ -101,7 +93,7 @@ class DefaultController extends Controller
                 $log->is_read = 0;
                 $log->msg = $msg;
                 $log->save();
-            }
+            }*/
         }
         return $this->render('login', [
             'model' => $model,

@@ -312,7 +312,7 @@ AppAsset::register($this);
         try{ace.settings.loadState('main-container')}catch(e){}
     </script>
 
-    <div id="sidebar" class="sidebar                  responsive                    ace-save-state">
+    <div id="sidebar" class="sidebar responsive ace-save-state">
         <script type="text/javascript">
             try{ace.settings.loadState('sidebar')}catch(e){}
         </script>
@@ -383,6 +383,14 @@ AppAsset::register($this);
                                 <a href="/main/config">
                                     <i class="menu-icon fa fa-caret-right"></i>
                                     Параметры
+                                </a>
+
+                                <b class="arrow"></b>
+                            </li>
+                            <li class="">
+                                <a href="/main/config/sms">
+                                    <i class="menu-icon fa fa-caret-right"></i>
+                                    Отправка смс
                                 </a>
 
                                 <b class="arrow"></b>
@@ -508,9 +516,9 @@ AppAsset::register($this);
             </li>
 
             <li class="">
-                <a href="gallery.html">
-                    <i class="menu-icon fa fa-picture-o"></i>
-                    <span class="menu-text"> Gallery </span>
+                <a href="/admin/events/index">
+                    <i class="menu-icon fa fa-bell-o" aria-hidden="true"></i>
+                    <span class="menu-text"> События </span>
                 </a>
 
                 <b class="arrow"></b>

@@ -15,20 +15,10 @@ LoginAsset::register($this);
     <title><?= $this->title ?></title>
     <?php $this->head() ?>
 </head>
-<body>
+<body class="login-layout">
 <?php $this->beginBody() ?>
-    <nav class="navbar navbar-default">
-        <div class="container-fluid">
-            <div class="navbar-header">
-                <a class="navbar-brand" href="/">
-                    <?= Html::img( '@web/images/logo.jpg', $options = ['alt'=>'Малоэтажная страна'] ) ?>
-                </a>
-                <p class="navbar-text">Малоэтажная страна</p>
-            </div>
-        </div>
-    </nav>
-    <div class="wrap">
-        <div class="container">
+    <div class="main-container">
+        <div class="main-content">
 
             <?= $content ?>
 
