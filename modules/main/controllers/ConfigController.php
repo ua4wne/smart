@@ -2,6 +2,8 @@
 
 namespace app\modules\main\controllers;
 
+use app\modules\main\models\Sms;
+use app\modules\user\models\User;
 use Yii;
 use app\modules\main\models\Config;
 use yii\data\ActiveDataProvider;
@@ -105,6 +107,29 @@ class ConfigController extends Controller
         //$this->findModel($id)->delete();
 
         return $this->redirect(['index']);
+    }
+
+    //тест отправки смс
+    public function actionSms(){
+        $model = new Sms();
+        $uid= Yii::$app->user->identity->getId();
+        $model->phone = User::findOne($uid)->phone;
+        if ($model->load(Yii::$app->request->post())) {
+            $model->phone = '7' . str_replace('-','',$model->phone);
+            if($model->from_mail){
+                //$to = Yii::$app->params['mail_sms'];
+                //return 'Отправка будет через ящик '.$to;
+                $data = new stdClass();
+                
+            }
+            else{
+                $model->SendSms();
+            }
+            //return print_r($model);
+        }
+        return $this->render('sms', [
+            'model' => $model,
+        ]);
     }
 
     /**
