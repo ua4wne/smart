@@ -37,7 +37,7 @@ AppAsset::register($this);
         <div class="navbar-header pull-left">
             <a href="/" class="navbar-brand">
                 <small>
-                    <i class="fa fa-leaf"></i>
+                    <i class="fa fa-eye"></i>
                     Домовёнок
                 </small>
             </a>
@@ -268,10 +268,9 @@ AppAsset::register($this);
 
                 <li class="light-blue dropdown-modal">
                     <a data-toggle="dropdown" href="#" class="dropdown-toggle">
-                        <img class="nav-user-photo" src="/images/avatars/user.jpg" alt="Jason's Photo" />
+                        <img class="nav-user-photo" src="<?= Yii::$app->user->identity->image ?>" alt="image" />
                         <span class="user-info">
-									<small>Welcome,</small>
-									Jason
+									<?= Yii::$app->user->identity->fname .'<br>'.Yii::$app->user->identity->lname ?>
 								</span>
 
                         <i class="ace-icon fa fa-caret-down"></i>
@@ -285,20 +284,22 @@ AppAsset::register($this);
                             </a>
                         </li>
 
-                        <li>
-                            <a href="profile.html">
-                                <i class="ace-icon fa fa-user"></i>
-                                Profile
-                            </a>
+                        <li><?= Html::a("<i class=\"ace-icon fa fa-user\"></i> Профиль", '/user/profile/index', [
+                                    'data' => [
+                                        'method' => 'post'
+                                    ],
+                                ]
+                            );?>
                         </li>
 
                         <li class="divider"></li>
 
-                        <li>
-                            <a href="#">
-                                <i class="ace-icon fa fa-power-off"></i>
-                                Logout
-                            </a>
+                        <li><?= Html::a("<i class=\"ace-icon fa fa-sign-out\"></i> Выход", '/user/default/logout', [
+                                    'data' => [
+                                        'method' => 'post'
+                                    ],
+                                ]
+                            );?>
                         </li>
                     </ul>
                 </li>
@@ -312,7 +313,7 @@ AppAsset::register($this);
         try{ace.settings.loadState('main-container')}catch(e){}
     </script>
 
-    <div id="sidebar" class="sidebar                  responsive                    ace-save-state">
+    <div id="sidebar" class="sidebar responsive ace-save-state">
         <script type="text/javascript">
             try{ace.settings.loadState('sidebar')}catch(e){}
         </script>
@@ -383,6 +384,14 @@ AppAsset::register($this);
                                 <a href="/main/config">
                                     <i class="menu-icon fa fa-caret-right"></i>
                                     Параметры
+                                </a>
+
+                                <b class="arrow"></b>
+                            </li>
+                            <li class="">
+                                <a href="/main/config/sms">
+                                    <i class="menu-icon fa fa-caret-right"></i>
+                                    Отправка смс
                                 </a>
 
                                 <b class="arrow"></b>
@@ -508,9 +517,9 @@ AppAsset::register($this);
             </li>
 
             <li class="">
-                <a href="gallery.html">
-                    <i class="menu-icon fa fa-picture-o"></i>
-                    <span class="menu-text"> Gallery </span>
+                <a href="/admin/events/index">
+                    <i class="menu-icon fa fa-bell-o" aria-hidden="true"></i>
+                    <span class="menu-text"> События </span>
                 </a>
 
                 <b class="arrow"></b>

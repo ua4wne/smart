@@ -25,6 +25,7 @@ class m171025_170755_create_user_table extends Migration
             'password_hash' => $this->string()->notNull(),
             'password_reset_token' => $this->string()->unique(),
             'email' => $this->string(40)->notNull()->unique(),
+            'phone' => $this->string(12)->notNull()->unique(),
             'status' => $this->smallInteger()->notNull()->defaultValue(0),
             'role_id' => $this->integer(11)->notNull(),
             'image' => $this->string(30)->defaultValue(null),

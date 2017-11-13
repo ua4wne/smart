@@ -9,9 +9,9 @@ use yii\filters\VerbFilter;
 use yii\web\Controller;
 use app\modules\user\models\PasswordResetForm;
 use app\modules\user\models\PasswordResetRequestForm;
-use app\models\BaseModel;
+use app\models\LibraryModel;
 use app\modules\user\models\User;
-use app\models\Events;
+use app\modules\admin\models\Eventlog;
 
 /**
  * Default controller for the `user` module
@@ -55,12 +55,12 @@ class DefaultController extends Controller
     public function actionLogin()
     {
         $this->layout = 'basic';
-        $session = Yii::$app->session;
+        /*$session = Yii::$app->session;
         $attempt = $session->get('num');
         if(!isset($attempt))
             $session->set('num', 0);
         if($attempt==5)
-            return $this->render('ban');
+            return $this->render('ban');*/
 
         if (!Yii::$app->user->isGuest) {
             return $this->goHome();
@@ -70,20 +70,12 @@ class DefaultController extends Controller
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
             //запись в лог
             $msg = 'Пользователь <strong>'. $model->username .'</strong> вошел в систему '.date('d-m-Y H:i:s');
-            BaseModel::AddEventLog('access',$msg);
+            LibraryModel::AddEventLog('access',$msg);
             return $this->goBack();
         }
         else{
             //запись в лог
-            /*$msg = 'Пользователь <strong>'. $model->username .'</strong> пытался войти в систему '.date('d-m-Y H:i:s');
-            $log = new Events();
-            $log->user_id = 1;
-            $log->user_ip = $_SERVER['REMOTE_ADDR'];
-            $log->type = 'access';
-            $log->is_read = 0;
-            $log->msg = $msg;
-            $log->save();*/
-            $attempt = $session->get('num');
+            /*$attempt = $session->get('num');
             if($attempt<5)
                 $attempt++;
             $session->set('num', $attempt);
@@ -94,14 +86,14 @@ class DefaultController extends Controller
                 $user->save();
                 //запись в лог
                 $msg = 'Пользователь <strong>'. $model->username .'</strong> исчерпал все свои попытки входа в систему и поэтому был заблокирован '.date('d-m-Y H:i:s');
-                $log = new Events();
+                $log = new Eventlog();
                 $log->user_id = 1;
-                $log->user_ip = $_SERVER['REMOTE_ADDR'];
+                $log->user_ip = LibraryModel::GetRealIp();
                 $log->type = 'error';
                 $log->is_read = 0;
                 $log->msg = $msg;
                 $log->save();
-            }
+            }*/
         }
         return $this->render('login', [
             'model' => $model,
@@ -117,9 +109,9 @@ class DefaultController extends Controller
     {
         //запись в лог
         $msg = 'Пользователь <strong>'. Yii::$app->user->identity->username .'</strong> вышел из системы '.date('d-m-Y H:i:s');
-        $log = new Events();
+        $log = new Eventlog();
         $log->user_id = 1;
-        $log->user_ip = $_SERVER['REMOTE_ADDR'];
+        $log->user_ip = LibraryModel::GetRealIp();
         $log->type = 'access';
         $log->is_read = 0;
         $log->msg = $msg;
@@ -148,18 +140,18 @@ class DefaultController extends Controller
         $model = new PasswordResetRequestForm($this->module->passwordResetTokenExpire);
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             if ($model->sendEmail()) {
-                $log = new Events();
+                $log = new Eventlog();
                 $log->user_id = 1;
-                $log->user_ip = $_SERVER['REMOTE_ADDR'];
+                $log->user_ip = LibraryModel::GetRealIp();
                 $log->type = 'info';
                 $log->is_read = 0;
                 $log->msg = 'На email <strong>'. $model->email .'</strong> отправлен запрос на смену пароля пользователя <strong>'. $model->getUser()->username .'</strong>.';
                 $log->save();
                 return $this->goHome();
             } else {
-                $log = new Events();
+                $log = new Eventlog();
                 $log->user_id = 1;
-                $log->user_ip = $_SERVER['REMOTE_ADDR'];
+                $log->user_ip = LibraryModel::GetRealIp();
                 $log->type = 'error';
                 $log->is_read = 0;
                 $log->msg = 'Возникла ошибка при попытке отправки запроса на смену пароля пользователя <strong>'. $model->getUser()->username .'</strong> на email <strong>'. $model->email .'</strong>.';
@@ -181,9 +173,9 @@ class DefaultController extends Controller
             throw new BadRequestHttpException($e->getMessage());
         }
         if ($model->load(Yii::$app->request->post()) && $model->validate() && $model->resetPassword()) {
-            $log = new Events();
+            $log = new Eventlog();
             $log->user_id = 1;
-            $log->user_ip = $_SERVER['REMOTE_ADDR'];
+            $log->user_ip = LibraryModel::GetRealIp();
             $log->type = 'info';
             $log->is_read = 0;
             $log->msg = 'Установлен новый пароль для пользователя <strong>'. $user['username'].'</strong>.';

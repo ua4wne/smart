@@ -75,10 +75,10 @@ class PasswordResetRequestForm extends Model
                     <body><h3>Сброс пароля для '.$user->username.'</h3>
                     <p>Здравствуйте!<br>С вашего e-mail поступил запрос на сброс пароля на сайте '.$site.'<br>Для сброса пароля перейдите по ссылке '.$resetLink.'</p>
                     <em style="color:red;">Письмо отправлено автоматически. Отвечать на него не нужно.</em><br>
-                    <p style="color:darkblue;">С уважением,<br> Ваш почтовый робот.</p>
+                    <p style="color:darkblue;">С уважением,<br> Ваш '.Yii::$app->name.'.</p>
                     </body></html>';
                 return Yii::$app->mailer->compose()
-                    ->setFrom([Yii::$app->params['supportEmail'] => Yii::$app->name . ' robot'])
+                    ->setFrom([Yii::$app->params['supportEmail'] => Yii::$app->name])
                     ->setTo($this->email)
                     ->setSubject('Запрос на сброс пароля для ' . $user->username)
                     ->setHtmlBody($msg)

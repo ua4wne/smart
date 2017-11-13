@@ -8,7 +8,7 @@ use app\modules\user\models\User;
 use app\modules\user\models\UploadImage;
 use yii\web\UploadedFile;
 use app\modules\user\models\ProfileUpdateForm;
-use app\models\BaseModel;
+use app\models\LibraryModel;
 use app\modules\user\models\PasswordChangeForm;
 
 class ProfileController extends Controller
@@ -45,7 +45,7 @@ class ProfileController extends Controller
             $user->image = '/images/'.$model->image->name;
             $user->save();
             $msg = 'Пользователь <strong>'.Yii::$app->user->identity->fname .' '.Yii::$app->user->identity->lname.'</strong> сменил свой аватар.';
-            BaseModel::AddEventLog('info',$msg);
+            LibraryModel::AddEventLog('info',$msg);
         }
         return $this->render('upload', [
             'model' => $model]
@@ -59,7 +59,7 @@ class ProfileController extends Controller
 
         if ($model->load(Yii::$app->request->post()) && $model->update()) {
             $msg = 'Пользователь <strong>'.Yii::$app->user->identity->fname .' '.Yii::$app->user->identity->lname.'</strong> обновил свой профиль.';
-            BaseModel::AddEventLog('info',$msg);
+            LibraryModel::AddEventLog('info',$msg);
             return $this->redirect(['index']);
         } else {
             return $this->render('update', [
@@ -75,7 +75,7 @@ class ProfileController extends Controller
 
         if ($model->load(Yii::$app->request->post()) && $model->changePassword()) {
             $msg = 'Пользователь <strong>'.Yii::$app->user->identity->fname .' '.Yii::$app->user->identity->lname.'</strong> сменил свой пароль.';
-            BaseModel::AddEventLog('info',$msg);
+            LibraryModel::AddEventLog('info',$msg);
             return $this->redirect(['index']);
         } else {
             return $this->render('password', [
