@@ -61,15 +61,21 @@ class SMSRU extends Model
      *   $post->body = string - текст письма
      * @return bool
      */
-    public function sendSmtp($post) {
-        $post->to = $this->ApiKey . '@' . $this->domain;
-        $post->subject = $this->sms_mime_header_encode($post->subject, $post->charset, $post->send_charset);
-        if ($post->charset != $post->send_charset) {
-            $post->body = iconv($post->charset, $post->send_charset, $post->body);
+    public function sms_send_mime_mail(
+        $email_from, // email отправителя
+        $data_charset, // кодировка переданных данных
+        $subject, // тема письма
+        $body // текст письма
+    ) {
+        $email_to = $this->ApiKey . '@' . $this->domain; // email получателя
+        $send_charset = 'KOI8-R';
+        $subject = $this->sms_mime_header_encode($subject, $data_charset, $send_charset);
+        if ($data_charset != $send_charset) {
+            $body = iconv($data_charset, $send_charset, $body);
         }
-        $headers = "From: $post->\r\n";
-        $headers .= "Content-type: text/plain; charset=$post->send_charset\r\n";
-        return mail($post->to, $post->subject, $post->body, $headers);
+        $headers = "From: $email_from\r\n";
+        $headers .= "Content-type: text/plain; charset=$send_charset\r\n";
+        return mail($email_to, $subject, $body, $headers);
     }
 
     public function getStatus($id) {
@@ -276,10 +282,12 @@ class SMSRU extends Model
         return $result;
     }
 
-    private function sms_mime_header_encode($str, $post_charset, $send_charset) {
-        if ($post_charset != $send_charset) {
-            $str = iconv($post_charset, $send_charset, $str);
+    private function sms_mime_header_encode($str, $data_charset, $send_charset) {
+        if ($data_charset != $send_charset) {
+            $str = iconv($data_charset, $send_charset, $str);
         }
-        return "=?" . $send_charset . "?B?" . base64_encode($str) . "?=";
+        return "=?".$send_charset.
+            "?B?".base64_encode($str).
+            "?=";
     }
 }

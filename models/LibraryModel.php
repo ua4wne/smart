@@ -5,7 +5,6 @@ namespace app\models;
 use app\modules\admin\models\Eventlog;
 use Yii;
 use yii\base\Model;
-use app\modules\admin\models\Eventlog;
 
 //библиотека общих функций
 class LibraryModel extends Model

@@ -64,25 +64,36 @@ class Sms extends Model
             //$msg = 'Сообщение успешно отправлено! ID сообщения:' . $sms->sms_id;
             //LibraryModel::AddEventLog('info',$msg);
         } else {
-            Yii::$app->session->setFlash('error', 'В процессе отправки сообщения возникла ошибка! Код ошибки: ' . $sms->status_code .'Текст ошибки: '.$sms->status_text);
+            Yii::$app->session->setFlash('error', 'В процессе отправки сообщения возникла ошибка! Код ошибки: ' . $sms->status_code .' Текст ошибки: '.$sms->status_text);
             //$msg = 'В процессе отправки сообщения возникла ошибка! Код ошибки: <strong>' . $sms->status_code .'</strong>. Текст ошибки: '.$sms->status_text;
             //LibraryModel::AddEventLog('error',$msg);
         }
+        return $sms->status;
+    }
+
+    public function GetCost(){
+        //определяем api_id
+        $this->api_id = Config::findOne(['param'=>'API_KEY_SMSRU'])->val;
+        if(empty($this->api_id)){
+            $msg = "Не найдено значение константы API_KEY_SMSRU в настройках системы! Отправка смс не возможна.";
+            LibraryModel::AddEventLog('error',$msg);
+            return 'ERR';
+        }
+        $smsru = new SMSRU($this->api_id); // Ваш уникальный программный ключ
+        $data = new stdClass();
+        $data->to = $this->phone; //'79685507780';
+        $data->text = $this->message; //'Hello World'; // Текст сообщения
 
         //фиксируем стоимость отправленных смс
         $request = $smsru->getCost($data); // Отправка сообщений и возврат данных в переменную
         if ($request->status == "OK") { // Запрос выполнен успешно
-            /*foreach ($request->sms as $phone => $data) { // Перебираем массив СМС сообщений
+            foreach ($request->sms as $phone => $data) { // Перебираем массив СМС сообщений
                 if ($data->status == "OK") { // Сообщение обработано
-                    echo "Номер: $phone ";
-                    echo "Стоимость: $data->cost ";
-                    echo "Длина в СМС: $data->sms ";
-                } else { // Ошибка в отправке
-                    echo "Номер: $phone ";
-                    echo "Код ошибки: $data->status_code ";
-                    echo "Текст ошибки: $data->status_text ";
+                    //echo "Номер: $phone ";
+                    $cost = $data->cost;
+                    //echo "Длина в СМС: $data->sms ";
                 }
-            }*/
+            }
             //$msg = "Общая стоимость: $request->total_cost руб.";
             //$msg.= " Общая длина СМС: $request->total_sms ";
             //LibraryModel::AddEventLog('info',$msg);
@@ -93,7 +104,16 @@ class Sms extends Model
             LibraryModel::AddEventLog('error',$msg);
             $request->status;
         }
-        return $sms->status;
+        return $cost;
+    }
+
+    public function SendViaMail(){
+        return Yii::$app->mailer->compose()
+            ->setFrom(Yii::$app->user->identity->email)
+            ->setTo(Yii::$app->params['mail_sms'])
+            ->setSubject($this->phone)
+            ->setHtmlBody($this->message)
+            ->send();
     }
 
     //узнать баланс

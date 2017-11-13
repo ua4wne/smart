@@ -119,11 +119,17 @@ class ConfigController extends Controller
             if($model->from_mail){
                 //$to = Yii::$app->params['mail_sms'];
                 //return 'Отправка будет через ящик '.$to;
-                $data = new stdClass();
+                $model->SendViaMail();
                 
             }
             else{
-                $model->SendSms();
+                $cost = $model->GetCost();
+                if($cost>0){
+                    Yii::$app->session->setFlash('success', 'Лимит бесплатных смс на сегодня исчерпан! Смс будет отправлено через почту.');
+                    $model->SendViaMail();
+                }
+                else
+                    $model->SendSms();
             }
             //return print_r($model);
         }
