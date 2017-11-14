@@ -131,8 +131,11 @@ class ConfigController extends Controller
                 else
                     $model->SendSms();
             }
-            //return print_r($model);
+            //сбросили значения
+            $model->phone = User::findOne($uid)->phone;
+            $model->message = '';
         }
+
         return $this->render('sms', [
             'model' => $model,
         ]);
