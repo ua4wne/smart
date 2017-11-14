@@ -19,6 +19,12 @@ $this->params['breadcrumbs'][] = $this->title;
     </div>
 
     <div class="form-group">
+        <?= $form->field($model, 'phone')->widget(\yii\widgets\MaskedInput::className(), [
+            'mask' => '999-999-9999',
+        ]) ?>
+    </div>
+
+    <div class="form-group">
         <?= Html::submitButton('Обновить', ['class' => 'btn btn-success']) ?>
     </div>
 <?php ActiveForm::end() ?>

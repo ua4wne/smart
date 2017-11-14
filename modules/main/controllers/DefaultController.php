@@ -113,6 +113,7 @@ class DefaultController extends Controller
             $user = new User();
             $user->username = 'ircut';
             $user->email = 'admin@mail.com';
+            $user->phone = '1234567890';
             $user->fname = 'Администратор';
             $user->lname = 'системы';
             $user->setPassword('12345678');
@@ -120,7 +121,7 @@ class DefaultController extends Controller
             $user->role_id = 1;
             $user->generateAuthKey();
             if ($user->save()) {
-                return 'Администратор системы создан. Данные для входа: admin (pass 12345678). После первого входа необходимо сменить пароль и установить реальный адрес e-mail!';
+                return 'Администратор системы создан. Данные для входа: admin (pass 12345678). После первого входа необходимо сменить пароль и установить реальный адрес e-mail и телефон!';
             }
             else{
                 throw new HttpException(500 ,'Ошибка выполнения');

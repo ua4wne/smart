@@ -6,6 +6,7 @@
 use yii\helpers\Html;
 use yii\widgets\Breadcrumbs;
 use app\assets\AppAsset;
+use app\components\NumEvents;
 
 AppAsset::register($this);
 ?>
@@ -519,7 +520,7 @@ AppAsset::register($this);
             <li class="">
                 <a href="/admin/events/index">
                     <i class="menu-icon fa fa-bell-o" aria-hidden="true"></i>
-                    <span class="menu-text"> События </span>
+                    <span class="menu-text"> События <?= NumEvents::widget() ?></span>
                 </a>
 
                 <b class="arrow"></b>

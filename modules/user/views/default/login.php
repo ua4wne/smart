@@ -46,10 +46,10 @@ $this->params['breadcrumbs'][] = $this->title;
                             <?= $form->field($model, 'rememberMe')->checkbox() ?>
 
                             <div class="row">
-                                <div class="col-md-8 form-group">
-                                    <?= Html::submitButton('Вход', ['class' => 'btn btn-primary', 'style'=>'width: 70%;', 'name' => 'login-button']) ?>
+                                <div class="col-md-7 form-group">
+                                    <?= Html::submitButton('Вход', ['class' => 'btn btn-primary', 'style'=>'width: 80%;', 'name' => 'login-button']) ?>
                                 </div>
-                                <div class="col-md-4 form-group">
+                                <div class="col-md-5 form-group">
                                     <?= Html::a('Сбросить пароль', ['/user/default/password-reset-request'], ['class' => 'btn btn-danger']) ?>
                                 </div>
                             </div>

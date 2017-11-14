@@ -125,11 +125,10 @@ class ConfigController extends Controller
             else{
                 $cost = $model->GetCost();
                 if($cost>0){
-                    Yii::$app->session->setFlash('success', 'Лимит бесплатных смс на сегодня исчерпан! Смс будет отправлено через почту.');
-                    $model->SendViaMail();
+                    Yii::$app->session->setFlash('success', 'Лимит бесплатных смс на сегодня исчерпан! Стоимость отправки - '.$cost.' руб.');
+                    //$model->SendViaMail();
                 }
-                else
-                    $model->SendSms();
+                $model->SendSms();
             }
             //сбросили значения
             $model->phone = User::findOne($uid)->phone;

@@ -10,6 +10,7 @@ class ProfileUpdateForm extends Model
     public $email;
     public $fname;
     public $lname;
+    public $phone;
 
     /**
      * @var User
@@ -20,6 +21,7 @@ class ProfileUpdateForm extends Model
     {
         $this->_user = $user;
         $this->email = $user->email;
+        $this->phone = $user->phone;
         $this->fname = $user->fname;
         $this->lname = $user->lname;
         parent::__construct($config);
@@ -45,6 +47,15 @@ class ProfileUpdateForm extends Model
                 'filter' => ['<>', 'id', $this->_user->id],
             ],
             ['email', 'string', 'max' => 40],
+            ['phone', 'required'],
+            ['phone', 'string', 'max' => 12],
+            [
+                'phone',
+                'unique',
+                'targetClass' => User::className(),
+                'message' => 'Такой телефон уже существует.',
+                'filter' => ['<>', 'id', $this->_user->id],
+            ],
         ];
     }
 
@@ -55,6 +66,7 @@ class ProfileUpdateForm extends Model
             $user->email = $this->email;
             $user->fname = $this->fname;
             $user->lname = $this->lname;
+            $user->phone = $this->phone;
             return $user->save();
         } else {
             return false;
@@ -67,6 +79,7 @@ class ProfileUpdateForm extends Model
             'email' => 'Email',
             'fname' => 'Имя',
             'lname' => 'Фамилия',
+            'phone' => 'Телефон',
         ];
     }
 }
