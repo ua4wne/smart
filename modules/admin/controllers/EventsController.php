@@ -29,6 +29,20 @@ class EventsController extends Controller
         ]);
     }
 
+    public function actionView($type){
+        $query = Eventlog::find()->where(['type'=>$type]);
+        $dataProvider = new ActiveDataProvider([
+            'query' => $query,
+            'pagination' => [
+                'pageSize' => Yii::$app->params['page_size'],
+            ],
+        ]);
+        return $this->render('view', [
+            'dataProvider' => $dataProvider,
+            'type' => $type,
+        ]);
+    }
+
     public function actionClearLog(){
         //if(Yii::$app->user->can('admin')) {
             if (\Yii::$app->request->isAjax) {

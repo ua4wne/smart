@@ -133,68 +133,6 @@ class DefaultController extends Controller
     //    }
     }
 
-    protected function SysState(){
-        //memory stat
-        $stat['mem_percent'] = round(shell_exec("free | grep Mem | awk '{print $3/$2 * 100.0}'"),0);
-        $mem_result = shell_exec("cat /proc/meminfo | grep MemTotal");
-        $stat['mem_total'] = round(preg_replace("#[^0-9]+(?:\.[0-9]*)?#", "", $mem_result) / 1024 / 1024, 3);
-        $mem_result = shell_exec("cat /proc/meminfo | grep MemFree");
-        $stat['mem_free'] = round(preg_replace("#[^0-9]+(?:\.[0-9]*)?#", "", $mem_result) / 1024 / 1024, 3);
-        $stat['mem_used'] = $stat['mem_total'] - $stat['mem_free'];
-        //hdd stat
-        $stat['hdd_free'] = round(disk_free_space("/") / 1024 / 1024 / 1024, 2);
-        $stat['hdd_total'] = round(disk_total_space("/") / 1024 / 1024/ 1024, 2);
-        $stat['hdd_used'] = $stat['hdd_total'] - $stat['hdd_free'];
-        $stat['hdd_percent'] = round(sprintf('%.2f',($stat['hdd_used'] / $stat['hdd_total']) * 100), 0);
-
-        $content=          '<div>
-                                <p>
-                                    <strong>Занято на диске</strong>
-                                    <span class="pull-right text-muted">'.$stat['hdd_percent'].'%</span>
-                                </p>
-                                <div class="progress progress-striped active">';
-        $sys_icon='fa fa-cogs fa-3x';
-        if($stat['mem_percent']<50)
-            $bar_state_mem='progress-bar progress-bar-info';
-        else if($stat['mem_percent']>49&&$stat['hdd_percent']<75) {
-            $bar_state_mem = 'progress-bar progress-bar-warning';
-            $sys_icon='fa fa-warning fa-3x';
-        }
-        else {
-            $bar_state_mem = 'progress-bar progress-bar-danger';
-            $sys_icon='fa fa-warning fa-3x';
-        }
-        if($stat['hdd_percent']<55)
-            $bar_state_hdd='progress-bar progress-bar-info';
-        else if($stat['hdd_percent']>54&&$stat['hdd_percent']<85) {
-            $bar_state_hdd = 'progress-bar progress-bar-warning';
-            $sys_icon='fa fa-warning fa-3x';
-        }
-        else {
-            $bar_state_hdd='progress-bar progress-bar-danger';
-            $sys_icon='fa fa-warning fa-3x';
-        }
-        $content.='
-                                    <div class="'.$bar_state_hdd.'" role="progressbar" aria-valuenow="'.$stat['hdd_percent'].'" aria-valuemin="0" aria-valuemax="100" style="width: '.$stat['hdd_percent'].'%">
-                                        <span class="sr-only">'.$stat['hdd_percent'].'</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div>
-                                <p>
-                                    <strong>Занято памяти</strong>
-                                    <span class="pull-right text-muted">'.$stat['mem_percent'].'%</span>
-                                </p>
-                                <div class="progress progress-striped active">
-                                    <div class="'.$bar_state_mem.'" role="progressbar" aria-valuenow="'.$stat['mem_percent'].'" aria-valuemin="0" aria-valuemax="100" style="width: '.$stat['mem_percent'].'%">
-                                        <span class="sr-only">'.$stat['mem_percent'].'</span>
-                                    </div>
-                                </div>
-                            </div>';
-
-        return $content;
-    }
-
     protected function findModel($id)
     {
         if (($model = Events::findOne($id)) !== null) {

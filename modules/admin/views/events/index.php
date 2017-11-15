@@ -31,7 +31,15 @@ $this->params['breadcrumbs'][] = $this->title;
                 'label'=>'Логин',
             ],
             'user_ip',
-            'type',
+            //'type',
+            [
+                'attribute' => 'type',
+                'format' => 'raw',
+                'value' => function ($model, $key, $index, $column) {
+                    /** @var User $model */
+                    return Html::a(Html::encode($model->type), ['view', 'type' => $model->type]);
+                }
+            ],
             'msg:html',
             'created_at',
             // 'updated_at',
