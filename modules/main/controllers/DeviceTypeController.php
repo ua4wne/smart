@@ -42,6 +42,9 @@ class DeviceTypeController extends Controller
 
         return $this->render('index', [
             'dataProvider' => $dataProvider,
+            'pagination' => [
+                'pageSize' => Yii::$app->params['page_size'],
+            ],
         ]);
     }
 

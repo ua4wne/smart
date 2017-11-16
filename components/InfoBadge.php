@@ -2,7 +2,10 @@
 namespace app\components;
 
 use app\modules\admin\models\Eventlog;
+use app\modules\main\models\Config;
 use yii\base\Widget;
+//use Yii;
+//use PDO;
 
 class InfoBadge extends Widget
 {
@@ -25,6 +28,9 @@ class InfoBadge extends Widget
                 break;
             case 'system':
                 return $this->SysState();
+                break;
+            case 'uptime':
+                return 'Время работы: '.$this->getUpTime();
                 break;
         }
     }
@@ -97,7 +103,9 @@ class InfoBadge extends Widget
         $stat['hdd_percent'] = round(sprintf('%.2f',($stat['hdd_used'] / $stat['hdd_total']) * 100), 0);
 
         $content = '';
-
+        $show_load = Config::findOne(['param'=>'SHOW_SERVER_LOAD'])->val;
+        if($show_load=='true')
+            $load = $this->getLoad();
         if($stat['mem_percent']<50)
             $bar_state_mem='progress-bar progress-bar-info';
         else if($stat['mem_percent']>49&&$stat['hdd_percent']<75) {
@@ -113,6 +121,14 @@ class InfoBadge extends Widget
         }
         else {
             $bar_state_hdd='progress-bar progress-bar-danger';
+        }
+        if($load<55)
+            $bar_state_load='progress-bar progress-bar-info';
+        else if($load>54&&$load<85) {
+            $bar_state_load = 'progress-bar progress-bar-warning';
+        }
+        else {
+            $bar_state_load='progress-bar progress-bar-danger';
         }
         $content.='<li>
                                     <a href="#">
@@ -138,8 +154,52 @@ class InfoBadge extends Widget
                                         </div>
                                     </a>
                                 </li>';
+        if($show_load=='true'){
+            $content.=              '<li>
+                                    <a href="#">
+                                        <div class="clearfix">
+                                            <span class="pull-left">Загрузка сервера</span>
+                                            <span class="pull-right">'.$load.'%</span>
+                                        </div>
+
+                                        <div class="progress progress-mini">
+                                            <div style="width:'.$load.'%" class="'.$bar_state_load.'"></div>
+                                        </div>
+                                    </a>
+                                </li>';
+        }
 
         return $content;
+    }
+
+    /**
+     * Gets system average load
+     *
+     * @return string
+     */
+    protected function getLoad()
+    {
+        $name = strtolower(php_uname('s'));
+        if (strpos($name, 'windows') !== FALSE) {
+            return '0';
+        } elseif (strpos($name, 'linux') !== FALSE) {
+            return round(array_sum(sys_getloadavg()) / count(sys_getloadavg()), 2);
+        }
+    }
+
+    /**
+     * Gets system up-time
+     *
+     * @return string
+     */
+    protected function getUpTime()
+    {
+        $uptime = shell_exec('uptime -p');
+        $uptime = str_replace('up','',$uptime);
+        $uptime = str_replace('days','d',$uptime);
+        $uptime = str_replace('hours','h',$uptime);
+        $uptime = str_replace('minutes','m',$uptime);
+        return $uptime;
     }
 
 }

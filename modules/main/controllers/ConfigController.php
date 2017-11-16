@@ -39,6 +39,9 @@ class ConfigController extends Controller
     {
         $dataProvider = new ActiveDataProvider([
             'query' => Config::find(),
+            'pagination' => [
+                'pageSize' => Yii::$app->params['page_size'],
+            ],
         ]);
 
         return $this->render('index', [

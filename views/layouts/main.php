@@ -53,8 +53,8 @@ AppAsset::register($this);
 
                     <ul class="dropdown-menu-right dropdown-navbar dropdown-menu dropdown-caret dropdown-close">
                         <li class="dropdown-header">
-                            <i class="ace-icon fa fa-refresh"></i>
-                            Загрузка системы
+                            <i class="ace-icon fa fa-clock-o"></i>
+                            <?= InfoBadge::widget(['type'=>'uptime']) ?>
                         </li>
 
                         <li class="dropdown-content">
@@ -64,10 +64,6 @@ AppAsset::register($this);
                         </li>
 
                         <li class="dropdown-footer">
-                            <a href="#">
-                                Подробнее
-                                <i class="ace-icon fa fa-arrow-right"></i>
-                            </a>
                         </li>
                     </ul>
                 </li>
