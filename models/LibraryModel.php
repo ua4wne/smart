@@ -29,7 +29,7 @@ class LibraryModel extends Model
 
     //геолокация
     public static function GeoLocation() {
-        $ip = $_SERVER['REMOTE_ADDR'];
+        $ip = getenv('SERVER_ADDR');
         $url = 'http://api.sypexgeo.net/xml/'. $ip .'';
         $xml = simplexml_load_string(file_get_contents($url));
         $loc_array = array($xml->ip->city->lat,$xml->ip->city->lon);

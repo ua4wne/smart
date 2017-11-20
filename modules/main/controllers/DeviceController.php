@@ -2,6 +2,7 @@
 
 namespace app\modules\main\controllers;
 
+use app\models\Ping;
 use app\modules\main\models\DeviceType;
 use app\modules\main\models\Location;
 use app\modules\main\models\Tarif;
@@ -190,6 +191,15 @@ class DeviceController extends Controller
             unlink($fname);
 
         return $this->redirect(['index']);
+    }
+
+    public function actionPing(){
+        $host="192.168.1.10";
+        //return shell_exec("arping -n 2 " . long2ip($host));
+        $scan = new Ping($host);
+        $result = $scan->ping('fsockopen');
+        if($result)
+            return gethostbyaddr($host);
     }
 
     /**

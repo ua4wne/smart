@@ -16,7 +16,9 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <p>
         <?= Html::a('Новая запись', ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Сканер устройств', ['ping'], ['class' => 'btn btn-danger', 'name' => 'scan', 'id' => 'scan']) ?>
     </p>
+
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'columns' => [
@@ -95,3 +97,25 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
     ]); ?>
 </div>
+
+<?php
+$js = <<<JS
+    $('#scan').click(function(e) {
+		e.preventDefault();
+		// отправляем AJAX запрос
+		$.ajax({
+			type: "POST",
+		    url: "/main/device/ping",
+		    //dataType: "json",
+	        data: {action:'ping'},
+		    // success - это обработчик удачного выполнения событий
+		    success: function(res) {
+			    alert("Сервер вернул вот что: " + res);
+			    //$(".events").text(res);
+			}     		 
+     	});
+	});
+JS;
+
+$this->registerJs($js);
+?>
