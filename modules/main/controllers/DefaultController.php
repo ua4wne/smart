@@ -9,6 +9,7 @@ use yii\web\Controller;
 use yii\data\ActiveDataProvider;
 use \yii\web\HttpException;
 use app\modules\user\models\User;
+use app\modules\main\models\Location;
 
 /**
  * Default controller for the `main` module
@@ -33,8 +34,10 @@ class DefaultController extends Controller
             $data = simplexml_load_file($file);
             $content = Weather::GetContent($data);
         }
+        $tabs = Location::GetTabs();
         return $this->render('index',[
             'content' => $content,
+            'tabs' => $tabs,
         ]);
         /*else{
             throw new HttpException(404 ,'Доступ запрещен');

@@ -19,9 +19,10 @@ class m171117_132711_create_option_table extends Migration
         $this->createTable('option', [
             'id' => $this->primaryKey(),
             'device_id' => $this->integer()->notNull(),
-            'val' => $this->float(5,2)->notNull(),
-            'unit' => $this->string(7)->notNull(),
-            'alias' => $this->string(50),
+            'val' => $this->float(5,2)->notNull()->defaultValue(0),
+            'unit' => $this->string(7),
+            'alias' => $this->string(50)->notNull(),
+            'name' => $this->string(50)->notNull(),
             'to_log' => $this->smallInteger(4)->notNull()->defaultValue(0),
             'created_at' => $this->dateTime()->notNull(),
             'updated_at' => $this->dateTime()->notNull(),

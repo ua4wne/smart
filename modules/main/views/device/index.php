@@ -37,7 +37,15 @@ $this->params['breadcrumbs'][] = $this->title;
                 },
             ],
             'uid',
-            'name',
+            //'name',
+            [
+                'attribute' => 'name',
+                'format' => 'raw',
+                'value' => function ($model, $key, $index, $column) {
+                    /** @var User $model */
+                    return Html::a(Html::encode($model->name), ['/main/option/index', 'id' => $model->id]);
+                }
+            ],
             [
                 'attribute'=>'type_id',
                 'label'=>'Тип устройства',

@@ -23,6 +23,8 @@ $this->params['breadcrumbs'][] = $this->title;
 
             //'id',
             'name',
+            'alias',
+            'is_show',
             'created_at',
             'updated_at',
 

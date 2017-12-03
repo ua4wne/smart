@@ -19,6 +19,8 @@ class m171106_125027_create_location_table extends Migration
         $this->createTable('location', [
             'id' => $this->primaryKey(),
             'name' => $this->string(50)->notNull(),
+            'alias' => $this->string(50)->notNull(),
+            'visible' => $this->smallInteger()->notNull()->defaultValue(0),
             'created_at' => $this->dateTime()->notNull(),
             'updated_at' => $this->dateTime()->notNull(),
         ], $tableOptions);

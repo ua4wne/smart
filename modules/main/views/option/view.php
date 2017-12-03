@@ -4,13 +4,13 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
-/* @var $model app\modules\main\models\Location */
+/* @var $model app\modules\main\models\Option */
 
 $this->title = $model->name;
-$this->params['breadcrumbs'][] = ['label' => 'Локации', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Параметры', 'url' => ['index', 'id' => $model->device_id]];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="location-view">
+<div class="option-view">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
@@ -31,7 +31,13 @@ $this->params['breadcrumbs'][] = $this->title;
             'id',
             'name',
             'alias',
-            'is_show',
+            'val',
+            'unit',
+            [
+                'attribute'=>'device.name',
+                'label'=>'Контроллер',
+            ],
+            'to_log',
             'created_at',
             'updated_at',
         ],
