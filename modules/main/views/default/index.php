@@ -4,6 +4,8 @@ use yii\helpers\Html;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
+$this->registerJsFile('/js/justgage.js',
+    ['depends' => ['yii\web\JqueryAsset']]);
 
 $this->title = 'Панель управления';
 $this->params['breadcrumbs'][] = $this->title;
@@ -91,7 +93,21 @@ $this->params['breadcrumbs'][] = $this->title;
 
                         <div class="tab-content">
                             <div id="home" class="tab-pane fade in active">
-                                <p>Raw denim you probably haven't heard of them jean shorts Austin.</p>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label>
+                                            <input name="switch-field-1" class="ace ace-switch ace-switch-7" type="checkbox" />
+                                            <span class="lbl"></span>
+                                        </label>
+                                        <span class="pull-left">Вентилятор</span>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div id="celsio" class="gauge" data-value="30" data-min="0" data-max="80" data-gaugeWidthScale="0.6"></div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div id="humy" class="gauge" data-value="40" data-min="0" data-max="100" data-gaugeWidthScale="0.6"></div>
+                                    </div>
+                                </div>
                             </div>
 
                             <div id="messages" class="tab-pane fade">
@@ -295,6 +311,48 @@ $js = <<<JS
      alert('Error!');
      }
      });
+     var celsio = new JustGage({
+        id: "celsio",
+        formatNumber: true,
+        gaugeWidthScale: 0.6,
+      customSectors: [{
+        color : "#2A95DF",
+        lo : 0,
+        hi : 17
+      },{
+        color : "#00ff00",
+        lo : 18,
+        hi : 30
+      },{
+        color : "#ff0000",
+        lo : 31,
+        hi : 80
+      }],
+        counter: true,
+        title: "Температура" 
+      });
+     
+     var humy = new JustGage({
+        id: "humy",
+        formatNumber: true,
+        gaugeWidthScale: 0.6,
+      customSectors: [{
+        color : "#ffff00",
+        lo : 0,
+        hi : 50
+      },{
+        color : "#00ff00",
+        lo : 51,
+        hi : 70
+      },{
+        color : "#ff0000",
+        lo : 71,
+        hi : 100
+      }],
+        counter: true,
+        title: "Влажность" 
+      });
+
  });
 
 JS;

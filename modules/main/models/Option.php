@@ -27,7 +27,7 @@ class Option extends BaseModel
      */
     public static function tableName()
     {
-        return 'option';
+        return 'options';
     }
 
     /**
@@ -56,7 +56,7 @@ class Option extends BaseModel
             'device_id' => 'Device ID',
             'val' => 'Значение параметра',
             'unit' => 'Ед измерения',
-            'alias' => 'Псевдоним',
+            'alias' => 'Параметр',
             'name' => 'Наименование',
             'to_log' => 'Писать в лог',
             'created_at' => 'Дата создания',

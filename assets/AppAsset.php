@@ -43,9 +43,11 @@ class AppAsset extends AssetBundle
         'js/jquery.dataTables.min.js',
         'js/dataTables.bootstrap.min.js',
         'js/dataTables.responsive.js',
-        'js/raphael-min.js',
+        //'js/raphael-min.js',
+        'js/raphael-2.1.4.min.js',
         'js/morris.js',
         'js/caldraw.js',
+        //'js/justgage.js'
     ];
     public $jsOptions = [
         //'position' => \yii\web\View::POS_HEAD, //влияет на работу фильтрации в таблицах представлений - виджет GridView!!!

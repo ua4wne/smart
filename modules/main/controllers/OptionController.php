@@ -105,9 +105,10 @@ class OptionController extends Controller
      */
     public function actionDelete($id)
     {
+        $id_device = $this->findModel($id)->device_id;
         $this->findModel($id)->delete();
 
-        return $this->redirect(['index']);
+        return $this->redirect(['index','id'=>$id_device]);
     }
 
     /**
