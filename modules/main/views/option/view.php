@@ -32,6 +32,8 @@ $this->params['breadcrumbs'][] = $this->title;
             'name',
             'alias',
             'val',
+            'min_val',
+            'max_val',
             'unit',
             [
                 'attribute'=>'device.name',

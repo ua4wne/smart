@@ -87,41 +87,7 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div class="space-6"></div>
                 <div class="col-sm-6">
                     <div class="tabbable">
-                        <ul class="nav nav-tabs" id="myTab">
-                            <?= $tabs; ?>
-                        </ul>
-
-                        <div class="tab-content">
-                            <div id="home" class="tab-pane fade in active">
-                                <div class="row">
-                                    <div class="col-md-4">
-                                        <label>
-                                            <input name="switch-field-1" class="ace ace-switch ace-switch-7" type="checkbox" />
-                                            <span class="lbl"></span>
-                                        </label>
-                                        <span class="pull-left">Вентилятор</span>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div id="celsio" class="gauge" data-value="30" data-min="0" data-max="80" data-gaugeWidthScale="0.6"></div>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <div id="humy" class="gauge" data-value="40" data-min="0" data-max="100" data-gaugeWidthScale="0.6"></div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div id="messages" class="tab-pane fade">
-                                <p>Food truck fixie locavore, accusamus mcsweeney's marfa nulla single-origin coffee squid.</p>
-                            </div>
-
-                            <div id="dropdown1" class="tab-pane fade">
-                                <p>Etsy mixtape wayfarers, ethical wes anderson tofu before they sold out mcsweeney's organic lomo retro fanny pack lo-fi farm-to-table readymade.</p>
-                            </div>
-
-                            <div id="dropdown2" class="tab-pane fade">
-                                <p>Trust fund seitan letterpress, keytar raw denim keffiyeh etsy art party before they sold out master cleanse gluten-free squid scenester freegan cosby sweater. Fanny pack portland seitan DIY, art party locavore wolf cliche high life echo park Austin.</p>
-                            </div>
-                        </div>
+                        <?= $tabs; ?>
                     </div>
                 </div><!-- /.col -->
 
@@ -326,14 +292,15 @@ $js = <<<JS
       },{
         color : "#ff0000",
         lo : 31,
-        hi : 80
+        hi : 100
       }],
         counter: true,
-        title: "Температура" 
+        title: "Температура",
+        label: "C"
       });
      
-     var humy = new JustGage({
-        id: "humy",
+     var humidity = new JustGage({
+        id: "humidity",
         formatNumber: true,
         gaugeWidthScale: 0.6,
       customSectors: [{
@@ -350,9 +317,9 @@ $js = <<<JS
         hi : 100
       }],
         counter: true,
-        title: "Влажность" 
+        title: "Влажность",
+        label: "%"
       });
-
  });
 
 JS;

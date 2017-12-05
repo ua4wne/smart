@@ -27,6 +27,8 @@ $this->params['breadcrumbs'][] = 'Параметры';
             'name',
             'alias',
             'val',
+            'min_val',
+            'max_val',
             'unit',
             'to_log',
             //'created_at',

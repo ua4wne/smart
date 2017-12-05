@@ -64,7 +64,7 @@ class Location extends BaseModel
 
     public static function GetTabs(){
         $html = '<ul class="nav nav-tabs" id="myTab">';
-        $locations = self::find()->select(['name','alias'])->where('is_show=1')->orderBy(['name' => SORT_ASC,])->all();
+        $locations = self::find()->select(['id','name','alias'])->where('is_show=1')->orderBy(['name' => SORT_ASC,])->all();
         $k=0;
         foreach ($locations as $location){
             if($k==0)
@@ -77,6 +77,63 @@ class Location extends BaseModel
                             </li>';
             $k++;
         }
+        $html .= '</ul>';
+        $k=0;
+        $html .= '<div class="tab-content">';
+        foreach ($locations as $location){
+            //определяем кол-во устройств в помещении, которые контролируются автоматически
+            $devices = Device::find()->select('id')->where(['location_id'=>$location->id,'verify'=>1])->all();
+            if($k==0)
+                $html .= '<div id="'.$location->alias.'" class="tab-pane fade in active">';
+            else
+                $html .= '<div id="'.$location->alias.'" class="tab-pane fade in">';
+            if(!empty($devices)){ //есть такие устройства
+                //определяем device_id
+                $device_id = array();
+                $i = 0;
+                foreach ($devices as $device){
+                    array_push($device_id, $device->id);
+                    $i++;
+                }
+                //определяем параметры, привязанные к этим устройствам
+                $params = Option::find()->where(['device_id' => $device_id])->all();
+                $pcount = Option::find()->where(['device_id' => $device_id])->count();
+                $step = 12/$pcount;
+                $switch = '';
+                $gaude = '';
+                foreach ($params as $param){
+                    if($param->alias == 'state'){
+                        $switch .= '<label>
+                                        <input name="switch-'.$param->id.'" id = "switch-'.$param->id.'" class="ace ace-switch ace-switch-7" type="checkbox" />
+                                        <span class="lbl">&nbsp;'.$param->name.'</span>
+                                    </label>';
+                    }
+                    else{
+                        $gaude .= '<div class="col-md-'.$step.'">
+                                        <div id="'.$param->alias.'" class="gauge" data-value="'.$param->val.'" data-min="'.$param->min_val.'" data-max="'.$param->max_val.'" data-gaugeWidthScale="0.6"></div>
+                                    </div>';
+                    }
+                }
+
+                $html .= '     <div class="row">
+                                    <div class="col-md-4">' .
+                                        $switch
+                                    . '</div>' .
+                                        $gaude
+                                . '</div>
+                            </div>';
+            }
+            else{
+                $html .= '     <div class="row">
+                                    
+                                </div>
+                        </div>';
+            }
+
+            $k++;
+        }
+        $html .= '</div>';
+
         return $html;
     }
 }

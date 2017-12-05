@@ -16,6 +16,10 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'val')->textInput(['value' => 0]) ?>
 
+    <?= $form->field($model, 'min_val')->textInput(['value' => 0]) ?>
+
+    <?= $form->field($model, 'max_val')->textInput(['value' => 0]) ?>
+
     <?= $form->field($model, 'unit')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'alias')->dropDownList(['state'=>'Состояние','celsio'=>'Температура','humidity'=>'Влажность', 'pressure'=>'Давление', 'light'=>'Освещенность', 'alarm'=>'Контроль']) ?>

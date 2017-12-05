@@ -36,9 +36,9 @@ class Option extends BaseModel
     public function rules()
     {
         return [
-            [['device_id', 'val', 'alias', 'name'], 'required'],
+            [['device_id', 'val', 'min_val', 'max_val', 'alias', 'name'], 'required'],
             [['device_id', 'to_log'], 'integer'],
-            [['val'], 'number'],
+            [['val', 'min_val', 'max_val'], 'number'],
             [['created_at', 'updated_at'], 'safe'],
             [['unit'], 'string', 'max' => 7],
             [['alias', 'name'], 'string', 'max' => 50],
@@ -55,6 +55,8 @@ class Option extends BaseModel
             'id' => 'ID',
             'device_id' => 'Device ID',
             'val' => 'Значение параметра',
+            'min_val' => 'Минимальное значение параметра',
+            'max_val' => 'Максимальное значение параметра',
             'unit' => 'Ед измерения',
             'alias' => 'Параметр',
             'name' => 'Наименование',
