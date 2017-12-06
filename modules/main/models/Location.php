@@ -63,7 +63,7 @@ class Location extends BaseModel
     }
 
     public static function GetTabs(){
-        $html = '<ul class="nav nav-tabs" id="myTab">';
+        $html = '<ul class="nav nav-tabs" id="LocationTab">';
         $locations = self::find()->select(['id','name','alias'])->where('is_show=1')->orderBy(['name' => SORT_ASC,])->all();
         $k=0;
         foreach ($locations as $location){

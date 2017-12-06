@@ -30,6 +30,7 @@ class AppAsset extends AssetBundle
         'css/dataTables.responsive.css',
         'css/style.css',
         'css/morris.css',
+        'css/custom.css',
     ];
     public $js = [
         'js/jquery-ui.custom.min.js',
