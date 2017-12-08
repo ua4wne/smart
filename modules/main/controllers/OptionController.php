@@ -34,7 +34,7 @@ class OptionController extends Controller
      * Lists all Option models.
      * @return mixed
      */
-    public function actionIndex($id) //http://192.168.1.10/control/?device=b10e84bf9c7a335b&celsio=23.10&humidity=42.40
+    public function actionIndex($id) //http://smart/control?device=b10e84bf9c7a335b&celsio=23.10&humidity=42.40
     {
         $model = Device::findOne($id);
         $dataProvider = new ActiveDataProvider([

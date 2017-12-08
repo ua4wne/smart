@@ -2,6 +2,7 @@
 
 namespace app\modules\main\controllers;
 
+use app\modules\main\models\Mqtt;
 use app\modules\main\models\Sms;
 use app\modules\user\models\User;
 use Yii;
@@ -10,6 +11,7 @@ use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\filters\AccessControl;
 
 /**
  * ConfigController implements the CRUD actions for Config model.
@@ -139,6 +141,14 @@ class ConfigController extends Controller
         }
 
         return $this->render('sms', [
+            'model' => $model,
+        ]);
+    }
+
+    public function actionMqtt(){
+        $model = new Mqtt();
+
+        return $this->render('mqtt', [
             'model' => $model,
         ]);
     }

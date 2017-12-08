@@ -24,7 +24,7 @@ class BaseModel extends ActiveRecord
     {
         $modelName = $this->tableName();
         parent::afterSave($insert, $changedAttributes);
-        if($modelName != 'options'){
+        if($modelName != 'options' && $modelName != 'eventlog'){
             if ($insert) {
                 Yii::$app->session->setFlash('success', 'Запись добавлена!');
             } else {

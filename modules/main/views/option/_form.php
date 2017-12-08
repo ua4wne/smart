@@ -22,7 +22,8 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'unit')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'alias')->dropDownList(['state'=>'Состояние','celsio'=>'Температура','humidity'=>'Влажность', 'pressure'=>'Давление', 'light'=>'Освещенность', 'alarm'=>'Контроль']) ?>
+    <?= $form->field($model, 'alias')->dropDownList(['state'=>'Состояние','celsio'=>'Температура','humidity'=>'Влажность', 'pressure'=>'Давление',
+        'light'=>'Освещенность', 'alarm'=>'Контроль', 'level'=>'Уровень сигнала', 'power'=>'Мощность', 'acdc'=>'Напряжение', 'current'=>'Сила тока']) ?>
 
     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 

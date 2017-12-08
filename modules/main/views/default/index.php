@@ -124,8 +124,8 @@ $this->params['breadcrumbs'][] = $this->title;
                     <div class="widget-box transparent">
                         <div class="widget-header widget-header-flat">
                             <h4 class="widget-title lighter">
-                                <i class="ace-icon fa fa-star orange"></i>
-                                Popular Domains
+                                <i class="ace-icon fa fa-wifi orange"></i>
+                                WiFi контроллеры
                             </h4>
 
                             <div class="widget-toolbar">
@@ -141,87 +141,35 @@ $this->params['breadcrumbs'][] = $this->title;
                                     <thead class="thin-border-bottom">
                                     <tr>
                                         <th>
-                                            <i class="ace-icon fa fa-caret-right blue"></i>name
+                                            <i class="ace-icon fa fa-caret-right blue"></i>Наименование
                                         </th>
 
                                         <th>
-                                            <i class="ace-icon fa fa-caret-right blue"></i>price
+                                            <i class="ace-icon fa fa-caret-right blue"></i>Уровень сигнала
                                         </th>
 
                                         <th class="hidden-480">
-                                            <i class="ace-icon fa fa-caret-right blue"></i>status
+                                            <i class="ace-icon fa fa-caret-right blue"></i>Батарея
+                                        </th>
+                                        <th class="hidden-480">
+                                            <i class="ace-icon fa fa-caret-right blue"></i>Статус
                                         </th>
                                     </tr>
                                     </thead>
 
                                     <tbody>
                                     <tr>
-                                        <td>internet.com</td>
+                                        <td>SONOFF</td>
 
-                                        <td>
-                                            <small>
-                                                <s class="red">$29.99</s>
-                                            </small>
-                                            <b class="green">$19.99</b>
-                                        </td>
+                                        <td><i class="ace-icon fa fa-signal blue"></i></td>
+
+                                        <td><i class="ace-icon fa fa-battery-full blue"></i></td>
 
                                         <td class="hidden-480">
-                                            <span class="label label-info arrowed-right arrowed-in">on sale</span>
+                                            <span class="label label-success arrowed-right arrowed-in">online</span>
                                         </td>
                                     </tr>
 
-                                    <tr>
-                                        <td>online.com</td>
-
-                                        <td>
-                                            <b class="blue">$16.45</b>
-                                        </td>
-
-                                        <td class="hidden-480">
-                                            <span class="label label-success arrowed-in arrowed-in-right">approved</span>
-                                        </td>
-                                    </tr>
-
-                                    <tr>
-                                        <td>newnet.com</td>
-
-                                        <td>
-                                            <b class="blue">$15.00</b>
-                                        </td>
-
-                                        <td class="hidden-480">
-                                            <span class="label label-danger arrowed">pending</span>
-                                        </td>
-                                    </tr>
-
-                                    <tr>
-                                        <td>web.com</td>
-
-                                        <td>
-                                            <small>
-                                                <s class="red">$24.99</s>
-                                            </small>
-                                            <b class="green">$19.95</b>
-                                        </td>
-
-                                        <td class="hidden-480">
-																	<span class="label arrowed">
-																		<s>out of stock</s>
-																	</span>
-                                        </td>
-                                    </tr>
-
-                                    <tr>
-                                        <td>domain.com</td>
-
-                                        <td>
-                                            <b class="blue">$12.00</b>
-                                        </td>
-
-                                        <td class="hidden-480">
-                                            <span class="label label-warning arrowed arrowed-right">SOLD</span>
-                                        </td>
-                                    </tr>
                                     </tbody>
                                 </table>
                             </div><!-- /.widget-main -->

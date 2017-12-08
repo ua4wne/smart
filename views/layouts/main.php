@@ -228,17 +228,17 @@ AppAsset::register($this);
                     <i class="ace-icon fa fa-signal"></i>
                 </button>
 
-                <button class="btn btn-info">
+                <a href="/main/stock/store" class="btn btn-info" title="Остатки на складе">
                     <i class="ace-icon fa fa-pencil"></i>
-                </button>
+                </a>
 
                 <button class="btn btn-warning">
                     <i class="ace-icon fa fa-users"></i>
                 </button>
 
-                <button class="btn btn-danger">
+                <a href="/main/device/index" class="btn btn-danger" title="Устройства">
                     <i class="ace-icon fa fa-cogs"></i>
-                </button>
+                </a>
             </div>
 
             <div class="sidebar-shortcuts-mini" id="sidebar-shortcuts-mini">
@@ -276,7 +276,6 @@ AppAsset::register($this);
                     <li class="">
                         <a href="#" class="dropdown-toggle">
                             <i class="menu-icon fa fa-caret-right"></i>
-
                             Система
                             <b class="arrow fa fa-angle-down"></b>
                         </a>
@@ -296,6 +295,14 @@ AppAsset::register($this);
                                 <a href="/main/config/sms">
                                     <i class="menu-icon fa fa-caret-right"></i>
                                     Отправка смс
+                                </a>
+
+                                <b class="arrow"></b>
+                            </li>
+                            <li class="">
+                                <a href="/main/config/mqtt">
+                                    <i class="menu-icon fa fa-caret-right"></i>
+                                    MQTT
                                 </a>
 
                                 <b class="arrow"></b>
@@ -428,92 +435,6 @@ AppAsset::register($this);
 
                 <b class="arrow"></b>
             </li>
-
-            <li class="">
-                <a href="#" class="dropdown-toggle">
-                    <i class="menu-icon fa fa-tag"></i>
-                    <span class="menu-text"> More Pages </span>
-
-                    <b class="arrow fa fa-angle-down"></b>
-                </a>
-
-                <b class="arrow"></b>
-
-                <ul class="submenu">
-                    <li class="">
-                        <a href="profile.html">
-                            <i class="menu-icon fa fa-caret-right"></i>
-                            User Profile
-                        </a>
-
-                        <b class="arrow"></b>
-                    </li>
-
-                    <li class="">
-                        <a href="inbox.html">
-                            <i class="menu-icon fa fa-caret-right"></i>
-                            Inbox
-                        </a>
-
-                        <b class="arrow"></b>
-                    </li>
-
-                    <li class="">
-                        <a href="pricing.html">
-                            <i class="menu-icon fa fa-caret-right"></i>
-                            Pricing Tables
-                        </a>
-
-                        <b class="arrow"></b>
-                    </li>
-
-                    <li class="">
-                        <a href="invoice.html">
-                            <i class="menu-icon fa fa-caret-right"></i>
-                            Invoice
-                        </a>
-
-                        <b class="arrow"></b>
-                    </li>
-
-                    <li class="">
-                        <a href="timeline.html">
-                            <i class="menu-icon fa fa-caret-right"></i>
-                            Timeline
-                        </a>
-
-                        <b class="arrow"></b>
-                    </li>
-
-                    <li class="">
-                        <a href="search.html">
-                            <i class="menu-icon fa fa-caret-right"></i>
-                            Search Results
-                        </a>
-
-                        <b class="arrow"></b>
-                    </li>
-
-                    <li class="">
-                        <a href="email.html">
-                            <i class="menu-icon fa fa-caret-right"></i>
-                            Email Templates
-                        </a>
-
-                        <b class="arrow"></b>
-                    </li>
-
-                    <li class="">
-                        <a href="login.html">
-                            <i class="menu-icon fa fa-caret-right"></i>
-                            Login &amp; Register
-                        </a>
-
-                        <b class="arrow"></b>
-                    </li>
-                </ul>
-            </li>
-
         </ul><!-- /.nav-list -->
 
         <div class="sidebar-toggle sidebar-collapse" id="sidebar-collapse">
