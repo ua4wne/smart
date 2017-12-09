@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\bootstrap\Modal;
+use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -15,7 +16,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1 class="center">Настройка работы по протоколу MQTT</h1>
     <div class="alert alert-danger">Error</div>
     <div class="alert alert-success">Connected</div>
-    <p>
+
 
     <?php
         Modal::begin([
@@ -26,14 +27,65 @@ $this->params['breadcrumbs'][] = $this->title;
         'class' => 'btn btn-success',
         ],
         //'footer' => 'Mosquitto',
-        ]);
+        ]); ?>
 
-        echo 'Say hello...';
-        Modal::end();
+    <div class="config-form">
+
+        <?php $form = ActiveForm::begin(); ?>
+
+        <?= $form->field($model, 'server')->textInput(['maxlength' => true]) ?>
+
+        <?= $form->field($model, 'port')->textInput(['maxlength' => true]) ?>
+
+        <?= $form->field($model, 'login')->textInput(['maxlength' => true]) ?>
+
+        <?= $form->field($model, 'pass')->passwordInput() ?>
+
+    <div class="form-group">
+        <?= Html::submitButton('Сохранить', ['class' => 'btn btn-success', 'id'=>'set-server', 'name'=>'button', 'value'=>'set-server']) ?>
+    </div>
+
+        <?php ActiveForm::end(); ?>
+
+    </div>
+     <?php   Modal::end();
     ?>
-        <?= Html::Button('Subscribe', ['class' => 'btn btn-primary', 'id'=>'subscribe']) ?>
+
+    <?php
+    Modal::begin([
+        'header' => '<h3>Публикация топика MQTT</h3>',
+        'toggleButton' => [
+            'label' => 'Публикация',
+            'tag' => 'button',
+            'class' => 'btn btn-primary',
+        ],
+        //'footer' => 'Mosquitto',
+    ]); ?>
+
+    <div class="topic-form">
+
+        <?php $form = ActiveForm::begin(); ?>
+
+        <?= $form->field($topic, 'name')->textInput(['maxlength' => true]) ?>
+
+        <?= $form->field($topic, 'payload')->textInput(['maxlength' => true]) ?>
+
+        <?= $form->field($topic, 'route')->dropDownList(['public'=>'Публикация', 'subscribe'=>'Подписка']) ?>
+
+        <?= $form->field($topic, 'option_id')->dropDownList($selopt) ?>
+
+        <div class="form-group">
+            <?= Html::submitButton('Сохранить', ['class' => 'btn btn-success', 'id'=>'set-topic']) ?>
+        </div>
+
+        <?php ActiveForm::end(); ?>
+
+    </div>
+    <?php   Modal::end();
+    ?>
+
         <?= Html::Button('Unsubscribe', ['class' => 'btn btn-inverse', 'id'=>'unsubscribe']) ?>
-    </p>
+
     <div class="hr hr32 hr-dotted"></div>
     <div class="row">
         <div class="col-md-4">

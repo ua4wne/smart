@@ -27,6 +27,7 @@ class Mqtt extends Model
             [['server', 'port', 'login' , 'pass'], 'required'],
             [['port'], 'number', 'max' => 99999],
             [['port'], 'default', 'value' => '1883'],
+            [['pval'], 'string', 'min' => 1, 'max' => 15],
             [['login', 'pass'], 'string', 'min' => 4, 'max' => 15],
             [['ptopic','stopic','untopic'], 'string', 'max' => 250],
             [['server'], 'string', 'min' => 7, 'max' => 32],

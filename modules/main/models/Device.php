@@ -90,6 +90,14 @@ class Device extends BaseModel
     /**
      * @return \yii\db\ActiveQuery
      */
+    public function getOption()
+    {
+        return $this->hasMany(Option::className(), ['id' => 'device_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getTarif()
     {
         return $this->hasOne(Tarif::className(), ['device_id' => 'id']);

@@ -3,7 +3,9 @@
 namespace app\modules\main\controllers;
 
 use app\modules\main\models\Mqtt;
+use app\modules\main\models\Option;
 use app\modules\main\models\Sms;
+use app\modules\main\models\Topic;
 use app\modules\user\models\User;
 use Yii;
 use app\modules\main\models\Config;
@@ -11,7 +13,7 @@ use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
-use yii\filters\AccessControl;
+
 
 /**
  * ConfigController implements the CRUD actions for Config model.
@@ -147,9 +149,30 @@ class ConfigController extends Controller
 
     public function actionMqtt(){
         $model = new Mqtt();
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            if($_POST['button']=='set-server');
+                $this->SaveMqttConfig($model);
+        }
+        //определяем наличие констант для подключения к серверу MQTT
+        $server = Config::findOne(['param'=>'MQTT_SERVER'])->val;
+        $port = Config::findOne(['param'=>'MQTT_PORT'])->val;
+        $login = Config::findOne(['param'=>'MQTT_LOGIN'])->val;
+        $pass = Config::findOne(['param'=>'MQTT_PASSWORD'])->val;
+        $model->server = $server;
+        $model->port = $port;
+        $model->login = $login;
+        $model->pass = $pass;
+        $topic = new Topic();
+        $options = Option::find()->select(['id','device_id', 'name'])->all();
+        $selopt = array();
+        foreach ($options as $option){
+            $selopt[$option->id] = $option->device->name.' ('.$option->name.') - '.$option->device->location->name;
+        }
 
         return $this->render('mqtt', [
             'model' => $model,
+            'topic' => $topic,
+            'selopt' => $selopt,
         ]);
     }
 
@@ -167,5 +190,45 @@ class ConfigController extends Controller
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
+    }
+
+    protected function SaveMqttConfig(Mqtt $model){
+        //определяем наличие записи
+        $s = Config::findOne(['param'=>'MQTT_SERVER']);
+        if(empty($s)){
+            $s = new Config();
+            $s->param = 'MQTT_SERVER';
+        }
+        $s->val = $model->server;
+        $s->descr = 'Сервер MQTT Mosquitto';
+        $s->save();
+        //определяем наличие записи
+        $p = Config::findOne(['param'=>'MQTT_PORT']);
+        if(empty($p)){
+            $p = new Config();
+            $p->param = 'MQTT_PORT';
+        }
+        $p->val = $model->port;
+        $p->descr = 'Порт сервера MQTT Mosquitto';
+        $p->save();
+        //определяем наличие записи
+        $l = Config::findOne(['param'=>'MQTT_LOGIN']);
+        if(empty($l)){
+            $l = new Config();
+            $l->param = 'MQTT_LOGIN';
+        }
+        $l->val = $model->login;
+        $l->descr = 'Логин для сервера MQTT Mosquitto';
+        $l->save();
+        //определяем наличие записи
+        $pw = Config::findOne(['param'=>'MQTT_PASSWORD']);
+        if(empty($pw)){
+            $pw = new Config();
+            $pw->param = 'MQTT_PASSWORD';
+        }
+        $pw->val = $model->pass;
+        $pw->descr = 'Пароль для сервера MQTT Mosquitto';
+        $pw->save();
+        Yii::$app->session->setFlash('success', 'Данные подключения к серверу MQTT сохранены');
     }
 }

@@ -73,4 +73,12 @@ class Option extends BaseModel
     {
         return $this->hasOne(Device::className(), ['id' => 'device_id']);
     }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getTopic()
+    {
+        return $this->hasMany(Topic::className(), ['id' => 'option_id']);
+    }
 }
