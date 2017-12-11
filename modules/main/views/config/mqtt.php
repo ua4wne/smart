@@ -6,6 +6,10 @@ use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
+$this->registerJsFile('/js/mqttws31.js',
+    ['depends' => ['yii\web\JqueryAsset']]);
+$this->registerJsFile('/js/mqtt.js',
+    ['depends' => ['yii\web\JqueryAsset']]);
 
 $this->title = 'MQTT';
 $this->params['breadcrumbs'][] = ['label' => 'Параметры', 'url' => ['index']];
@@ -14,8 +18,8 @@ $this->params['breadcrumbs'][] = $this->title;
 <div class="option-index">
 
     <h1 class="center">Настройка работы по протоколу MQTT</h1>
-    <div class="alert alert-danger">Error</div>
-    <div class="alert alert-success">Connected</div>
+    <div class="alert alert-danger" id="danger_msg">Error</div>
+    <div class="alert alert-success" id="success_msg">Connected</div>
 
 
     <?php
@@ -33,13 +37,13 @@ $this->params['breadcrumbs'][] = $this->title;
 
         <?php $form = ActiveForm::begin(); ?>
 
-        <?= $form->field($model, 'server')->textInput(['maxlength' => true]) ?>
+        <?= $form->field($model, 'server')->textInput(['maxlength' => true,'id'=>'mserver']) ?>
 
-        <?= $form->field($model, 'port')->textInput(['maxlength' => true]) ?>
+        <?= $form->field($model, 'port')->textInput(['maxlength' => true,'id'=>'mport']) ?>
 
-        <?= $form->field($model, 'login')->textInput(['maxlength' => true]) ?>
+        <?= $form->field($model, 'login')->textInput(['maxlength' => true,'id'=>'mlogin']) ?>
 
-        <?= $form->field($model, 'pass')->passwordInput() ?>
+        <?= $form->field($model, 'pass')->passwordInput(['id'=>'mpass']) ?>
 
     <div class="form-group">
         <?= Html::submitButton('Сохранить', ['class' => 'btn btn-success', 'id'=>'set-server', 'name'=>'button', 'value'=>'set-server']) ?>
@@ -66,13 +70,13 @@ $this->params['breadcrumbs'][] = $this->title;
 
         <?php $form = ActiveForm::begin(); ?>
 
-        <?= $form->field($topic, 'name')->textInput(['maxlength' => true]) ?>
+        <?= $form->field($topic, 'name')->textInput(['maxlength' => true,'id'=>'name']) ?>
 
-        <?= $form->field($topic, 'payload')->textInput(['maxlength' => true]) ?>
+        <?= $form->field($topic, 'payload')->textInput(['maxlength' => true,'id'=>'payload']) ?>
 
-        <?= $form->field($topic, 'route')->dropDownList(['public'=>'Публикация', 'subscribe'=>'Подписка']) ?>
+        <?= $form->field($topic, 'route')->dropDownList(['public'=>'Публикация', 'subscribe'=>'Подписка'],['id'=>'route']) ?>
 
-        <?= $form->field($topic, 'option_id')->dropDownList($selopt) ?>
+        <?= $form->field($topic, 'option_id')->dropDownList($selopt,['id'=>'option_id']) ?>
 
         <div class="form-group">
             <?= Html::submitButton('Сохранить', ['class' => 'btn btn-success', 'id'=>'set-topic']) ?>
