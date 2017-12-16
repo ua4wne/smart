@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use yii\bootstrap\Modal;
 use yii\widgets\ActiveForm;
+use yii\widgets\Pjax;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -65,10 +66,8 @@ $this->params['breadcrumbs'][] = $this->title;
         ],
         //'footer' => 'Mosquitto',
     ]); ?>
-
     <div class="topic-form">
-
-        <?php $form = ActiveForm::begin(); ?>
+        <?php $form = ActiveForm::begin(['action' =>['/main/config/save-topic'], 'id' => 'form-topic', 'method' => 'post']); ?>
 
         <?= $form->field($topic, 'name')->textInput(['maxlength' => true,'id'=>'name']) ?>
 
@@ -83,12 +82,9 @@ $this->params['breadcrumbs'][] = $this->title;
         </div>
 
         <?php ActiveForm::end(); ?>
-
     </div>
-    <?php   Modal::end();
+    <?php  Modal::end();
     ?>
-
-        <?= Html::Button('Unsubscribe', ['class' => 'btn btn-inverse', 'id'=>'unsubscribe']) ?>
 
     <div class="hr hr32 hr-dotted"></div>
     <div class="row">

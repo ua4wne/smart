@@ -169,11 +169,53 @@ class ConfigController extends Controller
             $selopt[$option->id] = $option->device->name.' ('.$option->name.') - '.$option->device->location->name;
         }
 
+        //выбираем сохраненные publish-топики
+        $pubs = Topic::find()->select(['id','name'])->where(['route'=>'public'])->all();
+        $public = '';
+        foreach ($pubs as $pub){
+            $public .= '<li class="pub" id="' . $pub->id . '"><pre>' . $pub->name . '<i class="fa fa-trash pubs pull-right" aria-hidden="true"></i></pre></li>';
+        }
+
+        //выбираем сохраненные subscribe-топики
+        $subs = Topic::find()->select(['id','name'])->where(['route'=>'subscribe'])->all();
+        $subscribe = '';
+        foreach ($subs as $sub){
+            $subscribe .= '<li class="sub" id="' . $sub->id . '"><pre>' . $sub->name . '<i class="fa fa-trash subs pull-right" aria-hidden="true"></i></pre></li>';
+        }
+
         return $this->render('mqtt', [
             'model' => $model,
             'topic' => $topic,
             'selopt' => $selopt,
+            'public' => $public,
+            'subscribe' => $subscribe,
         ]);
+    }
+
+    public function actionSaveTopic(){
+        if(\Yii::$app->request->isAjax){
+            $model = new Topic();
+            if ($model->load(Yii::$app->request->post()) && $model->validate()){
+                $dbl = Topic::findOne(['name'=>$model->name,'route'=>$model->route]);
+                if(empty($dbl)){
+                    $model->save();
+                    return 'OK';
+                }
+                else{
+                    return 'DBL';
+                }
+            }
+        }
+    }
+
+    public function actionDelTopic(){
+        if(\Yii::$app->request->isAjax){
+            $id=$_POST['id'];
+            if (($model = Topic::findOne($id)) !== null){
+                $model->delete();
+                return 'OK';
+            }
+        }
     }
 
     /**

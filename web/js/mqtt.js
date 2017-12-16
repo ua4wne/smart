@@ -111,19 +111,9 @@ $(document).ready(function(){
         route='NO';
     };
 
-    $("#set-topic").click(function(e) {
+    $("#set-topic").on("click", function(e) {
         e.preventDefault();
-        if(!$('#name').val()){
-            if($('#route').val()=='public')
-                alert("Не указан топик для публикации!");
-            else
-                alert("Не указан топик для подписки!");
-            $('#name').focus();
-        }
-        else if(!$('#payload').val() && $('#route').val()=='public'){
-            alert("Не указано значение топика для публикации!");
-            $('#payload').focus();
-        }
+        var option_id = $('#option_id');
         if($('#route').val()=='public'){
             var ptopic = $('#name').val();
             var pval = $('#payload').val();
@@ -137,156 +127,106 @@ $(document).ready(function(){
             if(count)
                 $(idx).remove();
             $('#publ').prepend('<li class="pub"><pre>' + ptopic + '</pre></li>');
-            $('#payload').val('');
+            var fData = $("form[id='form-topic']").serialize();
+            $.ajax({
+                type: "POST",
+                data: fData,
+                url: "/main/config/save-topic",
+                // success - это обработчик удачного выполнения событий
+                success: function(res) {
+                    alert("Сервер вернул вот что: " + res);
+                    if(res=="OK")
+                        alert('Данные топика сохранены!');
+                    if(res=="DBL")
+                        alert('Топик ' + ptopic + ' уже был сохранен ранее!');
+                },
+                error: function (err) {
+                    alert(err);
+                }
+            });
         }
         if($('#route').val()=='subscribe'){
             var stopic = $('#name').val();
-            var payload = '';
-            mqtt.subscribe(stopic);
+            var payload = 0;
             route='subscribe';
+            mqtt.subscribe(stopic);
             var idx = "li.sub:contains(" + stopic + ")";
             var count = $(idx).size();
             if(count)
                 $(idx).remove();
             $('#subs').prepend('<li class="sub"><pre>' + stopic + '</pre></li>');
-            /*$.ajax({
+            var fData = $("form[id='form-topic']").serialize();
+            $.ajax({
                 type: "POST",
-                data: {topic:stopic,payload:payload,route:route},
-                url: "/ajax?type=mqttmsg",
+                data: fData, //{name:stopic,payload:pval,route:route,option_id:option_id},
+                url: "/main/config/save-topic",
                 // success - это обработчик удачного выполнения событий
-                success: function(resp) {
-                    //alert("Сервер вернул вот что: " + resp);
-                    if(resp=="ERR")
-                        alert('Ошибка записи в БД!');
+                success: function(res) {
+                    //alert("Сервер вернул вот что: " + res);
+                    if(res=="OK")
+                        alert('Данные топика сохранены!');
+                    if(res=="DBL")
+                        alert('Топик ' + stopic + ' уже был сохранен ранее!');
+                },
+                error: function (err) {
+                    alert(err);
                 }
-            });*/
+            });
             $('#name').val('');
             route='NO';
         }
-
-    });
-
-
-    $("#subscrbtn").click(function(e) {
-        e.preventDefault();
-        if(!$('#stopic').val()){
-            alert("Не указан топик для подписки!");
-            $('#stopic').focus();
-        }
-        else {
-            var stopic = $('#stopic').val();
-            var payload = '';
-            mqtt.subscribe(stopic);
-            route='subscribe';
-            var idx = "li.sub:contains(" + stopic + ")";
-            var count = $(idx).size();
-            if(count)
-                $(idx).remove();
-            $('#subs').prepend('<li class="sub"><pre>' + stopic + '</pre></li>');
-            $.ajax({
-                type: "POST",
-                data: {topic:stopic,payload:payload,route:route},
-                url: "/ajax?type=mqttmsg",
-                // success - это обработчик удачного выполнения событий
-                success: function(resp) {
-                    //alert("Сервер вернул вот что: " + resp);
-                    if(resp=="ERR")
-                        alert('Ошибка записи в БД!');
-                }
-            });
-            $('#stopic').val('');
-            route='NO';
-        }
-    });
-
-    $("#unsbtn").click(function(e) {
-        e.preventDefault();
-        if(!$('#untopic').val()){
-            alert("Не указан топик для прекращения подписки!");
-            $('#untopic').focus();
-        }
-        else {
-            var utopic = $('#untopic').val();
-            var tip = 'subscribe';
-            Unsubscribe(utopic,tip);
-            $.ajax({
-                type: "POST",
-                data: {topic:utopic,route:'subscribe'},
-                url: "/ajax?type=deltopic",
-                // success - это обработчик удачного выполнения событий
-                success: function(resp) {
-                    //alert("Сервер вернул вот что: " + resp);
-                    if(resp=="ERR")
-                        alert('Ошибка удаления записи из БД!');
-                }
-            });
-            route='NO';
-        }
-    });
-
-    $("#unpub").click(function(e) {
-        e.preventDefault();
-        if(!$('#ptopic').val()){
-            alert("Не указан топик для прекращения подписки!");
-            $('#ptopic').focus();
-        }
-        else {
-            var utopic = $('#ptopic').val();
-            var tip = 'public';
-            Unsubscribe(utopic,tip);
-            $.ajax({
-                type: "POST",
-                data: {topic:utopic,route:'public'},
-                url: "/ajax?type=deltopic",
-                // success - это обработчик удачного выполнения событий
-                success: function(resp) {
-                    //alert("Сервер вернул вот что: " + resp);
-                    if(resp=="ERR")
-                        alert('Ошибка удаления записи из БД!');
-                }
-            });
-            route='NO';
-        }
+        $('#payload').val('');
     });
 
     $(document).on ({
         click: function() {
-            var uid=$(this).text();
-            $('#ptopic').val(uid);
+            var utopic=$(this).parent().text();
+            var id=$(this).parent().parent().attr('id');
+            mqtt.unsubscribe(utopic);
+            $.ajax({
+                type: "POST",
+                data: {id:id},
+                url: "/main/config/del-topic",
+                // success - это обработчик удачного выполнения событий
+                success: function(resp) {
+                    //alert("Сервер вернул вот что: " + resp);
+                    if(resp=='OK'){
+                        var idx = ".pub:contains(" + utopic + ")";
+                        var count = $(idx).size();
+                        if(count)
+                            $(idx).remove();
+                        alert('Топик '+ utopic +' был снят с публикации и удален из системы!');
+                    }
+
+                }
+            });
+            route='NO';
         }
-    }, ".pub" );
+    }, ".pubs" );
 
     $(document).on ({
         click: function() {
-            var uid=$(this).text();
-            $('#untopic').val(uid);
-        }
-    }, ".sub" );
+            var stopic=$(this).parent().text();
+            var id=$(this).parent().parent().attr('id');
+            mqtt.unsubscribe(stopic);
+            $.ajax({
+                type: "POST",
+                data: {id:id},
+                url: "/main/config/del-topic",
+                // success - это обработчик удачного выполнения событий
+                success: function(resp) {
+                    //alert("Сервер вернул вот что: " + resp);
+                    if(resp=='OK'){
+                        var idx = ".sub:contains(" + stopic + ")";
+                        var count = $(idx).size();
+                        if(count)
+                            $(idx).remove();
+                        alert('Топик '+ stopic +' был снят с подписки и удален из системы!');
+                    }
 
-    //функция отписки от топика
-    function Unsubscribe(utopic,tip) {
-        mqtt.unsubscribe(utopic);
-    //    if(utopic=='#') {
-    //        $('li.lws').remove();
-    //        $('li.pub').remove();
-    //        $('li.sub').remove();
-    //       $('#ptopic').val('');
-    //        $('#pval').val('');
-    //    }
-    //    else {
-        if(tip=='public') {
-            $('#ptopic').val('');
-            $('#pval').val('');
-            var idx = ".pub:contains(" + utopic + ")";
+                }
+            });
+            route='NO';
         }
-        else {
-            $('#untopic').val('');
-            var idx = ".sub:contains(" + utopic + ")";
-        }
-            var count = $(idx).size();
-            if(count)
-                $(idx).remove();
-    //    }
-    }
-
+    }, ".subs" );
 });
