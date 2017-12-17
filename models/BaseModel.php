@@ -24,7 +24,7 @@ class BaseModel extends ActiveRecord
     {
         $modelName = $this->tableName();
         parent::afterSave($insert, $changedAttributes);
-        if($modelName != 'options' && $modelName != 'eventlog'){
+        if($modelName != 'options' && $modelName != 'eventlog' && $modelName != 'topic'){
             if ($insert) {
                 Yii::$app->session->setFlash('success', 'Запись добавлена!');
             } else {
@@ -35,7 +35,10 @@ class BaseModel extends ActiveRecord
 
     public function afterDelete()
     {
+        $modelName = $this->tableName();
         parent::afterDelete();
-        Yii::$app->session->setFlash('success', 'Запись c ID='. $this->id .' была удалена!');
+        if($modelName != 'options' && $modelName != 'eventlog' && $modelName != 'topic'){
+            Yii::$app->session->setFlash('success', 'Запись c ID='. $this->id .' была удалена!');
+        }
     }
 }

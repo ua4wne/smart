@@ -1,10 +1,13 @@
 <?php
 
 use yii\helpers\Html;
+use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 $this->registerJsFile('/js/justgage.js',
+    ['depends' => ['yii\web\JqueryAsset']]);
+$this->registerJsFile('/js/mqttws31.js',
     ['depends' => ['yii\web\JqueryAsset']]);
 
 $this->title = 'Панель управления';
@@ -120,7 +123,30 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="hr hr32 hr-dotted"></div>
 
             <div class="row">
-                <div class="col-sm-5">
+                <div class="col-sm-6">
+                    <div class="widget-box transparent">
+                        <div class="widget-header widget-header-flat">
+                            <h4 class="widget-title lighter">
+                                <i class="ace-icon fa fa-bar-chart"></i>
+                                Графики
+                            </h4>
+
+                            <div class="widget-toolbar">
+                                <a href="#" data-action="collapse">
+                                    <i class="ace-icon fa fa-chevron-up"></i>
+                                </a>
+                            </div>
+                        </div>
+
+                        <div class="widget-body">
+                            <div class="widget-main padding-4">
+                                <div id="sales-charts"></div>
+                            </div><!-- /.widget-main -->
+                        </div><!-- /.widget-body -->
+                    </div><!-- /.widget-box -->
+                </div><!-- /.col -->
+
+                <div class="col-sm-6">
                     <div class="widget-box transparent">
                         <div class="widget-header widget-header-flat">
                             <h4 class="widget-title lighter">
@@ -176,29 +202,6 @@ $this->params['breadcrumbs'][] = $this->title;
                         </div><!-- /.widget-body -->
                     </div><!-- /.widget-box -->
                 </div><!-- /.col -->
-
-                <div class="col-sm-7">
-                    <div class="widget-box transparent">
-                        <div class="widget-header widget-header-flat">
-                            <h4 class="widget-title lighter">
-                                <i class="ace-icon fa fa-signal"></i>
-                                Sale Stats
-                            </h4>
-
-                            <div class="widget-toolbar">
-                                <a href="#" data-action="collapse">
-                                    <i class="ace-icon fa fa-chevron-up"></i>
-                                </a>
-                            </div>
-                        </div>
-
-                        <div class="widget-body">
-                            <div class="widget-main padding-4">
-                                <div id="sales-charts"></div>
-                            </div><!-- /.widget-main -->
-                        </div><!-- /.widget-body -->
-                    </div><!-- /.widget-box -->
-                </div><!-- /.col -->
             </div><!-- /.row -->
 
             <div class="hr hr32 hr-dotted"></div>
@@ -211,7 +214,70 @@ $this->params['breadcrumbs'][] = $this->title;
     </div><!-- /.row -->
 <?php
 $js = <<<JS
- $(document).ready(function(){
+     var mqtt;
+     var reconnectTimeout = 2000;
+     var username;
+     var password;
+     var host;
+     var port;
+     var topic = '#';
+     var clid = "web_" + parseInt(Math.random() * 100, 10);
+     var useTLS = false;
+     
+     function MQTTconnect() {
+        mqtt = new Paho.MQTT.Client(host,Number(port),clid);
+        options = {
+            timeout: 3,
+            useSSL: useTLS,
+            cleanSession: true,
+            onSuccess: onConnect,
+            onFailure: function (message) {
+                alert(message.errorMessage);
+                setTimeout(MQTTconnect, reconnectTimeout);
+            }
+        };
+
+        mqtt.onConnectionLost = onConnectionLost;
+        mqtt.onMessageArrived = onMessageArrived;
+
+        if (username != null) {
+            options.userName = username;
+            options.password = password;
+        }
+        mqtt.connect(options);
+    }
+    
+    function onConnect() {
+        // Connection succeeded; subscribe to our topic
+        mqtt.subscribe(topic, {qos: 0});
+    }
+    
+    function onConnectionLost(responseObject) {
+        setTimeout(MQTTconnect, reconnectTimeout);
+        alert(responseObject.errorMessage);
+    };
+     
+     function onMessageArrived(message) {
+        var topic = message.destinationName;
+        var payload = message.payloadString;
+        var route = 'NO';
+        
+        $.date = function(){
+            return new Date().toLocaleString();
+        };
+                
+        $.ajax({
+            type: "POST",
+            data: {topic:topic,payload:payload,route:route},
+            url: "/main/config/mqttmsg",
+            // success - это обработчик удачного выполнения событий
+            success: function(resp) {
+                //alert('topic is resieved');
+            }
+        });
+        //route='NO';
+    };
+     
      $.ajax({
      url: '/main/default/forecast',
      type: 'POST',
@@ -268,8 +334,53 @@ $js = <<<JS
         title: "Влажность",
         label: "%"
       });
- });
-
+     
+     $.ajax({
+        type: "POST",
+        data: {param:'conf'},
+        url: "/main/config/mqttconf",
+        // success - это обработчик удачного выполнения событий
+        success: function(res) {
+            //alert("Сервер вернул вот что: " + res);
+            if (res && res.length > 0) {
+                var obj = jQuery.parseJSON(res);
+                username = obj.login;
+                password = obj.pass;
+                host = obj.server;
+                port = obj.port;
+            }
+            if (username != null && password != null && host != null && port != null){
+                MQTTconnect();
+                //alert('Connected to ' + host + ':' + port);
+            }
+        },
+        error: function () {
+            alert('Error');
+        }
+    });
+     
+     $(document).on ({
+        click: function() {
+            var stat = $(this).prop('checked');
+            var ptopic = $(this).prev().attr('name');
+            if(stat){            
+                var pval = '1';
+            }
+            else{
+                var pval = '0';
+            } 
+            var message = new Paho.MQTT.Message(pval);
+            message.destinationName = ptopic;
+            message.qos = 0;
+            route='public';
+            mqtt.send(message);
+        }
+    }, ".ace-switch" );
+     
+     /*setInterval(function() {
+        //$(".tabbable").load("/main/default/update-vars");
+        //alert('timer');
+    }, 5000);*/
 JS;
 
 $this->registerJs($js);

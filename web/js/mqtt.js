@@ -100,12 +100,9 @@ $(document).ready(function(){
         $.ajax({
             type: "POST",
             data: {topic:topic,payload:payload,route:route},
-            url: "/ajax?type=mqttmsg",
+            url: "/main/config/mqttmsg",
             // success - это обработчик удачного выполнения событий
             success: function(resp) {
-                //alert("Сервер вернул вот что: " + resp);
-                if(resp=="ERR")
-                    alert('Ошибка записи в БД!');
             }
         });
         route='NO';
@@ -122,11 +119,6 @@ $(document).ready(function(){
             message.qos = 0;
             route='public';
             mqtt.send(message);
-            var idx = "li.pub:contains(" + ptopic + ")";
-            var count = $(idx).size();
-            if(count)
-                $(idx).remove();
-            $('#publ').prepend('<li class="pub"><pre>' + ptopic + '</pre></li>');
             var fData = $("form[id='form-topic']").serialize();
             $.ajax({
                 type: "POST",
@@ -134,11 +126,16 @@ $(document).ready(function(){
                 url: "/main/config/save-topic",
                 // success - это обработчик удачного выполнения событий
                 success: function(res) {
-                    alert("Сервер вернул вот что: " + res);
-                    if(res=="OK")
-                        alert('Данные топика сохранены!');
+                    //alert("Сервер вернул вот что: " + res);
                     if(res=="DBL")
                         alert('Топик ' + ptopic + ' уже был сохранен ранее!');
+                    else{
+                        var idx = "li.pub:contains(" + ptopic + ")";
+                        var count = $(idx).size();
+                        if(count)
+                            $(idx).remove();
+                        $('#publ').append('<li class="pub" id="' + res + '"><pre>' + ptopic + '<i class="fa fa-trash subs pull-right" aria-hidden="true"></i></pre></li>');
+                    }
                 },
                 error: function (err) {
                     alert(err);
@@ -150,11 +147,6 @@ $(document).ready(function(){
             var payload = 0;
             route='subscribe';
             mqtt.subscribe(stopic);
-            var idx = "li.sub:contains(" + stopic + ")";
-            var count = $(idx).size();
-            if(count)
-                $(idx).remove();
-            $('#subs').prepend('<li class="sub"><pre>' + stopic + '</pre></li>');
             var fData = $("form[id='form-topic']").serialize();
             $.ajax({
                 type: "POST",
@@ -163,10 +155,15 @@ $(document).ready(function(){
                 // success - это обработчик удачного выполнения событий
                 success: function(res) {
                     //alert("Сервер вернул вот что: " + res);
-                    if(res=="OK")
-                        alert('Данные топика сохранены!');
                     if(res=="DBL")
                         alert('Топик ' + stopic + ' уже был сохранен ранее!');
+                    else{
+                        var idx = "li.sub:contains(" + stopic + ")";
+                        var count = $(idx).size();
+                        if(count)
+                            $(idx).remove();
+                        $('#subs').append('<li class="sub" id="' + res + '"><pre>' + stopic + '<i class="fa fa-trash subs pull-right" aria-hidden="true"></i></pre></li>');
+                    }
                 },
                 error: function (err) {
                     alert(err);

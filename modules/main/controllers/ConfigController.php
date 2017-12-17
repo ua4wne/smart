@@ -2,6 +2,7 @@
 
 namespace app\modules\main\controllers;
 
+use app\modules\main\models\JsonAjax;
 use app\modules\main\models\Mqtt;
 use app\modules\main\models\Option;
 use app\modules\main\models\Sms;
@@ -147,6 +148,7 @@ class ConfigController extends Controller
         ]);
     }
 
+    //работа с MQTT в конфигураторе
     public function actionMqtt(){
         $model = new Mqtt();
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
@@ -192,14 +194,15 @@ class ConfigController extends Controller
         ]);
     }
 
+    //обработчик сохранения топика в базу
     public function actionSaveTopic(){
         if(\Yii::$app->request->isAjax){
             $model = new Topic();
             if ($model->load(Yii::$app->request->post()) && $model->validate()){
                 $dbl = Topic::findOne(['name'=>$model->name,'route'=>$model->route]);
                 if(empty($dbl)){
-                    $model->save();
-                    return 'OK';
+                    if($model->save())
+                        return $model->id;
                 }
                 else{
                     return 'DBL';
@@ -208,6 +211,7 @@ class ConfigController extends Controller
         }
     }
 
+    //обработчик удаления топика из базы
     public function actionDelTopic(){
         if(\Yii::$app->request->isAjax){
             $id=$_POST['id'];
@@ -215,6 +219,41 @@ class ConfigController extends Controller
                 $model->delete();
                 return 'OK';
             }
+        }
+    }
+
+    //обработчик сообщений топиков
+    public function actionMqttmsg(){
+        if(\Yii::$app->request->isAjax){
+            $name = $_POST['topic'];
+            $topic = Topic::findOne(['name'=>$name]);
+                if(!empty($topic)){
+                    //есть такой топик, обновляем связанный параметр
+                    $topic->payload = $_POST['payload'];
+                    $topic->save();
+                    $option = Option::findOne($topic->option_id);
+                    if(!empty($option)){
+                        $option->val = $topic->payload;
+                        $option->save();
+                    }
+                    return 'OK';
+                }
+                else{
+                    return 'NO';
+                }
+        }
+    }
+
+    //получение данных конфигурации MQTT
+    public function actionMqttconf(){
+        if(\Yii::$app->request->isAjax){
+            //определяем наличие констант для подключения к серверу MQTT
+            $server = Config::findOne(['param'=>'MQTT_SERVER'])->val;
+            $port = Config::findOne(['param'=>'MQTT_PORT'])->val;
+            $login = Config::findOne(['param'=>'MQTT_LOGIN'])->val;
+            $pass = Config::findOne(['param'=>'MQTT_PASSWORD'])->val;
+            $resp = ['server'=>$server, 'port'=>$port, 'login'=>$login, 'pass'=>$pass];
+            return json_encode($resp,JSON_UNESCAPED_UNICODE);
         }
     }
 

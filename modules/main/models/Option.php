@@ -79,6 +79,14 @@ class Option extends BaseModel
      */
     public function getTopic()
     {
-        return $this->hasMany(Topic::className(), ['id' => 'option_id']);
+        return $this->hasOne(Topic::className(), ['option_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getLogger()
+    {
+        return $this->hasMany(Option::className(), ['id' => 'option_id']);
     }
 }

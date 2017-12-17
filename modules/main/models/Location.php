@@ -103,8 +103,13 @@ class Location extends BaseModel
                 $gaude = '';
                 foreach ($params as $param){
                     if($param->alias == 'state'){
+                        $topic=$param->topic->name;
+                        $check='';
+                        if($param->val)
+                            $check='checked="checked"';
                         $switch .= '<label>
-                                        <input name="switch-'.$param->id.'" id = "switch-'.$param->id.'" class="ace ace-switch ace-switch-7" type="checkbox" />
+                                        <input type="hidden" name="'.$topic.'">
+                                        <input type="checkbox" name="switch-'.$param->id.'" id = "'.$param->id.'" class="ace ace-switch ace-switch-7" '.$check.' >
                                         <span class="lbl">&nbsp;'.$param->name.'</span>
                                     </label>';
                     }

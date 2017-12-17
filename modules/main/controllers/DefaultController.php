@@ -51,6 +51,11 @@ class DefaultController extends Controller
         }
     }
 
+    public function actionUpdateVars(){
+        $tabs = Location::GetTabs();
+        return $tabs;
+    }
+
     public function actionEvents(){
         if(Yii::$app->user->can('admin')) {
             $query = Events::find()->where(['=', 'is_read', 0]);
