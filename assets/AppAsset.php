@@ -33,7 +33,7 @@ class AppAsset extends AssetBundle
         'css/custom.css',
     ];
     public $js = [
-        'js/jquery-ui.custom.min.js',
+        'js/jquery-ui.min.js',
         'js/jquery.ui.touch-punch.min.js',
         'js/moment.min.js',
         'js/fullcalendar.min.js',

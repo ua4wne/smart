@@ -10,6 +10,7 @@ use yii\data\ActiveDataProvider;
 use \yii\web\HttpException;
 use app\modules\user\models\User;
 use app\modules\main\models\Location;
+use yii\data\SqlDataProvider;
 
 /**
  * Default controller for the `main` module
@@ -35,9 +36,18 @@ class DefaultController extends Controller
             $content = Weather::GetContent($data);
         }
         $tabs = Location::GetTabs();
+        $year='2017';
+        $dataProvider = new SqlDataProvider([
+            'sql' =>  'select l.name as name, lo.val as val, lo.created_at as dat from logger lo
+                        join options o on o.id = lo.option_id
+                        join device d on d.id = o.device_id
+                        join location l on l.id = d.location_id
+                        where o.alias=\'celsio\' and lo.created_at between \'2017-12-17\' and \'2017-12-19\'',
+        ]);
         return $this->render('index',[
             'content' => $content,
             'tabs' => $tabs,
+            'dataProvider' => $dataProvider
         ]);
         /*else{
             throw new HttpException(404 ,'Доступ запрещен');
