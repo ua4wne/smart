@@ -14,10 +14,13 @@ use app\models\BaseModel;
  * @property double $val
  * @property string $action
  * @property string $text
+ * @property string $runtime
+ * @property integer $step
+ * @property integer $expire
  * @property string $created_at
  * @property string $updated_at
  *
- * @property Option $option
+ * @property Options $option
  */
 class Rule extends BaseModel
 {
@@ -35,11 +38,11 @@ class Rule extends BaseModel
     public function rules()
     {
         return [
-            [['option_id', 'condition', 'val', 'action', 'text'], 'required'],
-            [['option_id'], 'integer'],
+            [['option_id', 'condition', 'val', 'action', 'text', 'step', 'expire'], 'required'],
+            [['option_id', 'step', 'expire'], 'integer'],
             [['val'], 'number'],
             [['text'], 'string'],
-            [['created_at', 'updated_at'], 'safe'],
+            [['runtime', 'created_at', 'updated_at'], 'safe'],
             [['condition', 'action'], 'string', 'max' => 5],
             [['option_id'], 'exist', 'skipOnError' => true, 'targetClass' => Option::className(), 'targetAttribute' => ['option_id' => 'id']],
         ];
@@ -52,14 +55,16 @@ class Rule extends BaseModel
     {
         return [
             'id' => 'ID',
-            'option_id' => 'Контролируемый параметр',
-            'condition' => 'Условие на значение параметра',
+            'option_id' => 'Параметр',
+            'condition' => 'Условие на значение',
             'val' => 'Значение параметра',
             'action' => 'Действие',
             'text' => 'Текст сообщения или команда',
+            'runtime' => 'Время запуска',
+            'step' => 'Период запуска, сек.',
+            'expire' => 'Остановлено',
             'created_at' => 'Дата создания',
-            'updated_at' => 'Дата обновления
-            ',
+            'updated_at' => 'Дата обновления',
         ];
     }
 

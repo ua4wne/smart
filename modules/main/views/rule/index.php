@@ -23,8 +23,7 @@ $this->params['breadcrumbs'][] = 'Правила';
             ['class' => 'yii\grid\SerialColumn'],
 
             //'id',
-            'option_id',
-            //'name',
+            //'option_id',
             /*[
                 'attribute' => 'name',
                 'format' => 'raw',

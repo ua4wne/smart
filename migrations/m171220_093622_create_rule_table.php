@@ -23,6 +23,9 @@ class m171220_093622_create_rule_table extends Migration
             'val' => $this->float(5,2)->notNull(),
             'action' => $this->string(5)->notNull(),
             'text' => $this->text()->notNull(),
+            'runtime' => $this->dateTime(),
+            'step' => $this->integer()->notNull()->defaultValue(0),
+            'expire' => $this->smallInteger()->notNull()->defaultValue(1),
             'created_at' => $this->dateTime()->notNull(),
             'updated_at' => $this->dateTime()->notNull(),
         ], $tableOptions);

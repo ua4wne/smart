@@ -4,6 +4,7 @@ namespace app\modules\main\controllers;
 
 use app\modules\main\models\Device;
 use app\modules\main\models\Option;
+use app\modules\main\models\Rule;
 
 class ControlController extends \yii\web\Controller
 {
@@ -32,11 +33,19 @@ class ControlController extends \yii\web\Controller
                     $option = Option::findOne(['device_id'=>$device->id,'alias'=>$key]);
                     $option->val = $value;
                     $option->save();
+                    //выполняем связанные правила
+                    $this->CheckRules($option);
                 }
             }
         }
         return true;
         //return $this->render('index');
+    }
+
+    private function CheckRules(Option $model){
+        //ищем связанные не запущенные правила
+        $rules = Rule::find()->where(['option_id'=>$model->option_id, 'expire'=>0])->all();
+
     }
 
 }
