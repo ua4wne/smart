@@ -7,15 +7,15 @@ use yii\grid\GridView;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = $model->name;
-$this->params['breadcrumbs'][] = ['label' => 'Оборудование', 'url' => ['device/index']];
-$this->params['breadcrumbs'][] = 'Параметры';
+$this->params['breadcrumbs'][] = ['label' => 'Параметры', 'url' => ['option/index']];
+$this->params['breadcrumbs'][] = 'Правила';
 ?>
 <div class="option-index">
 
     <h1 class="center"><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('Новый параметр', ['create', 'id' => $model->id], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Новое правило', ['create', 'id' => $model->id], ['class' => 'btn btn-success']) ?>
     </p>
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
@@ -23,24 +23,21 @@ $this->params['breadcrumbs'][] = 'Параметры';
             ['class' => 'yii\grid\SerialColumn'],
 
             //'id',
-            //'device_id',
+            'option_id',
             //'name',
-            [
+            /*[
                 'attribute' => 'name',
                 'format' => 'raw',
                 'value' => function ($model, $key, $index, $column) {
-                    /** @var User $model */
                     return Html::a(Html::encode($model->name), ['/main/rule/index', 'id' => $model->id]);
                 }
-            ],
-            'alias',
+            ],*/
+            'condition',
             'val',
-            'min_val',
-            'max_val',
-            'unit',
-            'to_log',
+            'action',
+            'text',
             //'created_at',
-            'updated_at',
+            //'updated_at',
 
             ['class' => 'yii\grid\ActionColumn'],
         ],

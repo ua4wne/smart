@@ -3,9 +3,9 @@
 use yii\db\Migration;
 
 /**
- * Handles the creation of table `location`.
+ * Handles the creation of table `rule`.
  */
-class m171106_125027_create_location_table extends Migration
+class m171220_093622_create_rule_table extends Migration
 {
     /**
      * @inheritdoc
@@ -16,11 +16,13 @@ class m171106_125027_create_location_table extends Migration
             $tableOptions = 'CHARACTER SET utf8 COLLATE utf8_unicode_ci ENGINE=InnoDB';
         }
 
-        $this->createTable('location', [
+        $this->createTable('rule', [
             'id' => $this->primaryKey(),
-            'name' => $this->string(50)->notNull(),
-            'alias' => $this->string(50)->notNull(),
-            'is_show' => $this->smallInteger()->notNull()->defaultValue(0),
+            'option_id' => $this->integer()->notNull(),
+            'condition' => $this->string(5)->notNull(),
+            'val' => $this->float(5,2)->notNull(),
+            'action' => $this->string(5)->notNull(),
+            'text' => $this->text()->notNull(),
             'created_at' => $this->dateTime()->notNull(),
             'updated_at' => $this->dateTime()->notNull(),
         ], $tableOptions);
@@ -31,6 +33,6 @@ class m171106_125027_create_location_table extends Migration
      */
     public function down()
     {
-        $this->dropTable('location');
+        $this->dropTable('rule');
     }
 }

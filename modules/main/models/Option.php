@@ -87,6 +87,14 @@ class Option extends BaseModel
      */
     public function getLogger()
     {
-        return $this->hasMany(Option::className(), ['id' => 'option_id']);
+        return $this->hasMany(Logger::className(), ['option_id' => 'id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getRule()
+    {
+        return $this->hasMany(Rule::className(), ['option_id' => 'id']);
     }
 }
