@@ -28,7 +28,8 @@ class BaseModel extends ActiveRecord
             if ($insert) {
                 Yii::$app->session->setFlash('success', 'Запись добавлена!');
             } else {
-                Yii::$app->session->setFlash('success', 'Запись обновлена!');
+                if($modelName != 'rule')
+                    Yii::$app->session->setFlash('success', 'Запись обновлена!');
             }
         }
     }

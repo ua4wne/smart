@@ -40,8 +40,6 @@ use kartik\datetime\DateTimePicker;
 
     <?= $form->field($model, 'step')->textInput(['value' => 0]) ?>
 
-    <?= $form->field($model, 'expire')->dropDownList(['0'=>'Остановлено','1'=>'Запуск']) ?>
-
 
     <div class="form-group">
         <?= Html::submitButton($model->isNewRecord ? 'Сохранить' : 'Обновить', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>

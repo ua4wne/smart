@@ -38,8 +38,8 @@ class Rule extends BaseModel
     public function rules()
     {
         return [
-            [['option_id', 'condition', 'val', 'action', 'text', 'step', 'expire'], 'required'],
-            [['option_id', 'step', 'expire'], 'integer'],
+            [['option_id', 'condition', 'val', 'action', 'text', 'step'], 'required'],
+            [['option_id', 'step'], 'integer'],
             [['val'], 'number'],
             [['text'], 'string'],
             [['runtime', 'created_at', 'updated_at'], 'safe'],
@@ -62,7 +62,6 @@ class Rule extends BaseModel
             'text' => 'Текст сообщения или команда',
             'runtime' => 'Время запуска',
             'step' => 'Период запуска, сек.',
-            'expire' => 'Остановлено',
             'created_at' => 'Дата создания',
             'updated_at' => 'Дата обновления',
         ];

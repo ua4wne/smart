@@ -39,7 +39,7 @@ $this->params['breadcrumbs'][] = $this->title;
             'text',
             'runtime',
             'step',
-            'expire',
+            //'expire',
             'created_at',
             'updated_at',
         ],
