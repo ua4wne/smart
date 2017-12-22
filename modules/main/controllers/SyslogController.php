@@ -3,6 +3,7 @@
 namespace app\modules\main\controllers;
 
 use app\modules\main\models\Syslog;
+use app\modules\main\models\SyslogSearch;
 use yii\data\ActiveDataProvider;
 use Yii;
 
@@ -10,7 +11,9 @@ class SyslogController extends \yii\web\Controller
 {
     public function actionIndex()
     {
-        $query = Syslog::find();
+        $searchModel = new SyslogSearch();
+        $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
+        /*$query = Syslog::find();
         $dataProvider = new ActiveDataProvider([
             //'format' => 'raw',
             'query' => $query,
@@ -18,9 +21,10 @@ class SyslogController extends \yii\web\Controller
             'pagination' => [
                 'pageSize' => Yii::$app->params['page_size'],
             ],
-        ]);
+        ]);*/
         return $this->render('index', [
             'dataProvider' => $dataProvider,
+            'searchModel' => $searchModel,
         ]);
     }
 
