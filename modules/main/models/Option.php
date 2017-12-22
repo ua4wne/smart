@@ -97,4 +97,11 @@ class Option extends BaseModel
     {
         return $this->hasMany(Rule::className(), ['option_id' => 'id']);
     }
+
+
+    public function getRuleCount()
+    {
+        $rule = $this->rule;
+        return count($rule);
+    }
 }

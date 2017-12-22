@@ -87,51 +87,80 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="row">
         <div class="col-xs-12">
             <div class="row">
-                <div class="space-6"></div>
-                <div class="col-sm-6">
-                    <div class="tabbable">
-                        <?= $tabs; ?>
-                    </div>
-                </div><!-- /.col -->
-
-                <div class="vspace-12-sm"></div>
-
-                <div class="col-sm-5">
-                    <div class="widget-box">
-                        <div class="widget-header widget-header-flat widget-header-small">
-                            <h5 class="widget-title">
-                                Текущий прогноз погоды в <?= $content['city']; ?>
-                            </h5>
+                <div class="col-md-5">
+                    <div class="col-md-12">
+                        <div class="tabbable">
+                            <?= $tabs; ?>
                         </div>
+                    </div><!-- /.col -->
+                    <div class="clearfix"></div>
+                    <div class="col-md-12">
+                        <div class="widget-box transparent">
+                            <div class="widget-header widget-header-flat">
+                                <h4 class="widget-title lighter">
+                                    <i class="ace-icon fa fa-wifi orange"></i>
+                                    WiFi контроллеры
+                                </h4>
 
-                        <div class="widget-body">
-                            <div class="widget-main">
-                                <div class="clearfix">
-                                    <?= $content['html']; ?>
+                                <div class="widget-toolbar">
+                                    <a href="#" data-action="collapse">
+                                        <i class="ace-icon fa fa-chevron-up"></i>
+                                    </a>
                                 </div>
-                                <div class="hr hr8 hr-double"></div>
-                                <div class="clearfix">
-                                    <div id="forecast_icon"></div>
-                                </div>
-                                <div class="hr hr8 hr-double"></div>
-                            </div><!-- /.widget-main -->
-                        </div><!-- /.widget-body -->
-                    </div><!-- /.widget-box -->
-                </div><!-- /.col -->
-            </div><!-- /.row -->
+                            </div>
 
-            <div class="hr hr32 hr-dotted"></div>
+                            <div class="widget-body">
+                                <div class="widget-main no-padding">
+                                    <table class="table table-bordered table-striped">
+                                        <thead class="thin-border-bottom">
+                                        <tr>
+                                            <th>
+                                                <i class="ace-icon fa fa-caret-right blue"></i>Наименование
+                                            </th>
 
-            <div class="row">
-                <div class="col-sm-6">
+                                            <th>
+                                                <i class="ace-icon fa fa-caret-right blue"></i>Уровень сигнала
+                                            </th>
+
+                                            <th class="hidden-480">
+                                                <i class="ace-icon fa fa-caret-right blue"></i>Батарея
+                                            </th>
+                                            <th class="hidden-480">
+                                                <i class="ace-icon fa fa-caret-right blue"></i>Статус
+                                            </th>
+                                        </tr>
+                                        </thead>
+
+                                        <tbody>
+                                        <tr>
+                                            <td>SONOFF</td>
+
+                                            <td><i class="ace-icon fa fa-signal blue"></i></td>
+
+                                            <td><i class="ace-icon fa fa-battery-full blue"></i></td>
+
+                                            <td class="hidden-480">
+                                                <span class="label label-success arrowed-right arrowed-in">online</span>
+                                            </td>
+                                        </tr>
+
+                                        </tbody>
+                                    </table>
+                                </div><!-- /.widget-main -->
+                            </div><!-- /.widget-body -->
+                        </div><!-- /.widget-box -->
+                    </div><!-- /.col -->
+                </div>
+
+                <div class="col-md-7">
                     <div class="widget-box transparent">
                         <div class="widget-header widget-header-flat">
 
-                                    <h4 class="widget-title lighter">
-                                        <i class="ace-icon fa fa-bar-chart"></i>
-                                        Графики
-                                    </h4>
-                                    <span class="pull-right">
+                            <h4 class="widget-title lighter">
+                                <i class="ace-icon fa fa-bar-chart"></i>
+                                Графики
+                            </h4>
+                            <span class="pull-right">
                                         <button class="btn btn-white btn-info dropdown-toggle" data-toggle="dropdown">
                                         Период
                                         <i class="ace-icon fa fa-chevron-down icon-on-right"></i>
@@ -160,22 +189,55 @@ $this->params['breadcrumbs'][] = $this->title;
                                         </li>
                                     </ul>
                                     </span>
+                        </div>
+                        <div id="chart"></div>
+                    </div><!-- /.widget-box -->
+                </div><!-- /.col -->
+            </div><!-- /.row -->
+
+            <div class="hr hr32 hr-dotted"></div>
+
+            <div class="row">
+                <div class="col-md-5">
+                    <div class="widget-box transparent">
+                        <div class="widget-header widget-header-flat">
+                            <h4 class="widget-title lighter">
+                                <i class="ace-icon fa fa-cloud blue"></i>
+                                Текущий прогноз погоды в <?= $content['city']; ?>
+                            </h4>
+
                             <div class="widget-toolbar">
                                 <a href="#" data-action="collapse">
                                     <i class="ace-icon fa fa-chevron-up"></i>
                                 </a>
                             </div>
                         </div>
-                        <div id="chart"></div>
+
+                        <div class="widget-body">
+                            <div class="widget-main no-padding">
+                                <div class="widget-body">
+                                    <div class="widget-main">
+                                        <div class="clearfix">
+                                            <?= $content['html']; ?>
+                                        </div>
+                                        <div class="hr hr8 hr-double"></div>
+                                        <div class="clearfix">
+                                            <div id="forecast_icon"></div>
+                                        </div>
+                                        <div class="hr hr8 hr-double"></div>
+                                    </div><!-- /.widget-main -->
+                                </div><!-- /.widget-body -->
+                            </div><!-- /.widget-main -->
+                        </div><!-- /.widget-body -->
                     </div><!-- /.widget-box -->
                 </div><!-- /.col -->
 
-                <div class="col-sm-6">
+                <div class="col-md-7">
                     <div class="widget-box transparent">
                         <div class="widget-header widget-header-flat">
                             <h4 class="widget-title lighter">
-                                <i class="ace-icon fa fa-wifi orange"></i>
-                                WiFi контроллеры
+                                <i class="ace-icon fa fa-comments-o orange2"></i>
+                                <a href="/main/syslog/index">Системный журнал</a>
                             </h4>
 
                             <div class="widget-toolbar">
@@ -191,35 +253,21 @@ $this->params['breadcrumbs'][] = $this->title;
                                     <thead class="thin-border-bottom">
                                     <tr>
                                         <th>
-                                            <i class="ace-icon fa fa-caret-right blue"></i>Наименование
+                                            <i class="ace-icon fa fa-caret-right blue"></i>Тип
                                         </th>
 
                                         <th>
-                                            <i class="ace-icon fa fa-caret-right blue"></i>Уровень сигнала
+                                            <i class="ace-icon fa fa-caret-right blue"></i>Сообщение
                                         </th>
 
                                         <th class="hidden-480">
-                                            <i class="ace-icon fa fa-caret-right blue"></i>Батарея
-                                        </th>
-                                        <th class="hidden-480">
-                                            <i class="ace-icon fa fa-caret-right blue"></i>Статус
+                                            <i class="ace-icon fa fa-caret-right blue"></i>Дата
                                         </th>
                                     </tr>
                                     </thead>
 
                                     <tbody>
-                                    <tr>
-                                        <td>SONOFF</td>
-
-                                        <td><i class="ace-icon fa fa-signal blue"></i></td>
-
-                                        <td><i class="ace-icon fa fa-battery-full blue"></i></td>
-
-                                        <td class="hidden-480">
-                                            <span class="label label-success arrowed-right arrowed-in">online</span>
-                                        </td>
-                                    </tr>
-
+                                    <?= $syslog; ?>
                                     </tbody>
                                 </table>
                             </div><!-- /.widget-main -->
@@ -229,9 +277,6 @@ $this->params['breadcrumbs'][] = $this->title;
             </div><!-- /.row -->
 
             <div class="hr hr32 hr-dotted"></div>
-
-            <div class="row">
-            </div><!-- /.row -->
 
             <!-- PAGE CONTENT ENDS -->
         </div><!-- /.col -->

@@ -30,7 +30,10 @@ $this->params['breadcrumbs'][] = 'Параметры';
                 'format' => 'raw',
                 'value' => function ($model, $key, $index, $column) {
                     /** @var User $model */
-                    return Html::a(Html::encode($model->name), ['/main/rule/index', 'id' => $model->id]);
+                    if($model->getRuleCount())
+                        return Html::a(Html::encode($model->name), ['/main/rule/index', 'id' => $model->id]).' <span class="badge">'.$model->getRuleCount().'</span>';
+                    else
+                        return Html::a(Html::encode($model->name), ['/main/rule/index', 'id' => $model->id]);
                 }
             ],
             'alias',

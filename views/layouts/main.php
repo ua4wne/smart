@@ -229,12 +229,12 @@ AppAsset::register($this);
                 </button>
 
                 <a href="/main/stock/store" class="btn btn-info" title="Остатки на складе">
-                    <i class="ace-icon fa fa-pencil"></i>
+                    <i class="ace-icon fa fa-stack-overflow"></i>
                 </a>
 
-                <button class="btn btn-warning">
-                    <i class="ace-icon fa fa-users"></i>
-                </button>
+                <a href="/main/syslog/index" class="btn btn-warning" title="Системный журнал">
+                    <i class="ace-icon fa fa-comments-o"></i>
+                </a>
 
                 <a href="/main/device/index" class="btn btn-danger" title="Устройства">
                     <i class="ace-icon fa fa-cogs"></i>

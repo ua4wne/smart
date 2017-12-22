@@ -7,6 +7,7 @@ use app\modules\main\models\Device;
 use app\modules\main\models\Option;
 use app\modules\main\models\Rule;
 use app\modules\main\models\Sms;
+use app\modules\main\models\Syslog;
 use Yii;
 
 class ControlController extends \yii\web\Controller
@@ -36,6 +37,23 @@ class ControlController extends \yii\web\Controller
                     $option = Option::findOne(['device_id'=>$device->id,'alias'=>$key]);
                     $option->val = $value;
                     $option->save();
+                    //проверяем на вхождение в диапазон min - max
+                    if($value < $option->min_val){
+                        //запись в лог
+                        $syslog = new Syslog();
+                        $syslog->created_at = date('Y-m-d H:i:s');
+                        $syslog->type = 'error';
+                        $syslog->msg = 'Значение параметра <strong>'. $option->name . ' (' . $option->device->name . ')</strong>  меньше минимально возможного! <span class="red">value=' . $value . ' min_value=' . $option->min_val . '</span>';
+                        $syslog->save();
+                    }
+                    if($value > $option->max_val){
+                        //запись в лог
+                        $syslog = new Syslog();
+                        $syslog->created_at = date('Y-m-d H:i:s');
+                        $syslog->type = 'error';
+                        $syslog->msg = 'Значение параметра <strong>'. $option->name . ' (' . $option->device->name . ')</strong>  больше максимально возможного! <span class="red">value=' . $value . ' max_value=' . $option->max_val . '</span>';
+                        $syslog->save();
+                    }
                     //ищем связанные правила
                     $rules = Rule::find()->where(['option_id'=>$option->id])->count();
                     if($rules) {
@@ -78,8 +96,9 @@ class ControlController extends \yii\web\Controller
                     }
                 }
                 if($rule->condition == 'more' && $rule->action == 'cmd'){
-                    $msg = 'Запуск команды <strong>'. $rule->text .'</strong>  '.date('d-m-Y H:i:s');
-                    //LibraryModel::AddEventLog('info',$msg);
+                    $cmd = $rule->text;
+                    $id_rule = $rule->id;
+                    $this->RunCmd($cmd,$id_rule);
                 }
                 $runtime = $time_stamp + $rule->step;
                 $rule->runtime = date( 'Y-m-d H:i:s' , $runtime);
@@ -101,8 +120,9 @@ class ControlController extends \yii\web\Controller
                     }
                 }
                 if($rule->condition == 'less' && $rule->action == 'cmd'){
-                    $msg = 'Запуск команды <strong>'. $rule->text .'</strong>  '.date('d-m-Y H:i:s');
-                    //LibraryModel::AddEventLog('info',$msg);
+                    $cmd = $rule->text;
+                    $id_rule = $rule->id;
+                    $this->RunCmd($cmd,$id_rule);
                 }
                 $runtime = $time_stamp + $rule->step;
                 $rule->runtime = date( 'Y-m-d H:i:s' , $runtime);
@@ -124,8 +144,9 @@ class ControlController extends \yii\web\Controller
                     }
                 }
                 if($rule->condition == 'equ' && $rule->action == 'cmd'){
-                    $msg = 'Запуск команды <strong>'. $rule->text .'</strong>  '.date('d-m-Y H:i:s');
-                    //LibraryModel::AddEventLog('info',$msg);
+                    $cmd = $rule->text;
+                    $id_rule = $rule->id;
+                    $this->RunCmd($cmd,$id_rule);
                 }
                 $runtime = $time_stamp + $rule->step;
                 $rule->runtime = date( 'Y-m-d H:i:s' , $runtime);
@@ -147,8 +168,9 @@ class ControlController extends \yii\web\Controller
                     }
                 }
                 if($rule->condition == 'not' && $rule->action == 'cmd'){
-                    $msg = 'Запуск команды <strong>'. $rule->text .'</strong>  '.date('d-m-Y H:i:s');
-                    //LibraryModel::AddEventLog('info',$msg);
+                    $cmd = $rule->text;
+                    $id_rule = $rule->id;
+                    $this->RunCmd($cmd,$id_rule);
                 }
                 $runtime = $time_stamp + $rule->step;
                 $rule->runtime = date( 'Y-m-d H:i:s' , $runtime);
@@ -158,6 +180,7 @@ class ControlController extends \yii\web\Controller
     }
 
     private function SendMail($to,$msg){
+
         $result = Yii::$app->mailer->compose()
             ->setFrom(Yii::$app->params['adminEmail'])
             ->setTo($to)
@@ -167,9 +190,11 @@ class ControlController extends \yii\web\Controller
             ->send();
         if(!$result){
             //запись в лог
-            $msg = 'Возникла ошибка при отправке системного сообщения адресату <strong>'. $to .'</strong>  '.date('d-m-Y H:i:s');
-            echo $msg;
-            //LibraryModel::AddEventLog('error',$msg);
+            $syslog = new Syslog();
+            $syslog->created_at = date('Y-m-d H:i:s');
+            $syslog->type = 'error';
+            $syslog->msg = 'Возникла ошибка при отправке системного сообщения адресату <strong>'. $to .'</strong>';
+            $syslog->save();
         }
     }
 
@@ -182,6 +207,21 @@ class ControlController extends \yii\web\Controller
             $model->SendViaMail();
         }
         $model->SendSms();
+        //запись в лог
+        $syslog = new Syslog();
+        $syslog->created_at = date('Y-m-d H:i:s');
+        $syslog->type = 'sms';
+        $syslog->msg = 'Адресату <strong>'. $to .'</strong> было отправлено СМС. Стоимость отправки - ' . $cost . ' руб.';
+        $syslog->save();
+    }
+
+    private function RunCmd($cmd,$rule){
+        //запись в лог
+        $syslog = new Syslog();
+        $syslog->created_at = date('Y-m-d H:i:s');
+        $syslog->type = 'info';
+        $syslog->msg = 'Запуск команды <strong>'. $cmd . '</strong> <a href="/main/rule/'.$rule.'">по правилу</a>';
+        $syslog->save();
     }
 
 }

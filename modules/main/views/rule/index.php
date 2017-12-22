@@ -7,7 +7,7 @@ use yii\grid\GridView;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = $model->name;
-$this->params['breadcrumbs'][] = ['label' => 'Параметры', 'url' => ['option/index']];
+$this->params['breadcrumbs'][] = ['label' => 'Параметры', 'url' => ['option/index','id'=>$model->device_id]];
 $this->params['breadcrumbs'][] = 'Правила';
 ?>
 <div class="option-index">

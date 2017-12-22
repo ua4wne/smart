@@ -92,7 +92,12 @@ class Device extends BaseModel
      */
     public function getOption()
     {
-        return $this->hasMany(Option::className(), ['id' => 'device_id']);
+        return $this->hasMany(Option::className(), ['device_id' => 'id']);
+    }
+
+    public function getOptionCount(){
+        $options = $this->option;
+        return count($options);
     }
 
     /**

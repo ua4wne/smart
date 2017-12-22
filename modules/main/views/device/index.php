@@ -43,7 +43,10 @@ $this->params['breadcrumbs'][] = $this->title;
                 'format' => 'raw',
                 'value' => function ($model, $key, $index, $column) {
                     /** @var User $model */
-                    return Html::a(Html::encode($model->name), ['/main/option/index', 'id' => $model->id]);
+                    if($model->getOptionCount())
+                        return Html::a(Html::encode($model->name), ['/main/option/index', 'id' => $model->id]).' <span class="badge">'.$model->getOptionCount().'</span>';
+                    else
+                        return Html::a(Html::encode($model->name), ['/main/option/index', 'id' => $model->id]);
                 }
             ],
             [

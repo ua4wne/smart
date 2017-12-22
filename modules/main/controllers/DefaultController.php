@@ -4,6 +4,7 @@ namespace app\modules\main\controllers;
 
 use app\models\Events;
 use app\models\Weather;
+use app\modules\main\models\Syslog;
 use Yii;
 use yii\web\Controller;
 use yii\data\ActiveDataProvider;
@@ -36,6 +37,7 @@ class DefaultController extends Controller
             $content = Weather::GetContent($data);
         }
         $tabs = Location::GetTabs();
+        $syslog = Syslog::ViewSysLog(10); //выводим последние 10 строк системного лога
         $year='2017';
         $dataProvider = new SqlDataProvider([
             'sql' =>  'select l.name as name, lo.val as val, lo.created_at as dat from logger lo
@@ -47,7 +49,8 @@ class DefaultController extends Controller
         return $this->render('index',[
             'content' => $content,
             'tabs' => $tabs,
-            'dataProvider' => $dataProvider
+            'dataProvider' => $dataProvider,
+            'syslog' => $syslog,
         ]);
         /*else{
             throw new HttpException(404 ,'Доступ запрещен');
