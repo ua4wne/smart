@@ -3,6 +3,7 @@ namespace app\components;
 
 use app\modules\admin\models\Eventlog;
 use app\modules\main\models\Config;
+use app\modules\main\models\Outbox;
 use yii\base\Widget;
 //use Yii;
 //use PDO;
@@ -22,6 +23,12 @@ class InfoBadge extends Widget
                 break;
             case 'count':
                 return Eventlog::find()->count();
+                break;
+            case 'countbox':
+                return Outbox::find()->where(['is_new'=>1])->count();
+                break;
+            case 'outbox':
+                return $this->getOutbox(3);
                 break;
             case 'group':
                 return $this->GetEventGroup();
@@ -200,6 +207,31 @@ class InfoBadge extends Widget
         $uptime = str_replace('hours','h',$uptime);
         $uptime = str_replace('minutes','m',$uptime);
         return $uptime;
+    }
+
+    protected function getOutbox($c){
+        $posts = Outbox::find()->where(['is_new'=>1])->limit($c)->orderBy(['id'=>SORT_DESC])->all();
+        $html = '';
+        foreach ($posts as $post){
+            $msg = $post->msg;
+            $msg = mb_substr($msg,0,40);
+            $html .= '<li>
+                        <a href="#" class="clearfix">
+                            <img src="/images/avatars/avatar.png" class="msg-photo" alt="housekeeper" />
+                            <span class="msg-body">
+						        <span class="msg-title">
+							        <span class="blue">Кузя:</span>' . $msg . ' ...
+			                        </span>
+                                    <span class="msg-time">
+								        <i class="ace-icon fa fa-clock-o"></i>
+									        <span>' . $post->created_at . '</span>
+								    </span>
+						    </span>
+                        </a>
+                     </li>';
+        }
+
+        return $html;
     }
 
 }

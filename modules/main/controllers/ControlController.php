@@ -5,6 +5,7 @@ namespace app\modules\main\controllers;
 use app\modules\main\models\Config;
 use app\modules\main\models\Device;
 use app\modules\main\models\Option;
+use app\modules\main\models\Outbox;
 use app\modules\main\models\Rule;
 use app\modules\main\models\Sms;
 use app\modules\main\models\Syslog;
@@ -180,7 +181,6 @@ class ControlController extends \yii\web\Controller
     }
 
     private function SendMail($to,$msg){
-
         $result = Yii::$app->mailer->compose()
             ->setFrom(Yii::$app->params['adminEmail'])
             ->setTo($to)
@@ -188,7 +188,16 @@ class ControlController extends \yii\web\Controller
             ->setTextBody($msg)
             ->setHtmlBody($msg)
             ->send();
-        if(!$result){
+        if($result){
+            $outbox = new Outbox();
+            $outbox->from = Yii::$app->params['adminEmail'];
+            $outbox->to = $to;
+            $outbox->msg = $msg;
+            $outbox->is_new = 1;
+            $outbox->created_at = date('Y-m-d H:i:s');
+            $outbox->save();
+        }
+        else{
             //запись в лог
             $syslog = new Syslog();
             $syslog->created_at = date('Y-m-d H:i:s');
