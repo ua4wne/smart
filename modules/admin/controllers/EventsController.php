@@ -44,16 +44,17 @@ class EventsController extends Controller
     }
 
     public function actionClearLog(){
-        //if(Yii::$app->user->can('admin')) {
+        if(Yii::$app->user->can('admin')) {
             if (\Yii::$app->request->isAjax) {
                 $query=Yii::$app->db->createCommand("delete from eventlog where type != 'error' and is_read = 0");
                 $logs = $query->execute();
-                return 'Журнал событий очищен';
+                if($logs)
+                    return 'Журнал событий очищен';
             }
-        //}
-        //else{
-       //     throw new HttpException(404 ,'Доступ запрещен');
-        //}
+        }
+        else{
+            throw new HttpException(404 ,'Доступ запрещен');
+        }
     }
 
 }

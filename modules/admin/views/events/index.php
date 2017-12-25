@@ -64,6 +64,7 @@ $js = <<<JS
 		    success: function(res) {
 			    //alert("Сервер вернул вот что: " + res);
 			    $(".events").text(res);
+			    window.location.reload(true); 
 			}     		 
      	});
 	});
