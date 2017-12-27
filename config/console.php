@@ -9,6 +9,7 @@ $db = require(__DIR__ . '/db.php');
 
 $config = [
     'id' => 'smart-console',
+    'name' => 'Домовенок',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'language' => 'ru-RU',
@@ -32,6 +33,19 @@ $config = [
         ],
         'authManager' => [
             'class' => 'yii\rbac\DbManager',
+        ],
+        'mailer' => [
+            'class' => 'yii\swiftmailer\Mailer',
+            'viewPath' => '@app/mail/',
+            'htmlLayout' => 'layouts/html',
+            'textLayout' => 'layouts/text',
+            'messageConfig' => [
+                'charset' => 'UTF-8',
+            ],
+            // send all mails to a file by default. You have to set
+            // 'useFileTransport' to false and configure a transport
+            // for the mailer to send real emails.
+            'useFileTransport' => true,
         ],
         'log' => [
             'targets' => [

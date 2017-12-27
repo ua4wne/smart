@@ -6,6 +6,8 @@ use app\modules\main\models\Logger;
 use app\modules\main\models\Option;
 use yii\console\Controller;
 use app\modules\main\models\Config;
+use app\modules\main\models\Syslog;
+use Yii;
 
 class CronController extends Controller
 {
@@ -55,6 +57,91 @@ class CronController extends Controller
                     $newlog->save();
                 }
             }
+        }
+    }
+
+    //запускать при старте системы
+    public function actionStart(){
+        $msg = 'Система была запущена ' . date("Y-m-d H:i:s");
+        $to = Yii::$app->params['adminEmail'];
+        $result = Yii::$app->mailer->compose()
+            ->setFrom(Yii::$app->params['adminEmail'])
+            ->setTo($to)
+            ->setSubject(Yii::$app->name)
+            ->setTextBody($msg)
+            ->setHtmlBody($msg)
+            ->send();
+        //запись в лог
+        $syslog = new Syslog();
+        if($result){
+            $syslog->msg = $msg;
+            $syslog->type = 'email';
+        }
+        else{
+            $syslog->type = 'error';
+            $syslog->msg = 'Возникла ошибка при отправке системного сообщения адресату <strong>'. $to .'</strong>';
+        }
+        $syslog->from = Yii::$app->params['adminEmail'];
+        $syslog->to = $to;
+        $syslog->is_new = 1;
+        $syslog->created_at = date('Y-m-d H:i:s');
+        $syslog->save();
+    }
+
+    //ежедневный отчет о работе
+    public function actionSysState(){
+        //memory stat
+        $stat['mem_percent'] = round(shell_exec("free | grep Mem | awk '{print $3/$2 * 100.0}'"),0);
+        $mem_result = shell_exec("cat /proc/meminfo | grep MemTotal");
+        $stat['mem_total'] = round(preg_replace("#[^0-9]+(?:\.[0-9]*)?#", "", $mem_result) / 1024 / 1024, 3);
+        $mem_result = shell_exec("cat /proc/meminfo | grep MemFree");
+        $stat['mem_free'] = round(preg_replace("#[^0-9]+(?:\.[0-9]*)?#", "", $mem_result) / 1024 / 1024, 3);
+        $stat['mem_used'] = $stat['mem_total'] - $stat['mem_free'];
+        $content ='<tr><td>RAM</td><td>'.$stat['mem_used'].'</td><td>'.$stat['mem_free'].'</td><td>'.$stat['mem_percent'].'</td></tr>';
+        //hdd stat
+        $stat['hdd_free'] = round(disk_free_space("/") / 1024 / 1024 / 1024, 2);
+        $stat['hdd_total'] = round(disk_total_space("/") / 1024 / 1024/ 1024, 2);
+        $stat['hdd_used'] = $stat['hdd_total'] - $stat['hdd_free'];
+        $stat['hdd_percent'] = round(sprintf('%.2f',($stat['hdd_used'] / $stat['hdd_total']) * 100), 0);
+        $content .='<tr><td>HDD</td><td>'.$stat['hdd_used'].'</td><td>'.$stat['hdd_free'].'</td><td>'.$stat['hdd_percent'].'</td></tr>';
+
+        $name = strtolower(php_uname('s'));
+        if (strpos($name, 'windows') !== FALSE) {
+
+        } elseif (strpos($name, 'linux') !== FALSE) {
+            $load = round(array_sum(sys_getloadavg()) / count(sys_getloadavg()), 2);
+        }
+
+        $uptime = shell_exec('uptime -p');
+        $uptime = str_replace('up','',$uptime);
+        $uptime = str_replace('days','d',$uptime);
+        $uptime = str_replace('hours','h',$uptime);
+        $uptime = str_replace('minutes','m',$uptime);
+
+        $to = Yii::$app->params['adminEmail'];
+        $params = [];
+        \Yii::$app->mailer->getView()->params['uptime'] = $uptime;
+        \Yii::$app->mailer->getView()->params['upload'] = $load;
+        \Yii::$app->mailer->getView()->params['table'] = $content;
+        $subject = 'Состояние системы на  ' . date('Y-m-d H:i:s');
+        $result = \Yii::$app->mailer->compose([
+            'html' => 'views/html_state',
+            //'text' => 'views/text_mail',
+        ], $params)
+            ->setFrom(Yii::$app->params['adminEmail'])
+            ->setTo($to)
+            ->setSubject($subject)
+            ->send();
+        if(!$result){
+            //запись в лог
+            $syslog = new Syslog();
+            $syslog->type = 'error';
+            $syslog->msg = 'Возникла ошибка при отправке ежедневного сообщения о состоянии системы адресату <strong>'. $to .'</strong>';
+            $syslog->from = Yii::$app->params['adminEmail'];
+            $syslog->to = $to;
+            $syslog->is_new = 1;
+            $syslog->created_at = date('Y-m-d H:i:s');
+            $syslog->save();
         }
     }
 
