@@ -29,10 +29,12 @@ class Syslog extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['type', 'msg', 'created_at'], 'required'],
+            [['from', 'to', 'type', 'msg', 'created_at'], 'required'],
             [['msg'], 'string'],
             [['created_at', 'updated_at'], 'safe'],
             [['type'], 'string', 'max' => 7],
+            [['is_new'], 'integer'],
+            [['from', 'to'], 'string', 'max' => 30],
         ];
     }
 
@@ -44,7 +46,10 @@ class Syslog extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'type' => 'Тип',
+            'from' => 'Отправитель',
+            'to' => 'Получатель',
             'msg' => 'Сообщение',
+            'is_new' => 'Новое',
             'created_at' => 'Дата создания',
             'updated_at' => 'Дата обновления',
         ];
@@ -58,11 +63,14 @@ class Syslog extends \yii\db\ActiveRecord
                 case 'error':
                     $content .= '<tr><td><i class="ace-icon fa fa-bug red"></i></td><td>' . $row->msg . '</td><td>' . $row->created_at . '</td></tr>';
                     break;
-                case 'info':
-                    $content .= '<tr><td><i class="ace-icon fa fa-info-circle blue"></i></td><td>' . $row->msg . '</td><td>' . $row->created_at . '</td></tr>';
+                case 'exec':
+                    $content .= '<tr><td><i class="ace-icon fa fa-terminal"></i></td><td>' . $row->msg . '</td><td>' . $row->created_at . '</td></tr>';
                     break;
                 case 'sms':
                     $content .= '<tr><td><i class="ace-icon fa fa-volume-control-phone green"></i></td><td>' . $row->msg . '</td><td>' . $row->created_at . '</td></tr>';
+                    break;
+                case 'email':
+                    $content .= '<tr><td><i class="ace-icon fa fa-envelope orange"></i></td><td>' . $row->msg . '</td><td>' . $row->created_at . '</td></tr>';
                     break;
             }
         }

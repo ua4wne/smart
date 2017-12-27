@@ -19,7 +19,10 @@ class m171222_122543_create_syslog_table extends Migration
         $this->createTable('syslog', [
             'id' => $this->primaryKey(),
             'type' => $this->string(7)->notNull(),
+            'from' => $this->string(30)->notNull(),
+            'to' => $this->string(30)->notNull(),
             'msg' => $this->text()->notNull(),
+            'is_new' => $this->smallInteger()->notNull()->defaultValue(1),
             'created_at' => $this->dateTime()->notNull(),
             'updated_at' => $this->dateTime()->notNull(),
         ], $tableOptions);

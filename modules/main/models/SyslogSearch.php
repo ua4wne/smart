@@ -17,8 +17,8 @@ class SyslogSearch extends Syslog
     public function rules()
     {
         return [
-            [['id'], 'integer'],
-            [['msg', 'type'], 'string'],
+            [['id', 'is_new'], 'integer'],
+            [['from', 'to', 'msg', 'type'], 'string'],
             [['created_at', 'updated_at'], 'safe'],
         ];
     }
@@ -49,7 +49,7 @@ class SyslogSearch extends Syslog
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
-            'sort' => ['defaultOrder' => ['id' => SORT_DESC]],
+            'sort' => ['defaultOrder' => ['id' => SORT_DESC, 'is_new'=>SORT_DESC]],
             'pagination' => [
                 'pageSize' => Yii::$app->params['page_size'],
             ],
@@ -67,11 +67,14 @@ class SyslogSearch extends Syslog
         $query->andFilterWhere([
             'id' => $this->id,
             'type' => $this->type,
-            //'msg' => $this->msg,
+            'is_new' => $this->is_new,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ]);
-        $query->andFilterWhere(['like', 'msg', $this->msg]);
+
+        $query->andFilterWhere(['like', 'from', $this->from])
+            ->andFilterWhere(['like', 'to', $this->to])
+            ->andFilterWhere(['like', 'msg', $this->msg]);
 
         return $dataProvider;
     }

@@ -36,7 +36,9 @@ class ControlController extends \yii\web\Controller
             foreach($_GET as $key=>$value){
                 if($key!='device'){
                     $option = Option::findOne(['device_id'=>$device->id,'alias'=>$key]);
-                    $option->val = $value;
+                    $oldval = $option->val;
+                    if($oldval != $value)
+                        $option->val = $value;
                     $option->save();
                     //проверяем на вхождение в диапазон min - max
                     if($value < $option->min_val){
@@ -188,23 +190,21 @@ class ControlController extends \yii\web\Controller
             ->setTextBody($msg)
             ->setHtmlBody($msg)
             ->send();
+        //запись в лог
+        $syslog = new Syslog();
         if($result){
-            $outbox = new Outbox();
-            $outbox->from = Yii::$app->params['adminEmail'];
-            $outbox->to = $to;
-            $outbox->msg = $msg;
-            $outbox->is_new = 1;
-            $outbox->created_at = date('Y-m-d H:i:s');
-            $outbox->save();
+            $syslog->msg = $msg;
+            $syslog->type = 'email';
         }
         else{
-            //запись в лог
-            $syslog = new Syslog();
-            $syslog->created_at = date('Y-m-d H:i:s');
             $syslog->type = 'error';
             $syslog->msg = 'Возникла ошибка при отправке системного сообщения адресату <strong>'. $to .'</strong>';
-            $syslog->save();
         }
+        $syslog->from = Yii::$app->params['adminEmail'];
+        $syslog->to = $to;
+        $syslog->is_new = 1;
+        $syslog->created_at = date('Y-m-d H:i:s');
+        $syslog->save();
     }
 
     private function SendSms($to,$msg){
@@ -218,6 +218,9 @@ class ControlController extends \yii\web\Controller
         $model->SendSms();
         //запись в лог
         $syslog = new Syslog();
+        $syslog->from = 'Система';
+        $syslog->to = $to;
+        $syslog->is_new = 1;
         $syslog->created_at = date('Y-m-d H:i:s');
         $syslog->type = 'sms';
         $syslog->msg = 'Адресату <strong>'. $to .'</strong> было отправлено СМС. Стоимость отправки - ' . $cost . ' руб.';
@@ -227,8 +230,11 @@ class ControlController extends \yii\web\Controller
     private function RunCmd($cmd,$rule){
         //запись в лог
         $syslog = new Syslog();
+        $syslog->from = 'Система';
+        $syslog->to = 'shell';
+        $syslog->is_new = 1;
         $syslog->created_at = date('Y-m-d H:i:s');
-        $syslog->type = 'info';
+        $syslog->type = 'exec';
         $syslog->msg = 'Запуск команды <strong>'. $cmd . '</strong> <a href="/main/rule/'.$rule.'">по правилу</a>';
         $syslog->save();
     }

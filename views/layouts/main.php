@@ -113,7 +113,7 @@ AppAsset::register($this);
                         </li>
 
                         <li class="dropdown-footer">
-                            <a href="/main/outbox/index">
+                            <a href="/main/syslog/index">
                                 Все сообщения
                                 <i class="ace-icon fa fa-arrow-right"></i>
                             </a>
@@ -184,7 +184,7 @@ AppAsset::register($this);
                 </a>
 
                 <a href="/main/syslog/index" class="btn btn-warning" title="Системный журнал">
-                    <i class="ace-icon fa fa-comments-o"></i>
+                    <i class="ace-icon fa fa-envelope-o"></i>
                 </a>
 
                 <a href="/main/device/index" class="btn btn-danger" title="Устройства">
@@ -386,6 +386,14 @@ AppAsset::register($this);
 
                 <b class="arrow"></b>
             </li>
+            <li class="">
+                <a href="/main/syslog/index">
+                    <i class="menu-icon fa fa-envelope-o" aria-hidden="true"></i>
+                    <span class="menu-text"> Сообщения <span class="badge"><?= InfoBadge::widget(['type'=>'countbox']) ?></span></span>
+                </a>
+
+                <b class="arrow"></b>
+            </li>
         </ul><!-- /.nav-list -->
 
         <div class="sidebar-toggle sidebar-collapse" id="sidebar-collapse">
@@ -399,15 +407,6 @@ AppAsset::register($this);
                 <?= Breadcrumbs::widget([
                     'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
                 ]) ?>
-
-                <div class="nav-search" id="nav-search">
-                    <form class="form-search">
-								<span class="input-icon">
-									<input type="text" placeholder="Search ..." class="nav-search-input" id="nav-search-input" autocomplete="off" />
-									<i class="ace-icon fa fa-search nav-search-icon"></i>
-								</span>
-                    </form>
-                </div><!-- /.nav-search -->
             </div>
             <div class="page-content">
                 <div class="row">
@@ -436,25 +435,10 @@ AppAsset::register($this);
     <div class="footer">
         <div class="footer-inner">
             <div class="footer-content">
-						<span class="bigger-120">
-							<span class="blue bolder">Ace</span>
-							Application &copy; 2013-2014
-						</span>
-
-                &nbsp; &nbsp;
-                <span class="action-buttons">
-							<a href="#">
-								<i class="ace-icon fa fa-twitter-square light-blue bigger-150"></i>
-							</a>
-
-							<a href="#">
-								<i class="ace-icon fa fa-facebook-square text-primary bigger-150"></i>
-							</a>
-
-							<a href="#">
-								<i class="ace-icon fa fa-rss-square orange bigger-150"></i>
-							</a>
-						</span>
+                <span class="bigger-120">
+                    <span class="blue bolder">Домовенок</span>
+                    Умный дом &copy; 2017-2018
+                </span>
             </div>
         </div>
     </div>

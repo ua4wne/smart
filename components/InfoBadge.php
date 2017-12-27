@@ -3,7 +3,7 @@ namespace app\components;
 
 use app\modules\admin\models\Eventlog;
 use app\modules\main\models\Config;
-use app\modules\main\models\Outbox;
+use app\modules\main\models\Syslog;
 use yii\base\Widget;
 //use Yii;
 //use PDO;
@@ -25,10 +25,10 @@ class InfoBadge extends Widget
                 return Eventlog::find()->count();
                 break;
             case 'countbox':
-                return Outbox::find()->where(['is_new'=>1])->count();
+                return Syslog::find()->where(['is_new'=>1])->count();
                 break;
             case 'outbox':
-                return $this->getOutbox(3);
+                return $this->getSysLog(3);
                 break;
             case 'group':
                 return $this->GetEventGroup();
@@ -209,11 +209,12 @@ class InfoBadge extends Widget
         return $uptime;
     }
 
-    protected function getOutbox($c){
-        $posts = Outbox::find()->where(['is_new'=>1])->limit($c)->orderBy(['id'=>SORT_DESC])->all();
+    protected function getSyslog($c){
+        $posts = Syslog::find()->where(['is_new'=>1])->limit($c)->orderBy(['id'=>SORT_DESC])->all();
         $html = '';
         foreach ($posts as $post){
             $msg = $post->msg;
+            $msg = strip_tags($msg);
             $msg = mb_substr($msg,0,40);
             $html .= '<li>
                         <a href="#" class="clearfix">

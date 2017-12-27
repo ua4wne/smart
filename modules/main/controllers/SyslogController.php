@@ -28,9 +28,22 @@ class SyslogController extends \yii\web\Controller
         ]);
     }
 
+    /**
+     * Displays a single Syslog model.
+     * @param integer $id
+     * @return mixed
+     */
+    public function actionView($id)
+    {
+        $model = $this->findModel($id);
+        $model->is_new = 0;
+        $model->save();
+        return $this->redirect(['index']);
+    }
+
     public function actionDeleteAll()
     {
-        Syslog::deleteAll();
+        Syslog::deleteAll(['is_new'=>0]); //удаляем все прочтенные сообщения
         return $this->redirect(['index']);
     }
 
