@@ -4,6 +4,8 @@ namespace app\modules\main\controllers;
 
 use app\models\Events;
 use app\models\Weather;
+use app\modules\main\models\Config;
+use app\modules\main\models\Device;
 use app\modules\main\models\Syslog;
 use Yii;
 use yii\web\Controller;
@@ -38,23 +40,70 @@ class DefaultController extends Controller
         }
         $tabs = Location::GetTabs();
         $syslog = Syslog::ViewSysLog(10); //выводим последние 10 строк системного лога
-        $year='2017';
-        $dataProvider = new SqlDataProvider([
-            'sql' =>  'select l.name as name, lo.val as val, lo.created_at as dat from logger lo
+        /*$dataProvider = new SqlDataProvider([
+            'sql' =>  'select l.name as name, o.alias as alias, round(avg(lo.val),1) as val, substr(lo.created_at,1,10) as dat from logger lo
                         join options o on o.id = lo.option_id
                         join device d on d.id = o.device_id
                         join location l on l.id = d.location_id
-                        where o.alias=\'celsio\' and lo.created_at between \'2017-12-17\' and \'2017-12-19\'',
-        ]);
+                        where lo.created_at between \'2017-12-01\' and \'2017-12-31\'
+                        group by alias, dat',
+        ]);*/
+        $device = new Device();
+        $state = $device->GetState();
         return $this->render('index',[
             'content' => $content,
             'tabs' => $tabs,
-            'dataProvider' => $dataProvider,
+            //'dataProvider' => $dataProvider,
             'syslog' => $syslog,
+            'state' => $state,
         ]);
         /*else{
             throw new HttpException(404 ,'Доступ запрещен');
         }*/
+    }
+
+    public function actionChart(){
+        if(\Yii::$app->request->isAjax){
+            $location_id = Config::findOne(['param'=>'CHART_LOCATION_ID'])->val;
+            if(!empty($location_id)){
+                $finish = date('Y-m-d H:i:s');
+                $timestamp = strtotime('-30 days',strtotime($finish));
+                $start = date('Y-m-d H:i:s', $timestamp);
+                $query = "select l.name as name, o.alias as alias, round(max(lo.val),1) as max, round(avg(lo.val),1) as val, substr(lo.created_at,1,10) as dat from logger lo
+                        join options o on o.id = lo.option_id
+                        join device d on d.id = o.device_id
+                        join location l on l.id = d.location_id
+                        where d.location_id = $location_id and lo.created_at between '$start' and '$finish'
+                        group by alias, dat";
+                // подключение к базе данных
+                $connection = \Yii::$app->db;
+                // Составляем SQL запрос
+                $model = $connection->createCommand($query);
+                //Осуществляем запрос к базе данных, переменная $model содержит ассоциативный массив с данными
+                $rows = $model->queryAll();
+                $celsio = array();
+                $humi = array();
+                foreach ($rows as $row){
+
+                    if($row['alias']=='celsio'){
+                        $celsio[$row['dat']] = $row['val'];
+                    }
+                    if($row['alias']=='humidity'){
+                        $humi[$row['dat']] = $row['max'];
+                    }
+
+                }
+                $dat = array();
+                foreach ($celsio as $key=>$val){
+                    $tmp = array();
+                    $tmp['d'] = $key;
+                    $tmp['t'] = $val;
+                    $tmp['h'] = $humi[$key];
+                    array_push($dat,$tmp);
+                }
+                return json_encode($dat);
+            }
+        }
     }
 
     public function actionForecast(){

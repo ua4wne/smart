@@ -96,8 +96,8 @@ class Location extends BaseModel
                     $i++;
                 }
                 //определяем параметры, привязанные к этим устройствам
-                $params = Option::find()->where(['device_id' => $device_id])->all();
-                $pcount = Option::find()->where(['device_id' => $device_id])->count();
+                $params = Option::find()->where(['device_id' => $device_id])->andWhere(['not in','alias',array('vcc','rssi')])->all();
+                $pcount = Option::find()->where(['device_id' => $device_id])->andWhere(['not in','alias',array('vcc','rssi')])->count();
                 $step = 12/$pcount;
                 $switch = '';
                 $gaude = '';

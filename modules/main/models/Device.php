@@ -71,6 +71,59 @@ class Device extends BaseModel
         ];
     }
 
+    public function GetState(){
+        $models = $this::findAll(['verify'=>1]);
+        $html = '';
+        foreach ($models as $model){
+            $vcc = Option::findOne(['device_id'=>$model->id,'alias'=>'vcc']);
+            $val = $vcc->val;
+            $min = $vcc->min_val;
+            $max = $vcc->max_val;
+            $mid = ($max + $min)/2;
+            if($val==$max){
+                $ico_vcc = '<i class="ace-icon fa fa-battery-full green"></i>';
+            }
+            elseif($val>$min && $val<($mid)){
+                $ico_vcc = '<i class="ace-icon fa fa-battery-quarter orange"></i>';
+            }
+            elseif($val>$mid && $val<$max){
+                $ico_vcc = '<i class="ace-icon fa fa-battery-three-quarters orange2"></i>';
+            }
+            elseif ($val<$min){
+                $ico_vcc = '<i class="ace-icon fa fa-battery-empty red"></i>';
+            }
+            $rssi = Option::findOne(['device_id'=>$model->id,'alias'=>'rssi']);
+            if($rssi->val > -70){
+                $ico_rssi = '<i class="ace-icon fa fa-signal green"></i>';
+            }
+            elseif($rssi->val > -80 && $rssi->val <= -70) {
+                $ico_rssi = '<i class="ace-icon fa fa-signal orange"></i>';
+            }
+            else{
+                $ico_rssi = '<i class="ace-icon fa fa-signal red"></i>';
+            }
+            $time_stamp = strtotime(date('Y-m-d H:i:s')); //получаем текущую метку времени
+            $time_last = strtotime($vcc->updated_at);
+            $period = strtotime('+30 minutes',$time_last);
+            if($time_stamp < $period){
+                $stat = '<span class="label label-success arrowed-right arrowed-in">online</span>';
+            }
+            else{
+                $stat = '<span class="label label-danger arrowed-right arrowed-in">offline</span>';
+            }
+            $html .= '<tr>
+                                            <td><a href="/main/option?id='.$model->id.'">' . $model->name . '</a></td>
+
+                                            <td>' . $ico_rssi . '&nbsp;&nbsp;&nbsp;<span class="badge">' . $rssi->val . $rssi->unit . '</span></td>
+
+                                            <td>' . $ico_vcc . '</td>
+
+                                            <td class="hidden-480">' . $stat . '</td>
+                                        </tr>';
+        }
+        return $html;
+    }
+
     /**
      * @return \yii\db\ActiveQuery
      */

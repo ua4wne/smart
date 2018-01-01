@@ -379,6 +379,15 @@ AppAsset::register($this);
             </li>
 
             <li class="">
+                <a href="/main/report">
+                    <i class="menu-icon fa fa-line-chart"></i>
+                    <span class="menu-text">Отчеты</span>
+                </a>
+
+                <b class="arrow"></b>
+            </li>
+
+            <li class="">
                 <a href="/admin/events/index">
                     <i class="menu-icon fa fa-bell-o" aria-hidden="true"></i>
                     <span class="menu-text"> События <?= InfoBadge::widget(['type'=>'event']) ?></span>

@@ -1,6 +1,6 @@
 <?php
 
-use yii\helpers\Html;
+//use yii\helpers\Html;
 
 /* @var $this yii\web\View */
 /* @var $dataProvider yii\data\ActiveDataProvider */
@@ -8,7 +8,7 @@ $this->registerJsFile('/js/justgage.js',
     ['depends' => ['yii\web\JqueryAsset']]);
 $this->registerJsFile('/js/mqttws31.js',
     ['depends' => ['yii\web\JqueryAsset']]);
-$this->registerJsFile('/js/gCharts.js'); //https://www.gstatic.com/charts/loader.js
+//$this->registerJsFile('/js/gChart.js'); //https://www.gstatic.com/charts/loader.js
 
 $this->title = 'Панель управления';
 $this->params['breadcrumbs'][] = $this->title;
@@ -66,18 +66,7 @@ $this->params['breadcrumbs'][] = $this->title;
                                         </thead>
 
                                         <tbody>
-                                        <tr>
-                                            <td>SONOFF</td>
-
-                                            <td><i class="ace-icon fa fa-signal blue"></i></td>
-
-                                            <td><i class="ace-icon fa fa-battery-full blue"></i></td>
-
-                                            <td class="hidden-480">
-                                                <span class="label label-success arrowed-right arrowed-in">online</span>
-                                            </td>
-                                        </tr>
-
+                                        <?= $state; ?>
                                         </tbody>
                                     </table>
                                 </div><!-- /.widget-main -->
@@ -89,42 +78,12 @@ $this->params['breadcrumbs'][] = $this->title;
                 <div class="col-md-7">
                     <div class="widget-box transparent">
                         <div class="widget-header widget-header-flat">
-
                             <h4 class="widget-title lighter">
                                 <i class="ace-icon fa fa-bar-chart"></i>
-                                Графики
+                                Климат-контроль
                             </h4>
-                            <span class="pull-right">
-                                        <button class="btn btn-white btn-info dropdown-toggle" data-toggle="dropdown">
-                                        Период
-                                        <i class="ace-icon fa fa-chevron-down icon-on-right"></i>
-                                    </button>
-
-                                    <ul class="dropdown-menu dropdown-menu-right dropdown-caret dropdown-close">
-                                        <li>
-                                            <a href="#">Текущий день</a>
-                                        </li>
-
-                                        <li>
-                                            <a href="#">Текущий месяц</a>
-                                        </li>
-
-                                        <li>
-                                            <a href="#">Текущий год</a>
-                                        </li>
-                                        <li>
-                                            <a href="#">Другой период</a>
-                                        </li>
-
-                                        <li class="divider"></li>
-
-                                        <li>
-                                            <a href="#">По умолчанию</a>
-                                        </li>
-                                    </ul>
-                                    </span>
                         </div>
-                        <div id="chart"></div>
+                        <div id="chart-main"></div>
                     </div><!-- /.widget-box -->
                 </div><!-- /.col -->
             </div><!-- /.row -->
@@ -380,53 +339,27 @@ $js = <<<JS
         }
     }, ".ace-switch" );
      
-    $("#from, #to").datepicker({
+    /*$("#from, #to").datepicker({
         dateFormat: "yy-mm-dd",
 		firstDay: 1,   
-    });
+    });*/
     
-    google.charts.load('current', {'packages':['line']});
-    google.charts.setOnLoadCallback(drawChart);
-
-    function drawChart() {
-
-      var data = new google.visualization.DataTable();
-      data.addColumn('number', 'Дата');
-      data.addColumn('number', 'Ванная');
-      data.addColumn('number', 'Комната');
-      data.addColumn('number', 'Кухня');
-
-      data.addRows([
-        [1,  37.8, 80.8, 41.8],
-        [2,  30.9, 69.5, 32.4],
-        [3,  25.4,   57, 25.7],
-        [4,  11.7, 18.8, 10.5],
-        [5,  11.9, 17.6, 10.4],
-        [6,   8.8, 13.6,  7.7],
-        [7,   7.6, 12.3,  9.6],
-        [8,  12.3, 29.2, 10.6],
-        [9,  16.9, 42.9, 14.8],
-        [10, 12.8, 30.9, 11.6],
-        [11,  5.3,  7.9,  4.7],
-        [12,  6.6,  8.4,  5.2],
-        [13,  4.8,  6.3,  3.6],
-        [14,  4.2,  6.2,  3.4]
-      ]);
-
-      var options = {
-        chart: {
-          title: 'Графики температур в помещениях',
-          subtitle: 'в градусах Цельсия'
-        },
-        //width: 900,
-        height: 400
-      };
-
-      var chart = new google.charts.Line(document.getElementById('chart'));
-
-      chart.draw(data, google.charts.Line.convertOptions(options));
-    }
-     
+    $.ajax({
+     url: '/main/default/chart',
+     type: 'POST',
+     data: {'type':'line'},
+         success: function(res){
+         //alert("Сервер вернул вот что: " + res);
+         $("#chart-main").empty();
+             Morris.Line({
+                  element: 'chart-main',
+                  data: JSON.parse(res),
+                  xkey: 'd',
+                  ykeys: ['t','h'],
+                  labels: ['Температура, С','Влажность, %']
+              });
+        }
+    });
      /*setInterval(function() {
         //$(".tabbable").load("/main/default/update-vars");
         //alert('timer');

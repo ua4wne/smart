@@ -14,16 +14,16 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'device_id')->hiddenInput(['value'=>$val])->label(false) ?>
 
-    <?= $form->field($model, 'val')->textInput(['value' => 0]) ?>
+    <?= $form->field($model, 'val')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'min_val')->textInput(['value' => 0]) ?>
+    <?= $form->field($model, 'min_val')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'max_val')->textInput(['value' => 0]) ?>
+    <?= $form->field($model, 'max_val')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'unit')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'alias')->dropDownList(['state'=>'Состояние','celsio'=>'Температура','humidity'=>'Влажность', 'pressure'=>'Давление',
-        'light'=>'Освещенность', 'alarm'=>'Контроль', 'level'=>'Уровень сигнала', 'power'=>'Мощность', 'acdc'=>'Напряжение', 'current'=>'Сила тока']) ?>
+        'light'=>'Освещенность', 'alarm'=>'Контроль', 'rssi'=>'Уровень сигнала', 'power'=>'Мощность', 'vcc'=>'Напряжение питания', 'acdc'=>'Напряжение сети','current'=>'Сила тока']) ?>
 
     <?= $form->field($model, 'name')->textInput(['maxlength' => true]) ?>
 
