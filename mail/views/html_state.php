@@ -10,7 +10,7 @@
 
 <table>
     <caption>ЗАГРУЗКА СИСТЕМЫ</caption>
-    <tr><th>Параметр</th><th>Занято</th><th>Свободно</th><th>% загрузки</th></tr>
+    <tr><th>Параметр</th><th>Занято, Гб</th><th>Всего, Гб</th><th>Использовано, %</th></tr>
     <?= $this->params['table'] ?>
 </table>
 <br>

@@ -91,24 +91,30 @@ class CronController extends Controller
     //ежедневный отчет о работе
     public function actionSysState(){
         //memory stat
-        $stat['mem_percent'] = round(shell_exec("free | grep Mem | awk '{print $3/$2 * 100.0}'"),0);
-        $mem_result = shell_exec("cat /proc/meminfo | grep MemTotal");
-        $stat['mem_total'] = round(preg_replace("#[^0-9]+(?:\.[0-9]*)?#", "", $mem_result) / 1024 / 1024, 3);
-        $mem_result = shell_exec("cat /proc/meminfo | grep MemFree");
-        $stat['mem_free'] = round(preg_replace("#[^0-9]+(?:\.[0-9]*)?#", "", $mem_result) / 1024 / 1024, 3);
-        $stat['mem_used'] = $stat['mem_total'] - $stat['mem_free'];
-        $content ='<tr><td>RAM</td><td>'.$stat['mem_used'].'</td><td>'.$stat['mem_free'].'</td><td>'.$stat['mem_percent'].'</td></tr>';
-        //hdd stat
-        $stat['hdd_free'] = round(disk_free_space("/") / 1024 / 1024 / 1024, 2);
-        $stat['hdd_total'] = round(disk_total_space("/") / 1024 / 1024/ 1024, 2);
-        $stat['hdd_used'] = $stat['hdd_total'] - $stat['hdd_free'];
-        $stat['hdd_percent'] = round(sprintf('%.2f',($stat['hdd_used'] / $stat['hdd_total']) * 100), 0);
-        $content .='<tr><td>HDD</td><td>'.$stat['hdd_used'].'</td><td>'.$stat['hdd_free'].'</td><td>'.$stat['hdd_percent'].'</td></tr>';
-
+        //$stat['mem_percent'] = shell_exec("cat /proc/meminfo | grep MemFree");
         $name = strtolower(php_uname('s'));
         if (strpos($name, 'windows') !== FALSE) {
-
+            //hdd stat
+            $stat['hdd_free'] = round(disk_free_space("/") / 1024 / 1024 / 1024, 2);
+            $stat['hdd_total'] = round(disk_total_space("/") / 1024 / 1024/ 1024, 2);
+            $stat['hdd_used'] = $stat['hdd_total'] - $stat['hdd_free'];
+            $stat['hdd_percent'] = round(sprintf('%.2f',($stat['hdd_used'] / $stat['hdd_total']) * 100), 0);
+            $content ='<tr><td>RAM</td><td>'.$stat['mem_used'].'</td><td>'.$stat['mem_total'].'</td><td>'.$stat['mem_percent'].'</td></tr>';
+            $content .='<tr><td>HDD</td><td>'.$stat['hdd_used'].'</td><td>'.$stat['hdd_free'].'</td><td>'.$stat['hdd_percent'].'</td></tr>';
         } elseif (strpos($name, 'linux') !== FALSE) {
+            $mem_result = shell_exec("cat /proc/meminfo | grep MemTotal");
+            $stat['mem_total'] = round(preg_replace("#[^0-9]+(?:\.[0-9]*)?#", "", $mem_result) / 1024 / 1024, 3);
+            $mem_result = shell_exec("cat /proc/meminfo | grep MemFree");
+            $stat['mem_free'] = round(preg_replace("#[^0-9]+(?:\.[0-9]*)?#", "", $mem_result) / 1024 / 1024, 3);
+            $stat['mem_used'] = $stat['mem_total'] - $stat['mem_free'];
+            $stat['mem_percent'] = round(sprintf('%.2f',($stat['mem_used']/$stat['mem_total']) * 100), 0);
+            $content ='<tr><td>RAM</td><td>'.$stat['mem_used'].'</td><td>'.$stat['mem_total'].'</td><td>'.$stat['mem_percent'].'</td></tr>';
+            //hdd stat
+            $stat['hdd_free'] = round(disk_free_space("/") / 1024 / 1024 / 1024, 2);
+            $stat['hdd_total'] = round(disk_total_space("/") / 1024 / 1024/ 1024, 2);
+            $stat['hdd_used'] = $stat['hdd_total'] - $stat['hdd_free'];
+            $stat['hdd_percent'] = round(sprintf('%.2f',($stat['hdd_used'] / $stat['hdd_total']) * 100), 0);
+            $content .='<tr><td>HDD</td><td>'.$stat['hdd_used'].'</td><td>'.$stat['hdd_total'].'</td><td>'.$stat['hdd_percent'].'</td></tr>';
             $load = round(array_sum(sys_getloadavg()) / count(sys_getloadavg()), 2);
         }
 

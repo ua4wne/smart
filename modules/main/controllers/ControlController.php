@@ -58,8 +58,8 @@ class ControlController extends \yii\web\Controller
                         $syslog->save();
                     }
                     //ищем связанные правила
-                    $rules = Rule::find()->where(['option_id'=>$option->id])->count();
-                    if($rules) {
+                    $rcount = Rule::find()->where(['option_id'=>$option->id])->count();
+                    if($rcount) {
                         $location = $device->location->name;
                         $this->CheckRules($option,$location); //проверяем связанные правила
                     }
@@ -83,22 +83,22 @@ class ControlController extends \yii\web\Controller
             if(!empty($rule->runtime))
                 $runtime = strtotime($rule->runtime); //получаем метку времени старта правила
             if($time_stamp < $runtime) continue; //время еще не вышло, пропуск правила
-            if($model->val > $rule->val){
-                if($rule->condition == 'more' && $rule->action == 'mail'){
+            if(($model->val > $rule->val) && $rule->condition == 'more'){
+                if($rule->action == 'mail'){
                     foreach ($resipients as $resipient){
                         $msg = str_replace("#LOCATION#",$location,$rule->text);
                         $msg = str_replace("#VAL#",$model->val . $model->unit,$msg);
                         $this->SendMail($resipient, $msg);
                     }
                 }
-                if($rule->condition == 'more' && $rule->action == 'sms'){
+                if($rule->action == 'sms'){
                     foreach ($phones as $phone){
                         $msg = str_replace('#LOCATION#',$location,$rule->text);
                         $msg = str_replace('#VAL#',$model->val . $model->unit,$msg);
                         $this->SendSms($phone,$msg);
                     }
                 }
-                if($rule->condition == 'more' && $rule->action == 'cmd'){
+                if($rule->action == 'cmd'){
                     $cmd = $rule->text;
                     $id_rule = $rule->id;
                     $this->RunCmd($cmd,$id_rule);
@@ -107,22 +107,22 @@ class ControlController extends \yii\web\Controller
                 $rule->runtime = date( 'Y-m-d H:i:s' , $runtime);
                 $rule->save();
             }
-            elseif($model->val < $rule->val){
-                if($rule->condition == 'less' && $rule->action == 'mail'){
+            elseif(($model->val < $rule->val) && $rule->condition == 'less'){
+                if($rule->action == 'mail'){
                     foreach ($resipients as $resipient){
                         $msg = str_replace("#LOCATION#",$location,$rule->text);
                         $msg = str_replace("#VAL#",$model->val . $model->unit,$msg);
                         $this->SendMail($resipient, $msg);
                     }
                 }
-                if($rule->condition == 'less' && $rule->action == 'sms'){
+                if($rule->action == 'sms'){
                     foreach ($phones as $phone){
                         $msg = str_replace('#LOCATION#',$location,$rule->text);
                         $msg = str_replace('#VAL#',$model->val . $model->unit,$msg);
                         $this->SendSms($phone,$msg);
                     }
                 }
-                if($rule->condition == 'less' && $rule->action == 'cmd'){
+                if($rule->action == 'cmd'){
                     $cmd = $rule->text;
                     $id_rule = $rule->id;
                     $this->RunCmd($cmd,$id_rule);
@@ -131,22 +131,22 @@ class ControlController extends \yii\web\Controller
                 $rule->runtime = date( 'Y-m-d H:i:s' , $runtime);
                 $rule->save();
             }
-            elseif($rule->val == $model->val){
-                if($rule->condition == 'equ' && $rule->action == 'mail'){
+            elseif(($rule->val == $model->val) && $rule->condition == 'equ'){
+                if($rule->action == 'mail'){
                     foreach ($resipients as $resipient){
                         $msg = str_replace("#LOCATION#",$location,$rule->text);
                         $msg = str_replace("#VAL#",$model->val . $model->unit,$msg);
                         $this->SendMail($resipient, $msg);
                     }
                 }
-                if($rule->condition == 'equ' && $rule->action == 'sms'){
+                if($rule->action == 'sms'){
                     foreach ($phones as $phone){
                         $msg = str_replace('#LOCATION#',$location,$rule->text);
                         $msg = str_replace('#VAL#',$model->val . $model->unit,$msg);
                         $this->SendSms($phone,$msg);
                     }
                 }
-                if($rule->condition == 'equ' && $rule->action == 'cmd'){
+                if($rule->action == 'cmd'){
                     $cmd = $rule->text;
                     $id_rule = $rule->id;
                     $this->RunCmd($cmd,$id_rule);
@@ -155,22 +155,22 @@ class ControlController extends \yii\web\Controller
                 $rule->runtime = date( 'Y-m-d H:i:s' , $runtime);
                 $rule->save();
             }
-            elseif($rule->val != $model->val){
-                if($rule->condition == 'not' && $rule->action == 'mail'){
+            elseif(($rule->val != $model->val) && $rule->condition == 'not'){
+                if($rule->action == 'mail'){
                     foreach ($resipients as $resipient){
                         $msg = str_replace("#LOCATION#",$location,$rule->text);
                         $msg = str_replace("#VAL#",$model->val . $model->unit,$msg);
                         $this->SendMail($resipient, $msg);
                     }
                 }
-                if($rule->condition == 'not' && $rule->action == 'sms'){
+                if($rule->action == 'sms'){
                     foreach ($phones as $phone){
                         $msg = str_replace('#LOCATION#',$location,$rule->text);
                         $msg = str_replace('#VAL#',$model->val . $model->unit,$msg);
                         $this->SendSms($phone,$msg);
                     }
                 }
-                if($rule->condition == 'not' && $rule->action == 'cmd'){
+                if($rule->action == 'cmd'){
                     $cmd = $rule->text;
                     $id_rule = $rule->id;
                     $this->RunCmd($cmd,$id_rule);
@@ -238,5 +238,4 @@ class ControlController extends \yii\web\Controller
         $syslog->msg = 'Запуск команды <strong>'. $cmd . '</strong> <a href="/main/rule/'.$rule.'">по правилу</a>';
         $syslog->save();
     }
-
 }
