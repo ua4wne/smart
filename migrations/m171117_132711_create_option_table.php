@@ -19,6 +19,7 @@ class m171117_132711_create_option_table extends Migration
         $this->createTable('option', [
             'id' => $this->primaryKey(),
             'device_id' => $this->integer()->notNull(),
+            'address' => $this->string(32),
             'val' => $this->float(5,2)->notNull()->defaultValue(0),
             'min_val' => $this->float(5,2)->notNull()->defaultValue(0),
             'max_val' => $this->float(5,2)->notNull()->defaultValue(0),

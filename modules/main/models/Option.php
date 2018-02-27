@@ -39,8 +39,9 @@ class Option extends BaseModel
             [['device_id', 'val', 'min_val', 'max_val', 'alias', 'name'], 'required'],
             [['device_id', 'to_log'], 'integer'],
             [['val', 'min_val', 'max_val'], 'number'],
-            [['created_at', 'updated_at'], 'safe'],
+            [['created_at', 'updated_at', 'address'], 'safe'],
             [['unit'], 'string', 'max' => 7],
+            [['address'], 'string', 'max' => 32],
             [['alias', 'name'], 'string', 'max' => 50],
             [['device_id'], 'exist', 'skipOnError' => true, 'targetClass' => Device::className(), 'targetAttribute' => ['device_id' => 'id']],
         ];
@@ -54,6 +55,7 @@ class Option extends BaseModel
         return [
             'id' => 'ID',
             'device_id' => 'Device ID',
+            'address' => 'Адрес датчика',
             'val' => 'Значение параметра',
             'min_val' => 'Минимальное значение параметра',
             'max_val' => 'Максимальное значение параметра',

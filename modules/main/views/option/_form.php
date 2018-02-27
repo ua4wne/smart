@@ -14,6 +14,8 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'device_id')->hiddenInput(['value'=>$val])->label(false) ?>
 
+    <?= $form->field($model, 'address')->textInput(['maxlength' => true]) ?>
+
     <?= $form->field($model, 'val')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'min_val')->textInput(['maxlength' => true]) ?>

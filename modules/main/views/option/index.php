@@ -37,6 +37,7 @@ $this->params['breadcrumbs'][] = 'Параметры';
                 }
             ],
             'alias',
+            'address',
             'val',
             'min_val',
             'max_val',

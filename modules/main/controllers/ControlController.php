@@ -27,47 +27,66 @@ class ControlController extends \yii\web\Controller
             ],
         ];
     }
-
-    public function actionIndex()
+//http://smart/control?device=70ed8b0cc057d9dd&celsio[123erf456hrthhh]=10.10&celsio[143erf456hrthhf]=50.10
+    public function actionIndex() //http://smart/control?device=70ed8b0cc057d9dd&celsio[one]=14.50&celsio[two]=51.00$addr[one]=402552162517723541$addr[two]=4025522324177235247
     {
         $uid = $_GET['device']; //выделяем UID устройства из запроса и смотрим, есть ли такой в базе
         $device = Device::findOne(['uid'=>$uid]);
         if(!empty($device)){ //есть такое устройство, парсим дальше, выбираем остальные параметры
+            //return print_r($_GET);
             foreach($_GET as $key=>$value){
                 if($key!='device'){
-                    $option = Option::findOne(['device_id'=>$device->id,'alias'=>$key]);
-                    $oldval = $option->val;
-                    if($oldval != $value)
-                        $option->val = $value;
-                    $option->save();
-                    //проверяем на вхождение в диапазон min - max
-                    if($value < $option->min_val){
-                        //запись в лог
-                        $syslog = new Syslog();
-                        $syslog->created_at = date('Y-m-d H:i:s');
-                        $syslog->type = 'error';
-                        $syslog->msg = 'Значение параметра <strong>'. $option->name . ' (' . $option->device->name . ')</strong>  меньше минимально возможного! <span class="red">value=' . $value . ' min_value=' . $option->min_val . '</span>';
-                        $syslog->save();
+                    if(is_array($value)){ //если массив параметров
+                        //return print_r($value);
+                        foreach($value as $k=>$param){
+                            $this->CheckParam($device,$key,$param,$k);
+                        }
                     }
-                    if($value > $option->max_val){
-                        //запись в лог
-                        $syslog = new Syslog();
-                        $syslog->created_at = date('Y-m-d H:i:s');
-                        $syslog->type = 'error';
-                        $syslog->msg = 'Значение параметра <strong>'. $option->name . ' (' . $option->device->name . ')</strong>  больше максимально возможного! <span class="red">value=' . $value . ' max_value=' . $option->max_val . '</span>';
-                        $syslog->save();
+                    else {
+                        $this->CheckParam($device,$key,$value);
                     }
-                    //ищем связанные правила
-                    $rcount = Rule::find()->where(['option_id'=>$option->id])->count();
-                    if($rcount) {
-                        $location = $device->location->name;
-                        $this->CheckRules($option,$location); //проверяем связанные правила
-                    }
+
                 }
             }
         }
         return true;
         //return $this->render('index');
+    }
+
+    private function CheckParam(Device $device,$key,$value,$address=null){
+        if(empty($address))
+            $option = Option::findOne(['device_id'=>$device->id,'alias'=>$key]);
+        else
+            $option = Option::findOne(['device_id'=>$device->id,'address'=>$address,'alias'=>$key]);
+        if(empty($option)) return; //если не найден объект - выход
+        $oldval = $option->val;
+        if($oldval != $value){
+            $option->val = $value;
+            $option->save();
+            //проверяем на вхождение в диапазон min - max
+            if($value < $option->min_val){
+                //запись в лог
+                $syslog = new Syslog();
+                $syslog->created_at = date('Y-m-d H:i:s');
+                $syslog->type = 'error';
+                $syslog->msg = 'Значение параметра <strong>'. $option->name . ' (' . $option->device->name . ')</strong>  меньше минимально возможного! <span class="red">value=' . $value . ' min_value=' . $option->min_val . '</span>';
+                $syslog->save();
+            }
+            if($value > $option->max_val){
+                //запись в лог
+                $syslog = new Syslog();
+                $syslog->created_at = date('Y-m-d H:i:s');
+                $syslog->type = 'error';
+                $syslog->msg = 'Значение параметра <strong>'. $option->name . ' (' . $option->device->name . ')</strong>  больше максимально возможного! <span class="red">value=' . $value . ' max_value=' . $option->max_val . '</span>';
+                $syslog->save();
+            }
+            //ищем связанные правила
+            $rcount = Rule::find()->where(['option_id'=>$option->id])->count();
+            if($rcount) {
+                $location = $device->location->name;
+                $this->CheckRules($option,$location); //проверяем связанные правила
+            }
+        }
     }
 
     private function CheckRules(Option $model, $location){

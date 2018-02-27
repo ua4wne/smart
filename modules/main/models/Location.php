@@ -67,7 +67,7 @@ class Location extends BaseModel
         $locations = self::find()->select(['id','name','alias'])->where('is_show=1')->orderBy(['name' => SORT_ASC,])->all();
         $k=0;
         foreach ($locations as $location){
-            if($k==0)
+            if($k==3)
                 $html .= '<li class="active">';
             else
                 $html .= '<li>';
