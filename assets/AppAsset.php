@@ -38,6 +38,7 @@ class AppAsset extends AssetBundle
         'js/moment.min.js',
         'js/fullcalendar.min.js',
         'js/bootbox.js',
+        'js/jquery.easypiechart.min.js',
         'js/ace-elements.min.js',
         'js/ace-extra.min.js',
         'js/ace.min.js',
@@ -48,7 +49,6 @@ class AppAsset extends AssetBundle
         'js/raphael-2.1.4.min.js',
         'js/morris.js',
         'js/caldraw.js',
-        //'js/justgage.js'
     ];
     public $jsOptions = [
         //'position' => \yii\web\View::POS_HEAD, //влияет на работу фильтрации в таблицах представлений - виджет GridView!!!

@@ -67,7 +67,7 @@ class Location extends BaseModel
         $locations = self::find()->select(['id','name','alias'])->where('is_show=1')->orderBy(['name' => SORT_ASC,])->all();
         $k=0;
         foreach ($locations as $location){
-            if($k==3)
+            if($k==0)
                 $html .= '<li class="active">';
             else
                 $html .= '<li>';
@@ -97,36 +97,136 @@ class Location extends BaseModel
                 }
                 //определяем параметры, привязанные к этим устройствам
                 $params = Option::find()->where(['device_id' => $device_id])->andWhere(['not in','alias',array('vcc','rssi')])->all();
-                $pcount = Option::find()->where(['device_id' => $device_id])->andWhere(['not in','alias',array('vcc','rssi')])->count();
-                $step = 12/$pcount;
-                $switch = '';
-                $gaude = '';
+                //$pcount = Option::find()->where(['device_id' => $device_id])->andWhere(['not in','alias',array('vcc','rssi')])->count();
+                $step = 0;
+                $html .= '<div class="row">
+                            <div class="col-xs-12">';
                 foreach ($params as $param){
-                    if($param->alias == 'state'){
+                    if($param->alias == 'state' || $param->alias == 'light'){
                         $topic=$param->topic->name;
                         $check='';
                         if($param->val)
                             $check='checked="checked"';
-                        $switch .= '<label>
-                                        <input type="hidden" name="'.$topic.'">
-                                        <input type="checkbox" name="switch-'.$param->id.'" id = "'.$param->id.'" class="ace ace-switch ace-switch-7" '.$check.' >
-                                        <span class="lbl">&nbsp;'.$param->name.'</span>
-                                    </label>';
+                        $html .= '<div class="infobox infobox-blue2">                                        
+								        <div class="infobox-data">
+										    <input type="hidden" name="'.$topic.'">
+											<label>
+												<input type="checkbox" name="switch-'.$param->id.'" id = "'.$param->id.'" class="ace ace-switch ace-switch-4 btn-rotate" '.$check.' >
+												<span class="lbl"></span>
+											</label>
+
+											<div class="infobox-content">
+												<span class="infobox-text">'.$param->name.'</span>
+											</div>
+										</div>
+								</div>';
+                    }
+                    elseif($param->alias == 'alarm'){
+                        if($param->val){
+                            $html.= '<div class="infobox infobox-red">
+											<div class="infobox-icon">
+												<i class="ace-icon fa fa-bell-o red"></i>
+											</div>
+											<div class="infobox-data">
+												<span class="infobox-data-number">' . $param->val . '</span>
+												<div class="infobox-content">'.$param->name.'</div>
+											</div>
+									</div>';
+                        }
+                        else{
+                            $html.= '<div class="infobox infobox-green">
+											<div class="infobox-icon">
+												<i class="ace-icon fa fa-bell-o green"></i>
+											</div>
+											<div class="infobox-data">
+												<span class="infobox-data-number">Норма</span>
+												<div class="infobox-content">'.$param->name.'</div>
+											</div>
+									</div>';
+                        }
+                    }
+                    elseif($param->alias == 'celsio' || $param->alias == 'humidity' || $param->alias == 'power'){
+                        if($param->alias == 'celsio'){
+                            if($param->val <= 15)
+                                $color = 'data-color="#87CEEB"';
+                            if($param->val > 15 && $param->val < 30)
+                                $color = 'data-color="#87B87F"';
+                            if($param->val >= 30)
+                                $color = 'data-color="#D15B47"';
+                        }
+                        if($param->alias == 'humidity'){
+                            if($param->val <= 50)
+                                $color = 'data-color="#FFB935"';
+                            if($param->val > 50 && $param->val < 70)
+                                $color = 'data-color="#87B87F"';
+                            if($param->val > 70)
+                                $color = 'data-color="#D15B47"';
+                        }
+                        $html.= '<div class="infobox infobox-blue2">
+											<div class="infobox-progress">
+												<div class="easy-pie-chart percentage" data-percent="' . $param->val . '" ' . $color .'>
+													<span class="percent">' . $param->val . '</span>
+												</div>
+											</div>
+
+											<div class="infobox-data">
+												<span class="infobox-text">' . $param->val . $param->unit . '</span>
+												<div class="infobox-content">'.$param->name.'</div>
+											</div>
+										</div>';
+
+                    }
+                    elseif($param->alias == 'pressure'){
+                        if($param->val <= 740){
+                            $html.= '<div class="infobox infobox-blue">
+											<div class="infobox-icon">
+												<i class="ace-icon fa fa-arrow-down blue"></i>
+											</div>
+											<div class="infobox-data">
+												<span class="infobox-data-number">' . $param->val . '</span>
+												<div class="infobox-content">'.$param->name.'</div>
+											</div>
+									</div>';
+                        }
+                        if($param->val > 740 && $param->val < 750){
+                            $html.= '<div class="infobox infobox-green">
+											<div class="infobox-icon">
+												<i class="ace-icon fa fa-thumbs-o-up green"></i>
+											</div>
+											<div class="infobox-data">
+												<span class="infobox-data-number">Норма</span>
+												<div class="infobox-content">'.$param->name.'</div>
+											</div>
+									</div>';
+                        }
+                        if($param->val >= 750){
+                            $html.= '<div class="infobox infobox-blue">
+											<div class="infobox-icon">
+												<i class="ace-icon fa fa-arrow-up blue"></i>
+											</div>
+											<div class="infobox-data">
+												<span class="infobox-data-number">' . $param->val . '</span>
+												<div class="infobox-content">'.$param->name.'</div>
+											</div>
+									</div>';
+                        }
                     }
                     else{
-                        $gaude .= '<div class="col-md-'.$step.'">
-                                        <div id="'.$param->alias.'" class="gauge" data-value="'.$param->val.'" data-min="'.$param->min_val.'" data-max="'.$param->max_val.'" data-gaugeWidthScale="0.6"></div>
-                                    </div>';
+                        $html.= '<div class="infobox infobox-green">
+											<div class="infobox-icon">
+												<i class="ace-icon fa fa-comment green"></i>
+											</div>
+											<div class="infobox-data">
+												<span class="infobox-data-number">Норма</span>
+												<div class="infobox-content">'.$param->name.'</div>
+											</div>
+									</div>';
                     }
                 }
 
-                $html .= '     <div class="row">
-                                    <div class="col-md-4">' .
-                                        $switch
-                                    . '</div>' .
-                                        $gaude
-                                . '</div>
-                            </div>';
+                $html .= '    </div>
+                            </div>
+                          </div>';
             }
             else{
                 $html .= '     <div class="row">

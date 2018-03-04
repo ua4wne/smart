@@ -253,28 +253,7 @@ $js = <<<JS
      alert('Error!');
      }
      });
-     var celsio = new JustGage({
-        id: "celsio",
-        formatNumber: true,
-        gaugeWidthScale: 0.6,
-      customSectors: [{
-        color : "#2A95DF",
-        lo : 0,
-        hi : 17
-      },{
-        color : "#00ff00",
-        lo : 18,
-        hi : 30
-      },{
-        color : "#ff0000",
-        lo : 31,
-        hi : 100
-      }],
-        counter: true,
-        title: "Температура",
-        label: "C"
-      });
-     
+  
      var humidity = new JustGage({
         id: "humidity",
         formatNumber: true,
@@ -364,6 +343,18 @@ $js = <<<JS
         //$(".tabbable").load("/main/default/update-vars");
         //alert('timer');
     }, 5000);*/
+     
+     $('.easy-pie-chart.percentage').each(function(){
+					$(this).easyPieChart({
+						barColor: $(this).data('color'),
+						trackColor: '#EEEEEE',
+						scaleColor: false,
+						lineCap: 'butt',
+						lineWidth: 8,
+						animate: ace.vars['old_ie'] ? false : 1000,
+						size:54
+					}).css('color', $(this).data('color'));
+				});
 JS;
 
 $this->registerJs($js);
