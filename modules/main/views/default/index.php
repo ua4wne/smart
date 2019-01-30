@@ -303,7 +303,7 @@ $js = <<<JS
      $(document).on ({
         click: function() {
             var stat = $(this).prop('checked');
-            var ptopic = $(this).prev().attr('name');
+            var ptopic = $(this).parent().prev().attr('name');
             if(stat){            
                 var pval = '1';
             }

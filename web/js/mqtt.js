@@ -110,10 +110,10 @@ $(document).ready(function(){
 
     $("#set-topic").on("click", function(e) {
         e.preventDefault();
-        var option_id = $('#option_id');
+        //var option_id = $('#option_id');
         if($('#route').val()=='public'){
-            var ptopic = $('#name').val();
-            var pval = $('#payload').val();
+            var ptopic = $('#topic_id option:selected').text();
+            var pval = '0'; //$('#payload').val();
             var message = new Paho.MQTT.Message(pval);
             message.destinationName = ptopic;
             message.qos = 0;
@@ -135,6 +135,8 @@ $(document).ready(function(){
                         if(count)
                             $(idx).remove();
                         $('#publ').append('<li class="pub" id="' + res + '"><pre>' + ptopic + '<i class="fa fa-trash subs pull-right" aria-hidden="true"></i></pre></li>');
+                        $('#topic_id option:selected').remove();
+                        $('#option_id option:selected').remove(); //удаляем текущий выбор из селектов
                     }
                 },
                 error: function (err) {
@@ -143,7 +145,7 @@ $(document).ready(function(){
             });
         }
         if($('#route').val()=='subscribe'){
-            var stopic = $('#name').val();
+            var stopic = $('#topic_id option:selected').text();
             var payload = 0;
             route='subscribe';
             mqtt.subscribe(stopic);
@@ -163,6 +165,8 @@ $(document).ready(function(){
                         if(count)
                             $(idx).remove();
                         $('#subs').append('<li class="sub" id="' + res + '"><pre>' + stopic + '<i class="fa fa-trash subs pull-right" aria-hidden="true"></i></pre></li>');
+                        $('#topic_id option:selected').remove();
+                        $('#option_id option:selected').remove(); //удаляем текущий выбор из селектов
                     }
                 },
                 error: function (err) {

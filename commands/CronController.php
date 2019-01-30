@@ -1,9 +1,15 @@
 <?php
 
 namespace app\commands;
+use app\models\LibraryModel;
 use app\models\Weather;
+use app\modules\admin\models\Eventlog;
+use app\modules\main\models\Device;
 use app\modules\main\models\Logger;
+use app\modules\main\models\MqttData;
 use app\modules\main\models\Option;
+use app\modules\main\models\Rule;
+use app\modules\main\models\Topic;
 use yii\console\Controller;
 use app\modules\main\models\Config;
 use app\modules\main\models\Syslog;
@@ -148,6 +154,61 @@ class CronController extends Controller
             $syslog->is_new = 1;
             $syslog->created_at = date('Y-m-d H:i:s');
             $syslog->save();
+        }
+    }
+
+    //очистка журналов логов
+    public function actionCleanLog(){
+        $period = Config::findOne(['param'=>'CLEANING_PERIOD'])->val;
+        if(!empty($period)){
+            $date =  (new \DateTime('-'.$period.' days'))->format('Y-m-d');
+            //очищаем eventlog
+            Eventlog::deleteAll(['<=','created_at',$date]);
+            //очищаем syslog
+            Syslog::deleteAll(['<=','created_at',$date]);
+        }
+
+    }
+
+    //обработчик данных, поступающих из топиков mqtt
+    public function actionSaveTopics(){
+        //выбираем все переменные, которые передаются через mqtt
+        $topics = Topic::find()->all();
+        if(!empty($topics)){
+            foreach ($topics as $topic){
+                $option = Option::findOne($topic->option_id);
+                if(empty($option)) continue; //если не найден объект - пропускаем итерацию
+                $oldval = $option->val;
+                $value = MqttData::findOne($topic->topic_id)->value;
+                if($oldval != $value){
+                    $option->val = $value;
+                    $option->save();
+                    //проверяем на вхождение в диапазон min - max
+                    if($value < $option->min_val){
+                        //запись в лог
+                        $syslog = new Syslog();
+                        $syslog->created_at = date('Y-m-d H:i:s');
+                        $syslog->type = 'error';
+                        $syslog->msg = 'Значение параметра <strong>'. $option->name . ' (' . $option->device->name . ')</strong>  меньше минимально возможного! <span class="red">value=' . $value . ' min_value=' . $option->min_val . '</span>';
+                        $syslog->save();
+                    }
+                    if($value > $option->max_val){
+                        //запись в лог
+                        $syslog = new Syslog();
+                        $syslog->created_at = date('Y-m-d H:i:s');
+                        $syslog->type = 'error';
+                        $syslog->msg = 'Значение параметра <strong>'. $option->name . ' (' . $option->device->name . ')</strong>  больше максимально возможного! <span class="red">value=' . $value . ' max_value=' . $option->max_val . '</span>';
+                        $syslog->save();
+                    }
+                    //ищем связанные правила
+                    $rcount = Rule::find()->where(['option_id'=>$option->id])->count();
+                    if($rcount) {
+                        $device = Device::findOne($option->device_id);
+                        $location = $device->location->name;
+                        LibraryModel::CheckRules($option,$location); //проверяем связанные правила
+                    }
+                }
+            }
         }
     }
 

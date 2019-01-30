@@ -32,12 +32,24 @@ class DefaultController extends Controller
 
     public function actionIndex()
     {
-        //читаем данные о погоде из файла
-        $file = 'temp/forecast.xml';
-        if(file_exists($file)){
-            $data = simplexml_load_file($file);
-            $content = Weather::GetContent($data);
+        $use_own_station = Config::findOne(['param'=>'USE_WEATHER_STATION'])->val;
+        if($use_own_station=='true'){
+            //читаем данные со своей погодной станции
+            //TODO нужно реализовать!!!
+            //временная заглушка
+            $content=array();
+            $content['city']=Config::findOne(['param'=>'CITY_ID'])->val;
+            $content['html']='<div></div>';
         }
+        else{
+            //читаем данные о погоде из файла
+            $file = 'temp/forecast.xml';
+            if(file_exists($file)){
+                $data = simplexml_load_file($file);
+                $content = Weather::GetContent($data);
+            }
+        }
+
         $tabs = Location::GetTabs();
         $syslog = Syslog::ViewSysLog(10); //выводим последние 10 строк системного лога
         /*$dataProvider = new SqlDataProvider([
@@ -108,7 +120,7 @@ class DefaultController extends Controller
 
     public function actionForecast(){
         if(\Yii::$app->request->isAjax){
-            $data =  Weather::GetForecast();
+            $data = Weather::GetForecast();
             return $data;
         }
     }

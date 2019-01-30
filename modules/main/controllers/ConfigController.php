@@ -4,6 +4,7 @@ namespace app\modules\main\controllers;
 
 use app\modules\main\models\JsonAjax;
 use app\modules\main\models\Mqtt;
+use app\modules\main\models\MqttData;
 use app\modules\main\models\Option;
 use app\modules\main\models\Sms;
 use app\modules\main\models\Topic;
@@ -165,30 +166,41 @@ class ConfigController extends Controller
         $model->login = $login;
         $model->pass = $pass;
         $topic = new Topic();
-        $options = Option::find()->select(['id','device_id', 'name'])->all();
+        $subquery = Topic::find()->select('option_id');
+        $options = Option::find()->select(['id','device_id', 'name'])->where(['not in','id',$subquery])->all(); //выбираем только то, что еще не связано
         $selopt = array();
         foreach ($options as $option){
             $selopt[$option->id] = $option->device->name.' ('.$option->name.') - '.$option->device->location->name;
         }
 
+        $subquery = Topic::find()->select('topic_id');
+        $topics = MqttData::find()->select(['id', 'topic'])->where(['not in','id',$subquery])->all(); //выбираем только то, что еще не связано
+        $seltop = array();
+        foreach ($topics as $val){
+            $seltop[$val->id] = $val->topic;
+        }
+
         //выбираем сохраненные publish-топики
-        $pubs = Topic::find()->select(['id','name'])->where(['route'=>'public'])->all();
+        $pubs = Topic::find()->select(['id','topic_id'])->where(['route'=>'public'])->all();
         $public = '';
         foreach ($pubs as $pub){
-            $public .= '<li class="pub" id="' . $pub->id . '"><pre>' . $pub->name . '<i class="fa fa-trash pubs pull-right" aria-hidden="true"></i></pre></li>';
+            $pub_top = MqttData::findOne($pub->topic_id)->topic;
+            $public .= '<li class="pub" id="' . $pub->id . '"><pre>' . $pub_top . '<i class="fa fa-trash pubs pull-right" aria-hidden="true"></i></pre></li>';
         }
 
         //выбираем сохраненные subscribe-топики
-        $subs = Topic::find()->select(['id','name'])->where(['route'=>'subscribe'])->all();
+        $subs = Topic::find()->select(['id','topic_id'])->where(['route'=>'subscribe'])->all();
         $subscribe = '';
         foreach ($subs as $sub){
-            $subscribe .= '<li class="sub" id="' . $sub->id . '"><pre>' . $sub->name . '<i class="fa fa-trash subs pull-right" aria-hidden="true"></i></pre></li>';
+            $sub_top = MqttData::findOne($sub->topic_id)->topic;
+            $subscribe .= '<li class="sub" id="' . $sub->id . '"><pre>' . $sub_top . '<i class="fa fa-trash subs pull-right" aria-hidden="true"></i></pre></li>';
         }
 
         return $this->render('mqtt', [
             'model' => $model,
             'topic' => $topic,
             'selopt' => $selopt,
+            'seltop' => $seltop,
             'public' => $public,
             'subscribe' => $subscribe,
         ]);
@@ -199,7 +211,7 @@ class ConfigController extends Controller
         if(\Yii::$app->request->isAjax){
             $model = new Topic();
             if ($model->load(Yii::$app->request->post()) && $model->validate()){
-                $dbl = Topic::findOne(['name'=>$model->name,'route'=>$model->route]);
+                $dbl = Topic::findOne(['topic_id'=>$model->topic_id,'route'=>$model->route]);
                 if(empty($dbl)){
                     if($model->save())
                         return $model->id;
@@ -226,14 +238,13 @@ class ConfigController extends Controller
     public function actionMqttmsg(){
         if(\Yii::$app->request->isAjax){
             $name = $_POST['topic'];
-            $topic = Topic::findOne(['name'=>$name]);
+            $data = MqttData::findOne(['topic'=>$name]);
+            $topic = Topic::findOne(['topic_id'=>$data->id]);
                 if(!empty($topic)){
                     //есть такой топик, обновляем связанный параметр
-                    $topic->payload = $_POST['payload'];
-                    $topic->save();
                     $option = Option::findOne($topic->option_id);
                     if(!empty($option)){
-                        $option->val = $topic->payload;
+                        $option->val = $_POST['payload'];
                         $option->save();
                     }
                     return 'OK';

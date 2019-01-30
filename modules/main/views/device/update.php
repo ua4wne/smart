@@ -41,7 +41,7 @@ $this->params['breadcrumbs'][] = ['label' => $model->name, 'url' => ['view', 'id
 
         <?= $form->field($model, 'verify')->dropDownList($selvrf) ?>
 
-        <?= $form->field($model, 'protocol_id')->textInput() ?>
+        <?= $form->field($model, 'protocol_id')->dropDownList($selprot) ?>
 
         <?= $form->field($model, 'location_id')->dropDownList($selloc) ?>
 

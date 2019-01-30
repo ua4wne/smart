@@ -16,7 +16,6 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <p>
         <?= Html::a('Новая запись', ['create'], ['class' => 'btn btn-success']) ?>
-        <?= Html::a('Сканер устройств', ['ping'], ['class' => 'btn btn-danger', 'name' => 'scan', 'id' => 'scan']) ?>
     </p>
 
     <?= GridView::widget([
@@ -95,7 +94,7 @@ $this->params['breadcrumbs'][] = $this->title;
                     );
                 },
             ],
-            'protocol_id',
+            'protocol.name',
             //'location.id',
             [
                 'attribute'=>'location.name',
@@ -104,7 +103,11 @@ $this->params['breadcrumbs'][] = $this->title;
             //'created_at',
             //'updated_at',
 
-            ['class' => 'yii\grid\ActionColumn'],
+            ['class' => 'yii\grid\ActionColumn',
+                'header'=>'Действия',
+                'headerOptions' => ['width' => '80'],
+                //'template' => '{view}  {delete}',
+            ],
         ],
     ]); ?>
 </div>

@@ -5,6 +5,7 @@ namespace app\modules\main\controllers;
 use app\models\Ping;
 use app\modules\main\models\DeviceType;
 use app\modules\main\models\Location;
+use app\modules\main\models\Protocol;
 use app\modules\main\models\Tarif;
 use Yii;
 use app\modules\main\models\Device;
@@ -115,12 +116,18 @@ class DeviceController extends Controller
             foreach($types as $type) {
                 $seltype[$type['id']] = $type['name']; //массив для заполнения данных в select формы
             }
+            $protocols = Protocol::find()->select(['id','name'])->asArray()->all();
+            $selprot = array();
+            foreach($protocols as $prot) {
+                $selprot[$prot['id']] = $prot['name']; //массив для заполнения данных в select формы
+            }
             $selvrf = array('0' => 'Ручной','1' => 'Автоматический');
             return $this->render('create', [
                 'model' => $model,
                 'selvrf' => $selvrf,
                 'selloc' => $selloc,
                 'seltype' => $seltype,
+                'selprot' => $selprot,
                 'upload' => $upload,
             ]);
         }
@@ -164,12 +171,18 @@ class DeviceController extends Controller
             foreach($types as $type) {
                 $seltype[$type['id']] = $type['name']; //массив для заполнения данных в select формы
             }
+            $protocols = Protocol::find()->select(['id','name'])->asArray()->all();
+            $selprot = array();
+            foreach($protocols as $prot) {
+                $selprot[$prot['id']] = $prot['name']; //массив для заполнения данных в select формы
+            }
             $selvrf = array('0' => 'Ручной','1' => 'Автоматический');
             return $this->render('update', [
                 'model' => $model,
                 'selvrf' => $selvrf,
                 'selloc' => $selloc,
                 'seltype' => $seltype,
+                'selprot' => $selprot,
                 'upload' => $upload,
             ]);
         }

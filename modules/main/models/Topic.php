@@ -34,13 +34,12 @@ class Topic extends BaseModel
     public function rules()
     {
         return [
-            [['option_id', 'name', 'route', 'payload'], 'required'],
-            [['option_id'], 'integer'],
+            [['option_id', 'topic_id', 'route'], 'required'],
+            [['option_id', 'topic_id'], 'integer'],
             [['created_at', 'updated_at'], 'safe'],
-            [['name'], 'string', 'max' => 100],
             [['route'], 'string', 'max' => 10],
-            [['payload'], 'string', 'max' => 70],
             [['option_id'], 'exist', 'skipOnError' => true, 'targetClass' => Option::className(), 'targetAttribute' => ['option_id' => 'id']],
+            [['topic_id'], 'exist', 'skipOnError' => true, 'targetClass' => MqttData::className(), 'targetAttribute' => ['topic_id' => 'id']],
         ];
     }
 
@@ -52,7 +51,7 @@ class Topic extends BaseModel
         return [
             'id' => 'ID',
             'option_id' => 'Что контролируем',
-            'name' => 'Наименование топика',
+            'topic_id' => 'Наименование топика',
             'route' => 'Тип топика',
             'payload' => 'Значение топика',
             'created_at' => 'Дата создания',
@@ -66,5 +65,13 @@ class Topic extends BaseModel
     public function getOption()
     {
         return $this->hasOne(Option::className(), ['id' => 'option_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getMqttData()
+    {
+        return $this->hasOne(MqttData::className(), ['topic_id' => 'id']);
     }
 }

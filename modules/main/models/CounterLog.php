@@ -76,7 +76,6 @@ class CounterLog extends BaseModel
 
     //таблица по счетчикам
     public static function StatCounter($year){
-        $data = array(1=>0,0,0,0,0,0,0,0,0,0,0,0); //показания счетчиков, нумерация с 1
         $content='<table class="table table-hover table-striped">
             <tr><th>Счетчик</th><th>Январь</th><th>Февраль</th><th>Март</th><th>Апрель</th><th>Май</th><th>Июнь</th><th>Июль</th><th>Август</th><th>Сентябрь</th>
                 <th>Октябрь</th><th>Ноябрь</th><th>Декабрь</th>
@@ -84,10 +83,12 @@ class CounterLog extends BaseModel
         $type = DeviceType::findOne(['name'=>'Счетчик'])->id;
         $models = Device::find()->select(['id','name'])->where(['=','type_id',$type])->all();
         foreach ($models as $model){
+            $data = array(1=>0,0,0,0,0,0,0,0,0,0,0,0); //показания счетчиков, нумерация с 1
             $content.='<tr><td>'.$model->name.'</td>';
             $logs = CounterLog::find()->select(['_month','delta'])->where(['=','device_id',$model->id])->andWhere(['=','_year',$year])->orderBy('_month', SORT_ASC)->all();
-            //return print_r($logs);
-            $k=1;
+            //if($model->id==7)
+            //    return print_r($logs);
+            /*$k=1;
             foreach($logs as $log){
                 if((int)$log->_month == $k){
                     $content .='<td>'.$log->delta.'</td>';
@@ -99,6 +100,14 @@ class CounterLog extends BaseModel
             while($k<13){
                 $content .='<td>0</td>';
                 $k++;
+            }
+            $content .='</tr>';*/
+            foreach ($logs as $key=>$log){
+                $k = (int)$log->_month;
+                $data[$k]=$log->delta;
+            }
+            foreach ($data as $val){
+                $content .='<td>'.$val.'</td>';
             }
             $content .='</tr>';
         }

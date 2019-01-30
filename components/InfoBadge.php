@@ -34,7 +34,7 @@ class InfoBadge extends Widget
                 return $this->GetEventGroup();
                 break;
             case 'system':
-                return $this->SysState();
+                return $this->getSysLog(3); //$this->SysState();
                 break;
             case 'uptime':
                 return 'Время работы: '.$this->getUpTime();
@@ -113,6 +113,8 @@ class InfoBadge extends Widget
         $show_load = Config::findOne(['param'=>'SHOW_SERVER_LOAD'])->val;
         if($show_load=='true')
             $load = $this->getLoad();
+        else
+            $load = 0;
         if($stat['mem_percent']<50)
             $bar_state_mem='progress-bar progress-bar-info';
         else if($stat['mem_percent']>49&&$stat['hdd_percent']<75) {

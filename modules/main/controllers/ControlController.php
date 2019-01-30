@@ -2,6 +2,7 @@
 
 namespace app\modules\main\controllers;
 
+use app\models\LibraryModel;
 use app\modules\main\models\Config;
 use app\modules\main\models\Device;
 use app\modules\main\models\Option;
@@ -84,12 +85,12 @@ class ControlController extends \yii\web\Controller
             $rcount = Rule::find()->where(['option_id'=>$option->id])->count();
             if($rcount) {
                 $location = $device->location->name;
-                $this->CheckRules($option,$location); //проверяем связанные правила
+                LibraryModel::CheckRules($option,$location); //проверяем связанные правила
             }
         }
     }
 
-    private function CheckRules(Option $model, $location){
+    /*private function CheckRules(Option $model, $location){
         $time_stamp = strtotime(date('Y-m-d H:i:s')); //получаем текущую метку времени
         //определяем получателей почты
         $resp = Config::findOne(['param'=>'CONTROL_E_MAIL'])->val;
@@ -202,59 +203,14 @@ class ControlController extends \yii\web\Controller
     }
 
     private function SendMail($to,$msg){
-        $result = Yii::$app->mailer->compose()
-            ->setFrom(Yii::$app->params['adminEmail'])
-            ->setTo($to)
-            ->setSubject(Yii::$app->name)
-            ->setTextBody($msg)
-            ->setHtmlBody($msg)
-            ->send();
-        //запись в лог
-        $syslog = new Syslog();
-        if($result){
-            $syslog->msg = $msg;
-            $syslog->type = 'email';
-        }
-        else{
-            $syslog->type = 'error';
-            $syslog->msg = 'Возникла ошибка при отправке системного сообщения адресату <strong>'. $to .'</strong>';
-        }
-        $syslog->from = Yii::$app->params['adminEmail'];
-        $syslog->to = $to;
-        $syslog->is_new = 1;
-        $syslog->created_at = date('Y-m-d H:i:s');
-        $syslog->save();
+        LibraryModel::SendMail($to,$msg);
     }
 
     private function SendSms($to,$msg){
-        $model = new Sms();
-        $model->phone = $to;
-        $model->message = $msg;
-        $cost = $model->GetCost();
-        if($cost>0){
-            $model->SendViaMail();
-        }
-        $model->SendSms();
-        //запись в лог
-        $syslog = new Syslog();
-        $syslog->from = 'Система';
-        $syslog->to = $to;
-        $syslog->is_new = 1;
-        $syslog->created_at = date('Y-m-d H:i:s');
-        $syslog->type = 'sms';
-        $syslog->msg = 'Адресату <strong>'. $to .'</strong> было отправлено СМС. Стоимость отправки - ' . $cost . ' руб.';
-        $syslog->save();
+        LibraryModel::SendSms($to,$msg);
     }
 
     private function RunCmd($cmd,$rule){
-        //запись в лог
-        $syslog = new Syslog();
-        $syslog->from = 'Система';
-        $syslog->to = 'shell';
-        $syslog->is_new = 1;
-        $syslog->created_at = date('Y-m-d H:i:s');
-        $syslog->type = 'exec';
-        $syslog->msg = 'Запуск команды <strong>'. $cmd . '</strong> <a href="/main/rule/'.$rule.'">по правилу</a>';
-        $syslog->save();
-    }
+        LibraryModel::RunCmd($cmd,$rule);
+    }*/
 }

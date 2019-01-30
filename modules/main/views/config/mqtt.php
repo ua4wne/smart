@@ -69,9 +69,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <div class="topic-form">
         <?php $form = ActiveForm::begin(['action' =>['/main/config/save-topic'], 'id' => 'form-topic', 'method' => 'post']); ?>
 
-        <?= $form->field($topic, 'name')->textInput(['maxlength' => true,'id'=>'name']) ?>
-
-        <?= $form->field($topic, 'payload')->textInput(['maxlength' => true,'id'=>'payload']) ?>
+        <?= $form->field($topic, 'topic_id')->dropDownList($seltop,['id'=>'topic_id']) ?>
 
         <?= $form->field($topic, 'route')->dropDownList(['public'=>'Публикация', 'subscribe'=>'Подписка'],['id'=>'route']) ?>
 

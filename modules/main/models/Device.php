@@ -47,6 +47,8 @@ class Device extends BaseModel
             [['address'], 'string', 'max' => 32],
             [['uid'], 'unique'],
             [['location_id'], 'exist', 'skipOnError' => true, 'targetClass' => Location::className(), 'targetAttribute' => ['location_id' => 'id']],
+            [['protocol_id'], 'exist', 'skipOnError' => true, 'targetClass' => Protocol::className(), 'targetAttribute' => ['protocol_id' => 'id']],
+            [['type_id'], 'exist', 'skipOnError' => true, 'targetClass' => DeviceType::className(), 'targetAttribute' => ['type_id' => 'id']],
         ];
     }
 
@@ -63,7 +65,7 @@ class Device extends BaseModel
             'descr' => 'Описание',
             'address' => 'Адрес',
             'verify' => 'Контроль',
-            'protocol_id' => 'Протокол',
+            'protocol_id' => 'Протокол обмена',
             'location_id' => 'Локация',
             'type_id' => 'Тип устройства',
             'created_at' => 'Дата создания',
@@ -130,6 +132,14 @@ class Device extends BaseModel
     public function getLocation()
     {
         return $this->hasOne(Location::className(), ['id' => 'location_id']);
+    }
+
+    /**
+     * @return \yii\db\ActiveQuery
+     */
+    public function getProtocol()
+    {
+        return $this->hasOne(Protocol::className(), ['id' => 'protocol_id']);
     }
 
     /**

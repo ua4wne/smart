@@ -103,7 +103,8 @@ class Location extends BaseModel
                             <div class="col-xs-12">';
                 foreach ($params as $param){
                     if($param->alias == 'state' || $param->alias == 'light'){
-                        $topic=$param->topic->name;
+                        $topic_id = Topic::findOne(['option_id'=>$param->id])->topic_id;
+                        $topic=MqttData::findOne($topic_id)->topic;
                         $check='';
                         if($param->val)
                             $check='checked="checked"';

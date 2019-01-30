@@ -1,6 +1,7 @@
 <?php
 namespace app\models;
 
+use app\modules\main\models\Config;
 use Yii;
 use yii\base\Model;
 use app\models\LibraryModel;
@@ -9,7 +10,8 @@ class Weather extends Model {
     const ONE_DAY = 'weather'; //текущий прогноз
     const FIVE_DAYS = 'forecast'; //прогноз на пять дней
     const CACHE_LIFETIME = 7200; //время кэша файла в секундах, 3600=1 час
-    const CACHE_FILE = DIRECTORY_SEPARATOR . 'temp' . DIRECTORY_SEPARATOR . 'forecast.xml'; // временный файл-кэш
+    //const CACHE_FILE = DIRECTORY_SEPARATOR . 'temp' . DIRECTORY_SEPARATOR . 'forecast.xml'; // временный файл-кэш
+    const CACHE_FILE = '/temp/forecast.xml';
     const CALVIN = 273.15; //для перевода из Кельвинов в Цельсии
     private $city_id; //город в формате Moscow,ru
     private $api_key; // = '360d7ad192fa3bf83b5df1e380570d24'; //http://openweathermap.org/forecast5
@@ -113,6 +115,16 @@ class Weather extends Model {
     }
 
     public static function GetForecast(){
+        $use_own_station = Config::findOne(['param'=>'USE_WEATHER_STATION'])->val;
+        if($use_own_station=='true'){
+            //читаем данные со своей погодной станции
+            //TODO нужно реализовать!!!
+            //временная заглушка
+            $content=array();
+            $content['city']=Config::findOne(['param'=>'CITY_ID'])->val;
+            $content['html']='<div></div>';
+            return $content;
+        }
         $file = 'temp/forecast.xml';
         if(file_exists($file)){
             $logs = simplexml_load_file($file);
