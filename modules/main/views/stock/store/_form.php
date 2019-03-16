@@ -10,20 +10,22 @@ use yii\widgets\ActiveForm;
 
 <div class="stock-form">
 
-    <?php $form = ActiveForm::begin(); ?>
+    <?php $form = ActiveForm::begin(['id'=>'f_pos']); ?>
 
-    <?= $form->field($model, 'cell_id')->dropDownList($cells) ?>
+    <?= $form->field($model, 'cell_id')->dropDownList($cells,['id'=>'cell_id']) ?>
+
+    <?= $form->field($model, 'id')->hiddenInput()->label(false) ?>
 
     <?= $form->field($model, 'material_id')->hiddenInput()->label(false) ?>
 
-    <?= $form->field($model, 'quantity')->textInput() ?>
+    <?= $form->field($model, 'quantity')->textInput(['id'=>'quantity']) ?>
 
-    <?= $form->field($model, 'unit_id')->dropDownList($units) ?>
+    <?= $form->field($model, 'unit_id')->dropDownList($units,['id'=>'unit_id']) ?>
 
-    <?= $form->field($model, 'price')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'price')->textInput(['maxlength' => true,'id'=>'price']) ?>
 
     <div class="form-group">
-        <?= Html::submitButton($model->isNewRecord ? 'Создать' : 'Обновить', ['class' => $model->isNewRecord ? 'btn btn-success' : 'btn btn-primary']) ?>
+        <?= Html::submitButton('Обновить', ['class' => 'btn btn-primary','id'=>'edit_pos']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>

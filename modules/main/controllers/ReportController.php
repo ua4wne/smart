@@ -35,6 +35,8 @@ class ReportController extends \yii\web\Controller
                 $location = $row->option->device->location->name;
                 $option[$row->option_id] = $row->option->name . " ($location)";
             }
+            $model->start = date('Y-m').'-01';
+            $model->finish = date('Y-m-d');
             return $this->render('index', [
                 'model' => $model,
                 'option' => $option,

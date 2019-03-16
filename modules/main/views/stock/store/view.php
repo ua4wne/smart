@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\widgets\DetailView;
+use yii\helpers\Url;
 
 /* @var $this yii\web\View */
 /* @var $model app\modules\main\models\Stock */
@@ -12,25 +13,25 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="stock-view">
 
-    <h1><?= Html::encode($this->title) ?></h1>
-
-    <p>
-        <?= Html::a('Обновить', ['update', 'id' => $model->material_id], ['class' => 'btn btn-primary']) ?>
-        <?= Html::a('Удалить', ['delete', 'id' => $model->material_id], [
-            'class' => 'btn btn-danger',
-            'data' => [
-                'confirm' => 'Вы уверены, что хотите удалить этот элемент?',
-                'method' => 'post',
-            ],
-        ]) ?>
-    </p>
+    <h3 class="text-center"><?= Html::a($this->title,['stock/material/view', 'id' => $model->material_id],['target' => '_blank'])?></h3>
 
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
             'id',
+            [
+                'label' => 'Изображение',
+                'format' => 'raw',
+                'value' => function($data){
+                    return Html::img(Url::toRoute($data->image),[
+                        'alt'=>'image',
+                        'style' => 'width:200px;',
+                        'class'=>'img-responsive center-block'
+                    ]);
+                },
+            ],
             'cell.name',
-            'material.name',
+            //'material.name',
             'quantity',
             'unit.name',
             'price',

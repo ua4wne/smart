@@ -1,7 +1,7 @@
 <?php
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use kartik\datetime\DateTimePicker;
+use kartik\date\DatePicker;
 /* @var $this yii\web\View */
 $this->title = 'Фильтр';
 $this->params['breadcrumbs'][] = ['label' => 'Отчеты', 'url' => ['report/index']];
@@ -13,14 +13,13 @@ $this->params['breadcrumbs'][] = ['label' => 'Отчеты', 'url' => ['report/i
 
     <?php $form = ActiveForm::begin(); ?>
 
-    <?= $form->field($model, 'start')->widget(DateTimePicker::className(),[
+    <?= $form->field($model, 'start')->widget(DatePicker::className(),[
         'name' => 'start',
-        'type' => DateTimePicker::TYPE_COMPONENT_PREPEND,
-        'options' => ['placeholder' => 'Ввод даты/времени...'],
-        'value'=> date("yyyy-MM-dd H:i:s"),
+        'options' => ['placeholder' => 'Ввод даты'],
+        'value'=> date("yyyy-MM-dd",strtotime($model->start)),
         'convertFormat' => true,
         'pluginOptions' => [
-            'format' => 'yyyy-MM-dd H:i:s',
+            'format' => 'yyyy-MM-dd',
             'autoclose'=>true,
             'weekStart'=>1, //неделя начинается с понедельника
             'startDate' => '2015-01-01', //самая ранняя возможная дата
@@ -28,14 +27,13 @@ $this->params['breadcrumbs'][] = ['label' => 'Отчеты', 'url' => ['report/i
         ]
     ]) ?>
 
-    <?= $form->field($model, 'finish')->widget(DateTimePicker::className(),[
+    <?= $form->field($model, 'finish')->widget(DatePicker::className(),[
         'name' => 'finish',
-        'type' => DateTimePicker::TYPE_COMPONENT_PREPEND,
-        'options' => ['placeholder' => 'Ввод даты/времени...'],
-        'value'=> date("yyyy-MM-dd H:i:s"),
+        'options' => ['placeholder' => 'Ввод даты'],
+        'value'=> date("yyyy-MM-dd",strtotime($model->finish)),
         'convertFormat' => true,
         'pluginOptions' => [
-            'format' => 'yyyy-MM-dd H:i:s',
+            'format' => 'yyyy-MM-dd',
             'autoclose'=>true,
             'weekStart'=>1, //неделя начинается с понедельника
             'startDate' => '2015-01-01', //самая ранняя возможная дата

@@ -212,4 +212,43 @@ class CronController extends Controller
         }
     }
 
+    //проверка частоты обновления данных с сенсоров
+    public function actionCheckFail(){
+        $date = date("Y-m-d"); //текущая дата
+        $period = date('Y-m-d', strtotime("$date -3 day"));
+        //выбираем из базы переменные, которые не обновлялись более суток
+        $options = Option::find()->select(['device_id','val','unit','name','updated_at'])->where(['<','updated_at',$period])->andWhere(['not in','alias',['state','alarm']])->all();
+        if(!empty($options)){
+            //если есть такие параметры, тогда формируем из них таблицу и отправляем письмо
+            $content='';
+            foreach ($options as $option){
+                $dname = $option->device->name;
+                $content.="<tr><td>$dname</td><td>$option->name</td><td>$option->val</td><td>$option->unit</td><td>$option->updated_at</td></tr>";
+            }
+            $to = Yii::$app->params['adminEmail'];
+            $params = [];
+            \Yii::$app->mailer->getView()->params['table'] = $content;
+            $subject = 'Ошибки считывания данных на ' . date('Y-m-d H:i:s');
+            $result = \Yii::$app->mailer->compose([
+                'html' => 'views/html_fail_param',
+                //'text' => 'views/text_mail',
+            ], $params)
+                ->setFrom(Yii::$app->params['adminEmail'])
+                ->setTo($to)
+                ->setSubject($subject)
+                ->send();
+            if(!$result){
+                //запись в лог
+                $syslog = new Syslog();
+                $syslog->type = 'error';
+                $syslog->msg = 'Возникла ошибка при отправке сообщения об ошибках считывания данных в системе адресату <strong>'. $to .'</strong>';
+                $syslog->from = Yii::$app->params['adminEmail'];
+                $syslog->to = $to;
+                $syslog->is_new = 1;
+                $syslog->created_at = date('Y-m-d H:i:s');
+                $syslog->save();
+            }
+        }
+    }
+
 }

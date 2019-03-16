@@ -50,7 +50,7 @@ class StoreController extends Controller
                 'INNER JOIN unit u ON (u.id = s.unit_id) ',
         ]); */
         $content = Stock::ViewStock();
-        return $this->render('index',[
+        return $this->render('index', [
             'content' => $content,
         ]);
         /*return $this->render('indexOLD', [
@@ -66,7 +66,7 @@ class StoreController extends Controller
      */
     public function actionView($id)
     {
-        return $this->render('view', [
+        return $this->renderPartial('view', [
             'model' => $this->findModel($id),
         ]);
     }
@@ -84,13 +84,13 @@ class StoreController extends Controller
             return $this->redirect(['view', 'id' => $model->id]);
         } else {
             $cells = array();
-            $rows = Cell::find()->select(['id','name'])->asArray()->all();
-            foreach ($rows as $row){
+            $rows = Cell::find()->select(['id', 'name'])->asArray()->all();
+            foreach ($rows as $row) {
                 $cells[$row[id]] = $row[name];
             }
             $units = array();
-            $rows = Unit::find()->select(['id','name'])->asArray()->all();
-            foreach ($rows as $row){
+            $rows = Unit::find()->select(['id', 'name'])->asArray()->all();
+            foreach ($rows as $row) {
                 $units[$row[id]] = $row[name];
             }
             return $this->render('create', [
@@ -107,28 +107,46 @@ class StoreController extends Controller
      * @param integer $id
      * @return mixed
      */
-    public function actionUpdate($id)
+    public function actionViewUpdate($id)
     {
         $model = $this->findModel($id);
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->material_id]);
-        } else {
+        if (\Yii::$app->request->isAjax) {
             $cells = array();
-            $rows = Cell::find()->select(['id','name'])->asArray()->all();
-            foreach ($rows as $row){
+            $rows = Cell::find()->select(['id', 'name'])->asArray()->all();
+            foreach ($rows as $row) {
                 $cells[$row[id]] = $row[name];
             }
             $units = array();
-            $rows = Unit::find()->select(['id','name'])->asArray()->all();
-            foreach ($rows as $row){
+            $rows = Unit::find()->select(['id', 'name'])->asArray()->all();
+            foreach ($rows as $row) {
                 $units[$row[id]] = $row[name];
             }
-            return $this->render('update', [
+            return $this->renderPartial('update', [
                 'model' => $model,
                 'cells' => $cells,
                 'units' => $units,
             ]);
+        }
+    }
+
+    public function actionUpdatePos()
+    {
+        $new = new Stock();
+        if (\Yii::$app->request->isAjax) {
+            if ($new->load(Yii::$app->request->post())) {
+                $model = $this->findModel($new->id);
+                if(!empty($model)) {
+                    $model->cell_id = $new->cell_id;
+                    $model->material_id = $new->material_id;
+                    $model->quantity = $new->quantity;
+                    $model->unit_id = $new->unit_id;
+                    $model->price = $new->price;
+                    if($model->save())
+                        return 'OK';
+                    else
+                        return 'ERR';
+                }
+            }
         }
     }
 
@@ -138,11 +156,17 @@ class StoreController extends Controller
      * @param integer $id
      * @return mixed
      */
-    public function actionDelete($id)
+    public function actionDelete()
     {
-        $this->findModel($id)->delete();
+        if (\Yii::$app->request->isAjax) {
+            $id = $_POST['id'];
+            if ($this->findModel($id)->delete())
+                return 'OK';
+            else
+                return 'ERR';
+        }
 
-        return $this->redirect(['index']);
+        //return $this->redirect(['index']);
     }
 
     /**
@@ -154,7 +178,7 @@ class StoreController extends Controller
      */
     protected function findModel($id)
     {
-        if (($model = Stock::findOne(['material_id'=>$id])) !== null) {
+        if (($model = Stock::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
@@ -172,8 +196,9 @@ class StoreController extends Controller
         ]);
     }
 
-    public function actionExport(){
-        $query = Stock::find()->orderBy(['cell_id'=>SORT_ASC]);
+    public function actionExport()
+    {
+        $query = Stock::find()->orderBy(['cell_id' => SORT_ASC]);
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
         ]);
@@ -205,8 +230,8 @@ class StoreController extends Controller
             'options' => ['title' => 'Инвентаризация'],
             // call mPDF methods on the fly
             'methods' => [
-                'SetHeader'=>['Инвентаризация'],
-                'SetFooter'=>['{PAGENO}'],
+                'SetHeader' => ['Инвентаризация'],
+                'SetFooter' => ['{PAGENO}'],
             ]
         ]);
 

@@ -41,7 +41,7 @@ class Stock extends BaseModel
             [['cell_id', 'material_id', 'quantity', 'unit_id', 'price'], 'required'],
             [['cell_id', 'material_id', 'quantity', 'unit_id'], 'integer'],
             [['price'], 'number'],
-            [['created_at', 'updated_at'], 'safe'],
+            [['id','created_at', 'updated_at'], 'safe'],
             [['cell_id'], 'exist', 'skipOnError' => true, 'targetClass' => Cell::className(), 'targetAttribute' => ['cell_id' => 'id']],
             [['material_id'], 'exist', 'skipOnError' => true, 'targetClass' => Material::className(), 'targetAttribute' => ['material_id' => 'id']],
             [['unit_id'], 'exist', 'skipOnError' => true, 'targetClass' => Unit::className(), 'targetAttribute' => ['unit_id' => 'id']],
@@ -130,7 +130,7 @@ class Stock extends BaseModel
     }
 
     public static function ViewStock(){
-        $query =  'SELECT s.material_id AS id, c.name AS cell, m.name AS material, cat.name AS category, s.quantity AS quantity, u.name AS unit, s.price AS price ' .
+        $query =  'SELECT s.id, s.material_id, c.name AS cell, m.name AS material, m.image AS img, cat.name AS category, s.quantity AS quantity, u.name AS unit, s.price AS price ' .
             'FROM stock s ' .
             'INNER JOIN cell c ON (c.id = s.cell_id) ' .
             'INNER JOIN material m ON (m.id = s.material_id) '.
@@ -143,14 +143,16 @@ class Stock extends BaseModel
         //Осуществляем запрос к базе данных, переменная $model содержит ассоциативный массив с данными
         $rows = $model->queryAll();
         $content = '<table class="table table-striped table-bordered table-hover" id="dataTables-stock">
-                        <thead><tr><th>ID</th><th>Ячейка</th><th>Номенклатура</th><th>Категория</th><th>Кол-во</th><th>Ед. изм</th><th>Цена</th><th>Действия</th></tr></thead>
+                        <thead><tr><th>Фото</th><th>Ячейка</th><th>Номенклатура</th><th>Категория</th><th>Кол-во</th><th>Ед. изм</th><th>Цена</th><th style="width: 160px">Действия</th></tr></thead>
                             <tbody>';
+        //$num = 1;
         foreach ($rows as $row){
-            $content.='<tr><td>'.$row['id'].'</td><td>'.$row['cell'].'</td><td>'.$row['material'].'</td>
+            $content.='<tr id="'. $row['id'] .'"><td><img class="img-rounded" src="'.$row['img'].'"></td><td>'.$row['cell'].'</td><td>'.$row['material'].'</td>
                         <td>'.$row['category'].'</td><td>'.$row['quantity'].'</td><td>'.$row['unit'].'</td><td>'.$row['price'].'</td>
-                        <td><a href="/main/stock/store/view?id='.$row['id'].'" title="Просмотр" aria-label="Просмотр"><span class="glyphicon glyphicon-eye-open"></span></a>
-                         <a href="/main/stock/store/update?id='.$row['id'].'" title="Редактировать" aria-label="Редактировать"><span class="glyphicon glyphicon-pencil"></span></a>
-                         <a href="/main/stock/store/delete?id='.$row['id'].'" title="Удалить" aria-label="Удалить" data-confirm="Вы уверены, что хотите удалить этот элемент?" data-method="post"><span class="glyphicon glyphicon-trash"></span></a></tr>';
+                        <td><button class="btn btn-info btn-sm doc_view" type="button" title="Просмотр записи"><i class="fa fa-eye fa-lg" aria-hidden="true"></i></button>
+                         <button class="btn btn-success btn-sm doc_edit" type="button" title="Редактировать запись"><i class="fa fa-edit fa-lg" aria-hidden="true"></i></button>
+                         <button class="btn btn-danger btn-sm doc_delete" type="button" title="Удалить запись"><i class="fa fa-trash fa-lg" aria-hidden="true"></i></button></tr>';
+            //$num++;
         }
         $content.='</tbody></table>';
         return $content;
